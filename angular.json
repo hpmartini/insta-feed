@@ -120,9 +120,16 @@
               "devServerTarget": "insta-feed:serve:production"
             }
           }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {}
         }
       }
     }
   },
-  "defaultProject": "insta-feed"
+  "defaultProject": "insta-feed",
+  "cli": {
+    "analytics": false
+  }
 }

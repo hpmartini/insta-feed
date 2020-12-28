@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "ready-e9b4e": {
+      "hosting": {
+        "insta-feed": [
+          "ready-e9b4e"
+        ]
+      }
+    }
+  }
+}
