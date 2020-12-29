@@ -5,10 +5,12 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AngularFireModule } from '@angular/fire';
 import { environment } from '../environments/environment';
+import { RowRunnerComponent } from './row-runner/row-runner.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    RowRunnerComponent,
   ],
   imports: [
     AngularFireModule.initializeApp(
@@ -21,4 +23,5 @@ import { environment } from '../environments/environment';
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}
