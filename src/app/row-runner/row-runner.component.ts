@@ -1,20 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { HttpClient } from '@angular/common/http';
 import { FeedService } from '../services/feed.service';
 import { ScraperService } from '../services/scraper.service';
+import { AngularFireFunctions } from '@angular/fire/functions';
 
 @Component({
   selector: 'app-row-runner',
   templateUrl: './row-runner.component.html',
-  styleUrls: ['./row-runner.component.sass']
+  styleUrls: ['./row-runner.component.sass'],
 })
 export class RowRunnerComponent implements OnInit {
-
   constructor(
-    private http: HttpClient,
-    private feedService: FeedService,
-    private scraperService: ScraperService
+    private readonly feedService: FeedService,
+    private readonly scraperService: ScraperService
   ) {}
   private url = 'https://rss.sueddeutsche.de/rss/Topthemen';
   public data;
@@ -28,21 +26,20 @@ export class RowRunnerComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.feedService.getFeedContent(this.url)
-      .subscribe(value => {
-        const feed = this.feedService.extractFeeds(value);
-        this.scraperService.scrapeTextFromHtml(feed).then(content => {
-          const options = {
-            strings: [content],
-            typeSpeed: 10,
-            backSpeed: 40,
-            showCursor: false,
-            startDelay: RowRunnerComponent.getStartDelay()
-          };
+    this.feedService.getFeedContent(this.url).subscribe((value) => {
+      const feed = this.feedService.extractFeeds(value);
+      this.scraperService.scrapeTextFromHtml(feed).then((content) => {
+        const options = {
+          strings: [content],
+          typeSpeed: 10,
+          backSpeed: 40,
+          showCursor: false,
+          startDelay: RowRunnerComponent.getStartDelay(),
+        };
 
-          // return new Typed('#typed', options);
-          return null;
-        });
+        // return new Typed('#typed', options);
+        return null;
       });
+    });
   }
 }

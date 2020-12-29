@@ -1,21 +1,26 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-
-const firebase = require('firebase');
+import { Observable, of } from 'rxjs';
+import { AngularFireFunctions } from '@angular/fire/functions';
 
 @Injectable()
 export class FeedService {
-  constructor(private http: HttpClient) {}
+  constructor(private readonly functions: AngularFireFunctions) {}
 
   getFeedContent(url: string): Observable<string> {
-    const getFeed = firebase.functions().httpsCallable('getFeed');
+    console.log('getFeed');
+    const getFeed = this.functions.httpsCallable('getFeed');
     let content = '';
-    getFeed({url}).then((result) => content = result.data);
+    getFeed({ url }).subscribe(
+      (result) => {
+        console.log('result', result);
+        return (content = result?.data);
+      },
+      (error) => console.log(error)
+    );
     console.log(content);
 
     // return this.http.get(url, {responseType: 'text'});
-    return null;
+    return of(content);
   }
 
   extractFeeds(response: any): any {
