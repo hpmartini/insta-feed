@@ -2,23 +2,21 @@ import * as functions from 'firebase-functions';
 import * as express from 'express';
 import * as cors from 'cors';
 import * as https from 'https';
+import * as Parser from 'rss-parser';
 
 const app = express();
+const parser = new Parser();
 
 app.use(cors({ origin: true }));
 
 app.get('/:id', (req, res) => res.send(req.params.id));
 app.post('/', (req, res) =>
-  https.get(req.body.url, (incomingMessage) => {
-    let body = '';
-    incomingMessage.on('data', (data) => (body += data));
-    incomingMessage.on('end', () =>
-      res.send({
-        requested_url: req.body.url ?? '',
-        result: body,
-      })
-    );
-  })
+  parser.parseURL(req.body.url).then((result: any) =>
+    res.send({
+      requested_url: req.body.url ?? '',
+      result: result,
+    })
+  )
 );
 
 exports.loadFeed = functions.https.onRequest(app);
