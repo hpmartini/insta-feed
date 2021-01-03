@@ -4,6 +4,9 @@ import * as cors from 'cors';
 import * as https from 'https';
 import * as Parser from 'rss-parser';
 
+const Readability = require('@mozilla/readability');
+const jsdom = require('jsdom').JSDOM;
+
 const app = express();
 const parser = new Parser();
 
@@ -15,13 +18,19 @@ app.post('/', (req, res) =>
     https.get(result.items[0].link, (incomingMessage) => {
       let body = '';
       incomingMessage.on('data', (data) => (body += data));
-      return incomingMessage.on('end', () =>
+      return incomingMessage.on('end', () => {
+        const doc = new jsdom(body, result.items[0].link);
+        const reader = new Readability(doc.window.document);
+        const article = reader.parse();
         res.send({
-          requested_url: req.body.url ?? '',
-          result: result,
-          body: body,
-        })
-      );
+          url: result.items[0].link,
+          title: article.title,
+          excerpt: article.excerpt,
+          content: article.content,
+          textContent: article.textContent,
+          siteName: article.siteName,
+        });
+      });
     })
   )
 );
