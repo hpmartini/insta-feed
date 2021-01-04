@@ -3,6 +3,7 @@ import * as express from 'express';
 import * as cors from 'cors';
 import * as https from 'https';
 import * as Parser from 'rss-parser';
+const fetch = require('node-fetch');
 
 const Readability = require('@mozilla/readability');
 const jsdom = require('jsdom').JSDOM;
@@ -37,10 +38,10 @@ app.post('/', (req, res) =>
 
 exports.loadFeed = functions.https.onRequest(app);
 
-exports.getFeed = functions.https.onCall((data) =>
-  https.get(data.url, (incomingMessage) => {
-    let body = '';
-    incomingMessage.on('data', (incomingData) => (body += incomingData));
-    return incomingMessage.on('end', () => body);
-  })
+exports.getFeed = functions.https.onCall(
+  async (data) => await parser.parseURL(data.url)
+);
+
+exports.getArticle = functions.https.onCall(async (data) =>
+  fetch(data.url).then((response: any) => response.text())
 );

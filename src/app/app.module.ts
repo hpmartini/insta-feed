@@ -9,14 +9,18 @@ import { RowRunnerComponent } from './row-runner/row-runner.component';
 import { FeedService } from './services/feed.service';
 import { ScraperService } from './services/scraper.service';
 import { HttpClientModule } from '@angular/common/http';
+import { AngularFireFunctionsModule } from '@angular/fire/functions';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [AppComponent, RowRunnerComponent],
   imports: [
     AngularFireModule.initializeApp(environment.firebase, 'ready'),
+    AngularFireFunctionsModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    CommonModule,
   ],
   providers: [FeedService, ScraperService],
   bootstrap: [AppComponent],

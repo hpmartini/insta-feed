@@ -23,6 +23,7 @@
     "firebase-functions": "^3.11.0",
     "jsdom": "^16.4.0",
     "moz-readability-node": "^0.2.4",
+    "node-fetch": "^2.6.1",
     "request": "^2.88.2",
     "rss-parser": "^3.10.0"
   },
