@@ -12,7 +12,7 @@ export class RowRunnerComponent implements OnInit {
   constructor(private readonly functions: AngularFireFunctions) {}
 
   private url = 'https://rss.sueddeutsche.de/rss/Topthemen';
-  public data;
+  public article;
 
   ngOnInit(): void {
     console.log('getting feed');
@@ -25,7 +25,17 @@ export class RowRunnerComponent implements OnInit {
   private getArticle(result) {
     const getArticle = this.functions.httpsCallable('getArticle');
     getArticle({ url: result.items[0].link }).subscribe((result) => {
-      this.getParsedArticleWebSite(result);
+      this.article = this.getParsedArticleWebSite(result);
+      let i = 0;
+      const speed = 30;
+      const text = this.article.content;
+      this.article.content = '';
+      const rowRunner = () => {
+        if (i === text.length) return;
+        this.article.content += text.charAt(i++);
+        setTimeout(rowRunner, speed);
+      };
+      setTimeout(rowRunner, 500);
     });
   }
 
@@ -33,7 +43,11 @@ export class RowRunnerComponent implements OnInit {
     const doc = new DOMParser().parseFromString(result, 'text/html');
     const reader = new Readability.Readability(doc);
     const article = reader.parse();
-    console.log(article);
-    return article;
+    return {
+      siteName: article.siteName,
+      title: article.title,
+      excerpt: article.excerpt,
+      content: article.textContent,
+    };
   }
 }
