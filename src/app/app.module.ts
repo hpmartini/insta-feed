@@ -11,6 +11,8 @@ import { ScraperService } from './services/scraper.service';
 import { HttpClientModule } from '@angular/common/http';
 import { AngularFireFunctionsModule } from '@angular/fire/functions';
 import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { FlexModule } from '@angular/flex-layout';
 
 @NgModule({
   declarations: [AppComponent, RowRunnerComponent],
@@ -21,6 +23,9 @@ import { CommonModule } from '@angular/common';
     AppRoutingModule,
     HttpClientModule,
     CommonModule,
+    MatButtonModule,
+    MatButtonModule,
+    FlexModule,
   ],
   providers: [FeedService, ScraperService],
   bootstrap: [AppComponent],

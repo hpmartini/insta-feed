@@ -9,10 +9,14 @@ const Readability = require('@mozilla/readability');
   styleUrls: ['./row-runner.component.sass'],
 })
 export class RowRunnerComponent implements OnInit {
-  constructor(private readonly functions: AngularFireFunctions) {}
-
   private url = 'https://rss.sueddeutsche.de/rss/Topthemen';
+  private speed = 20;
+
+  public isRowRunnerActive = false;
   public article;
+  public textBuffer: string;
+
+  constructor(private readonly functions: AngularFireFunctions) {}
 
   ngOnInit(): void {
     console.log('getting feed');
@@ -26,28 +30,44 @@ export class RowRunnerComponent implements OnInit {
     const getArticle = this.functions.httpsCallable('getArticle');
     getArticle({ url: result.items[0].link }).subscribe((result) => {
       this.article = this.getParsedArticleWebSite(result);
-      let i = 0;
-      const speed = 30;
-      const text = this.article.content;
-      this.article.content = '';
-      const rowRunner = () => {
-        if (i === text.length) return;
-        this.article.content += text.charAt(i++);
-        setTimeout(rowRunner, speed);
-      };
-      setTimeout(rowRunner, 500);
+      this.textBuffer = this.article.content;
     });
   }
 
   private getParsedArticleWebSite(result): {} {
     const doc = new DOMParser().parseFromString(result, 'text/html');
-    const reader = new Readability.Readability(doc);
-    const article = reader.parse();
+    const article = new Readability.Readability(doc).parse();
     return {
       siteName: article.siteName,
       title: article.title,
       excerpt: article.excerpt,
       content: article.textContent,
     };
+  }
+
+  private rowRunner = (i: number) => {
+    if (i === this.article.content?.length || !this.isRowRunnerActive) return;
+
+    if (i > 0) {
+      this.textBuffer = this.textBuffer.slice(0, -3);
+    }
+
+    this.textBuffer += this.article.content.charAt(i++);
+    this.textBuffer += ' ⌷>';
+    setTimeout(this.rowRunner, this.speed, i);
+  };
+
+  toggleSrt($event: MouseEvent) {
+    if (this.isRowRunnerActive) {
+      this.textBuffer = this.article.content;
+      this.isRowRunnerActive = false;
+      return;
+    }
+
+    let i = 0;
+    this.textBuffer = '';
+    this.isRowRunnerActive = true;
+
+    setTimeout(this.rowRunner, 50, i);
   }
 }
