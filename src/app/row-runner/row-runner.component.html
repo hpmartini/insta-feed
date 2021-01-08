@@ -5,7 +5,7 @@
   </div>
   <div fxLayout="row" class="buttonRow">
     <button mat-raised-button color="primary" class="toggleSrt"
-            (click)="toggleSrt($event)">{{ isRowRunnerActive ? 'show static text' : 'speed read' }}</button>
+            (click)="toggleSrt()">{{ isRowRunnerActive ? 'show static text' : 'speed read' }}</button>
   </div>
-  <div class="article-content">{{ textBuffer }}</div>
+  <div class="article-content" [class.big-font]="isRowRunnerActive">{{ textBuffer }}</div>
 </div>

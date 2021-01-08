@@ -49,15 +49,15 @@ export class RowRunnerComponent implements OnInit {
     if (i === this.article.content?.length || !this.isRowRunnerActive) return;
 
     if (i > 0) {
-      this.textBuffer = this.textBuffer.slice(0, -3);
+      this.textBuffer = this.textBuffer.slice(0, -2);
     }
 
     this.textBuffer += this.article.content.charAt(i++);
-    this.textBuffer += ' ⌷>';
+    this.textBuffer += ' ▶';
     setTimeout(this.rowRunner, this.speed, i);
   };
 
-  toggleSrt($event: MouseEvent) {
+  toggleSrt() {
     if (this.isRowRunnerActive) {
       this.textBuffer = this.article.content;
       this.isRowRunnerActive = false;
