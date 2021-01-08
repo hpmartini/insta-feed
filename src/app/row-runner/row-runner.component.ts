@@ -3,6 +3,13 @@ import { AngularFireFunctions } from '@angular/fire/functions';
 
 const Readability = require('@mozilla/readability');
 
+interface Article {
+  siteName: string;
+  title: string;
+  excerpt: string;
+  content: string;
+}
+
 @Component({
   selector: 'app-row-runner',
   templateUrl: './row-runner.component.html',
@@ -13,7 +20,7 @@ export class RowRunnerComponent implements OnInit {
   private speed = 20;
 
   public isRowRunnerActive = false;
-  public article;
+  public article: Article;
   public textBuffer: string;
 
   constructor(private readonly functions: AngularFireFunctions) {}
@@ -34,7 +41,7 @@ export class RowRunnerComponent implements OnInit {
     });
   }
 
-  private getParsedArticleWebSite(result): {} {
+  private getParsedArticleWebSite(result): Article {
     const doc = new DOMParser().parseFromString(result, 'text/html');
     const article = new Readability.Readability(doc).parse();
     return {
@@ -64,10 +71,19 @@ export class RowRunnerComponent implements OnInit {
       return;
     }
 
-    let i = 0;
-    this.textBuffer = '';
     this.isRowRunnerActive = true;
+    this.textBuffer = '';
 
-    setTimeout(this.rowRunner, 50, i);
+    this.animate();
+  }
+
+  private animate() {
+    [...this.article.content].forEach((char, index) => {
+      setTimeout(() => {
+        this.textBuffer = this.textBuffer?.slice(0, -2);
+        this.textBuffer += char;
+        this.textBuffer += ' ▶';
+      }, index * this.speed);
+    });
   }
 }

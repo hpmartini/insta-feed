@@ -4,26 +4,39 @@ $active-font-size: 1.8rem
 $active-line-height: 2.5rem
 
 .content
-  margin: 0 auto
+  width: 100vw
   padding-top: 4em
   padding-bottom: 4em
-  width: 42em
-  justify-content: left
-
-.article-content
   margin: 0 auto
-  text-align: left
-  white-space: normal
-  overflow: auto
-
-.big-font
-  font-size: $active-font-size
-  line-height: $active-line-height
-
-.buttonRow
   justify-content: center
 
-button.toggleSrt
-  margin-bottom: 2em
-  align-self: center
-  align-items: center
+  .header
+    width: 35rem
+    margin: 0 auto
+    justify-content: left
+
+  .article-content
+    width: 35rem
+    margin: 0 auto
+    text-align: left
+    white-space: normal
+    overflow: auto
+
+  .row-runner-active
+    font-size: $active-font-size
+    line-height: $active-line-height
+    min-width: 90vh
+    max-width: 60rem
+    height: 100%
+    padding: 10px
+    background-color: silver
+    border-radius: 11px
+    box-shadow: 0 0 10px 0 black
+
+  .buttonRow
+    justify-content: center
+
+  button.toggleSrt
+    margin-bottom: 2em
+    align-self: center
+    align-items: center
