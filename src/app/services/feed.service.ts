@@ -1,39 +1,37 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { AngularFireFunctions } from '@angular/fire/functions';
+import {Injectable} from '@angular/core';
+import {AngularFireFunctions} from '@angular/fire/functions';
+import {Article} from '../model/article';
+import {BehaviorSubject} from 'rxjs';
+
+const Readability = require('@mozilla/readability');
 
 @Injectable()
 export class FeedService {
-  constructor(private readonly functions: AngularFireFunctions) {}
+  private emptyArticle: {siteName: '', content: '', excerpt: '', title: ''};
+  public article = new BehaviorSubject<Article>(null);
 
-  getFeedContent(url: string): Observable<string> {
-    console.log('getFeed');
-    const getFeed = this.functions.httpsCallable('getFeed');
-    let content = '';
-    getFeed({ url }).subscribe(
-      (result) => {
-        console.log('result', result);
-        return (content = result?.data);
-      },
-      (error) => console.log(error)
-    );
-    console.log(content);
-
-    // return this.http.get(url, {responseType: 'text'});
-    return of(content);
+  constructor(private readonly functions: AngularFireFunctions) {
   }
 
-  extractFeeds(response: any): any {
-    // const parser = new xml2js.Parser({explicitArray : false, mergeAttrs : true});
-    // let feed: any;
-    // parser.parseString(response, (err: any, result: any) => {
-    //   if (err) {
-    //     console.warn(err);
-    //   }
-    //   feed = result;
-    // });
-    //
-    // return feed?.rss?.channel?.item[0] ?? {};
-    return null;
+  public getArticleByUrl(url: string): void {
+    this.article.next(this.emptyArticle);
+    const getFeed = this.functions.httpsCallable('getFeed');
+    getFeed({url}).subscribe((result) => this.loadArticle(result.items[0].link));
+  }
+
+  private loadArticle(url): void {
+    const getArticle = this.functions.httpsCallable('getArticle');
+    getArticle({url}).subscribe((article) => this.article.next(this.getParsedArticleWebSite(article)));
+  }
+
+  private getParsedArticleWebSite(result): Article {
+    const doc = new DOMParser().parseFromString(result, 'text/html');
+    const article = new Readability.Readability(doc).parse();
+    return {
+      siteName: article.siteName,
+      title: article.title,
+      excerpt: article.excerpt,
+      content: article.textContent,
+    };
   }
 }

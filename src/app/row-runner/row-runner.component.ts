@@ -1,14 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { AngularFireFunctions } from '@angular/fire/functions';
-
-const Readability = require('@mozilla/readability');
-
-interface Article {
-  siteName: string;
-  title: string;
-  excerpt: string;
-  content: string;
-}
+import {Component, OnInit} from '@angular/core';
+import {AngularFireFunctions} from '@angular/fire/functions';
+import {Article} from '../model/article';
+import {FeedService} from '../services/feed.service';
 
 @Component({
   selector: 'app-row-runner',
@@ -23,48 +16,18 @@ export class RowRunnerComponent implements OnInit {
   public article: Article;
   public textBuffer: string;
 
-  constructor(private readonly functions: AngularFireFunctions) {}
+  constructor(private readonly functions: AngularFireFunctions, private readonly feedService: FeedService) {
+  }
 
   ngOnInit(): void {
-    console.log('getting feed');
-    const getFeed = this.functions.httpsCallable('getFeed');
-    getFeed({ url: this.url }).subscribe((result) => {
-      this.getArticle(result);
+    this.feedService.article.subscribe((article) => {
+      this.article = article ?? null;
+      this.textBuffer = article?.content;
     });
+    this.feedService.getArticleByUrl(this.url);
   }
 
-  private getArticle(result) {
-    const getArticle = this.functions.httpsCallable('getArticle');
-    getArticle({ url: result.items[0].link }).subscribe((result) => {
-      this.article = this.getParsedArticleWebSite(result);
-      this.textBuffer = this.article.content;
-    });
-  }
-
-  private getParsedArticleWebSite(result): Article {
-    const doc = new DOMParser().parseFromString(result, 'text/html');
-    const article = new Readability.Readability(doc).parse();
-    return {
-      siteName: article.siteName,
-      title: article.title,
-      excerpt: article.excerpt,
-      content: article.textContent,
-    };
-  }
-
-  private rowRunner = (i: number) => {
-    if (i === this.article.content?.length || !this.isRowRunnerActive) return;
-
-    if (i > 0) {
-      this.textBuffer = this.textBuffer.slice(0, -2);
-    }
-
-    this.textBuffer += this.article.content.charAt(i++);
-    this.textBuffer += ' ▶';
-    setTimeout(this.rowRunner, this.speed, i);
-  };
-
-  toggleSrt() {
+  toggleSrt(): void {
     if (this.isRowRunnerActive) {
       this.textBuffer = this.article.content;
       this.isRowRunnerActive = false;
@@ -77,13 +40,20 @@ export class RowRunnerComponent implements OnInit {
     this.animate();
   }
 
-  private animate() {
-    [...this.article.content].forEach((char, index) => {
-      setTimeout(() => {
-        this.textBuffer = this.textBuffer?.slice(0, -2);
-        this.textBuffer += char;
-        this.textBuffer += ' ▶';
-      }, index * this.speed);
+  /**
+   * for each char in string
+   *    if content is longer then div
+   *      try to split last word
+   *      add line to line array
+   */
+  private animate(): void {
+    [...this.article.content].forEach(async (char, index) => {
+      this.textBuffer = this.textBuffer?.slice(0, -2);
+      this.textBuffer += char;
+      this.textBuffer += ' ▶';
+      await this.sleep(index * this.speed);
     });
   }
+
+  sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 }
