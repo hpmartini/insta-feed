@@ -7,7 +7,6 @@ import { AngularFireModule } from '@angular/fire';
 import { environment } from '../environments/environment';
 import { RowRunnerComponent } from './row-runner/row-runner.component';
 import { FeedService } from './services/feed.service';
-import { ScraperService } from './services/scraper.service';
 import { HttpClientModule } from '@angular/common/http';
 import { AngularFireFunctionsModule } from '@angular/fire/functions';
 import { CommonModule } from '@angular/common';
@@ -27,7 +26,7 @@ import { FlexModule } from '@angular/flex-layout';
     MatButtonModule,
     FlexModule,
   ],
-  providers: [FeedService, ScraperService],
+  providers: [FeedService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
