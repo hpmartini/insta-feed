@@ -3,12 +3,17 @@
     <h1>{{ article?.title }}</h1>
     <h2>{{ article?.excerpt }}</h2>
 
-    <div fxLayout="row" class="buttonRow">
-      <button mat-raised-button color="primary" class="toggleSrt"
-              (click)="toggleSrt()">{{ isRowRunnerActive ? 'show static text' : 'speed read' }}</button>
+    <div class="buttonRow" fxLayout="row">
+      <button (click)="isRowRunnerActive = !isRowRunnerActive" class="toggleSrt" color="primary"
+              mat-raised-button>{{ isRowRunnerActive ? 'show static text' : 'speed read' }}</button>
     </div>
   </div>
 
-  <div class="article-content" [class.row-runner-active]="isRowRunnerActive">{{ textBuffer }}</div>
-  <div #dummyDiv class="article-content row-runner-active dummy"></div>
+  <div *ngIf="!isRowRunnerActive" [class.row-runner-active]="isRowRunnerActive"
+       class="article-content">{{ this.article?.content }}</div>
+
+  <app-animation *ngIf="isRowRunnerActive" [lines]="lines"
+                 [speed]="speed"></app-animation>
+
+    <div #dummyDiv class="article-content row-runner-active dummy"></div>
 </div>

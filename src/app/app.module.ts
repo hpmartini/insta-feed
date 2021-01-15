@@ -12,9 +12,10 @@ import { AngularFireFunctionsModule } from '@angular/fire/functions';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { FlexModule } from '@angular/flex-layout';
+import { AnimationComponent } from './row-runner/animation/animation.component';
 
 @NgModule({
-  declarations: [AppComponent, RowRunnerComponent],
+  declarations: [AppComponent, RowRunnerComponent, AnimationComponent],
   imports: [
     AngularFireModule.initializeApp(environment.firebase, 'ready'),
     AngularFireFunctionsModule,

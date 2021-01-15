@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { ElementRef, Injectable, ViewChild } from '@angular/core';
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { Article } from '../model/article';
 import { BehaviorSubject } from 'rxjs';
@@ -7,8 +7,12 @@ const Readability = require('@mozilla/readability');
 
 @Injectable()
 export class FeedService {
+  @ViewChild('dummyDiv', { static: false }) dummyDiv: ElementRef;
+
   private emptyArticle: { siteName: ''; content: ''; excerpt: ''; title: '' };
+
   public article = new BehaviorSubject<Article>(null);
+  public lines: string[];
 
   constructor(private readonly functions: AngularFireFunctions) {}
 
