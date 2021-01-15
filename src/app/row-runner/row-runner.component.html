@@ -1,19 +1,43 @@
 <div class="content">
   <div class="header">
-    <h1>{{ article?.title }}</h1>
-    <h2>{{ article?.excerpt }}</h2>
+    <div *ngIf="!fullScreen">
+      <h1>{{ article?.title }}</h1>
+      <h2>{{ article?.excerpt }}</h2>
+    </div>
 
     <div class="buttonRow" fxLayout="row">
-      <button (click)="isRowRunnerActive = !isRowRunnerActive" class="toggleSrt" color="primary"
-              mat-raised-button>{{ isRowRunnerActive ? 'show static text' : 'speed read' }}</button>
+      <button
+        class="toggleSrt"
+        color="primary"
+        mat-fab
+        (click)="toggleActive()"
+      >
+        <mat-icon *ngIf="!isRowRunnerActive">double_arrow</mat-icon>
+        <mat-icon *ngIf="isRowRunnerActive">cancel</mat-icon>
+      </button>
+      <button
+        *ngIf="!isRowRunnerActive"
+        class="toggleSrt"
+        color="primary"
+        mat-fab
+        (click)="toggleActiveFullscreen()"
+      >
+        <mat-icon>fullscreen</mat-icon>
+      </button>
     </div>
   </div>
 
-  <div *ngIf="!isRowRunnerActive" [class.row-runner-active]="isRowRunnerActive"
-       class="article-content">{{ this.article?.content }}</div>
+  <div *ngIf="!isRowRunnerActive" class="article-content">
+    {{ this.article?.content }}
+  </div>
 
-  <app-animation *ngIf="isRowRunnerActive" [lines]="lines"
-                 [speed]="speed"></app-animation>
+  <div class="animationContainer">
+    <app-animation
+      *ngIf="isRowRunnerActive"
+      [lines]="lines"
+      [speed]="speed"
+    ></app-animation>
+  </div>
 
-    <div #dummyDiv class="article-content row-runner-active dummy"></div>
+  <div #dummyDiv class="article-content row-runner-active dummy"></div>
 </div>

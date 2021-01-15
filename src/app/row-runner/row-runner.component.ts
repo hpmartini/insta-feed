@@ -14,10 +14,11 @@ export class RowRunnerComponent implements AfterViewInit {
 
   private url = 'https://rss.sueddeutsche.de/rss/Topthemen';
 
+  public article: Article;
   public speed = 20;
   public lines: string[];
   public isRowRunnerActive = false;
-  public article: Article;
+  private fullScreen = false;
 
   constructor(
     private readonly functions: AngularFireFunctions,
@@ -37,5 +38,15 @@ export class RowRunnerComponent implements AfterViewInit {
     });
 
     this.feedService.getArticleByUrl(this.url);
+  }
+
+  toggleActive(): void {
+    this.isRowRunnerActive = !this.isRowRunnerActive;
+    this.fullScreen = false;
+  }
+
+  toggleActiveFullscreen(): void {
+    this.isRowRunnerActive = !this.isRowRunnerActive;
+    this.fullScreen = !this.fullScreen;
   }
 }

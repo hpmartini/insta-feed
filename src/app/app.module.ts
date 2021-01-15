@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { FlexModule } from '@angular/flex-layout';
 import { AnimationComponent } from './row-runner/animation/animation.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [AppComponent, RowRunnerComponent, AnimationComponent],
@@ -25,6 +26,7 @@ import { AnimationComponent } from './row-runner/animation/animation.component';
     CommonModule,
     MatButtonModule,
     MatButtonModule,
+    MatIconModule,
     FlexModule,
   ],
   providers: [FeedService],

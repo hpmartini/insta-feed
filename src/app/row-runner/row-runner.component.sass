@@ -1,47 +1,40 @@
-@import url(https://fonts.googleapis.com/css?family=Anonymous+Pro)
-
-$active-font-size: 1.8rem
-$active-line-height: 2.5rem
+@use 'base'
 
 .content
-  width: 100vw
   padding-top: 4em
   padding-bottom: 4em
-  margin: 0 auto
-  justify-content: center
 
   .header
     width: 35rem
     margin: 0 auto
-    justify-content: left
 
   .article-content
-    width: 35rem
+    max-width: 35rem
+    min-width: 90vh
     margin: 0 auto
-    text-align: left
-    white-space: normal
-    overflow: auto
 
-  .row-runner-active
-    font-size: $active-font-size
-    line-height: $active-line-height
+  .animationContainer
+    padding-left: 20px
+    padding-right: 20px
+
+  .dummy
+    position: fixed
+    top: -10em
     min-width: 90vh
     max-width: 60rem
     padding: 10px
     background-color: silver
     border-radius: 11px
     box-shadow: 0 0 10px 0 black
-
-  .dummy
-    position: fixed
-    top: -10em
     overflow: scroll
     white-space: nowrap
+    font-size: base.$active-font-size
+    line-height: base.$active-line-height
 
   .buttonRow
     justify-content: center
 
   button.toggleSrt
-    margin-bottom: 2em
+    margin: 0 2em 2em 2em
     align-self: center
     align-items: center
