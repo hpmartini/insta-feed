@@ -1,16 +1,15 @@
 @use 'base'
 
 .content
-  padding-top: 4em
-  padding-bottom: 4em
+  padding: 3rem 2rem 4rem 2rem
 
   .header
-    width: 35rem
+    max-width: 35rem
     margin: 0 auto
 
   .article-content
+    min-width: 20rem
     max-width: 35rem
-    min-width: 90vh
     margin: 0 auto
 
   .animationContainer
@@ -20,16 +19,14 @@
   .dummy
     position: fixed
     top: -10em
-    min-width: 90vh
-    max-width: 60rem
+    min-width: 23rem
+    max-width: 90vw
     padding: 10px
     background-color: silver
     border-radius: 11px
     box-shadow: 0 0 10px 0 black
     overflow: scroll
     white-space: nowrap
-    font-size: base.$active-font-size
-    line-height: base.$active-line-height
 
   .buttonRow
     justify-content: center
