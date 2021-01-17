@@ -1,5 +1,13 @@
+<div *ngIf="!article" class="spinner-container">
+  <img
+    alt="spinner"
+    class="spinner"
+    src="/assets/icons/spinner_icon-icons.com_71082.svg"
+  />
+</div>
+
 <div class="content">
-  <div class="header">
+  <div *ngIf="article" class="header">
     <div *ngIf="!fullScreen">
       <h1>{{ article?.title }}</h1>
       <h2>{{ article?.excerpt }}</h2>
@@ -7,20 +15,20 @@
 
     <div class="buttonRow" fxLayout="row">
       <button
+        (click)="toggleActive()"
         class="toggleSrt"
         color="primary"
         mat-fab
-        (click)="toggleActive()"
       >
         <mat-icon *ngIf="!isRowRunnerActive">double_arrow</mat-icon>
         <mat-icon *ngIf="isRowRunnerActive">cancel</mat-icon>
       </button>
       <button
+        (click)="toggleActiveFullscreen()"
         *ngIf="!isRowRunnerActive"
         class="toggleSrt"
         color="primary"
         mat-fab
-        (click)="toggleActiveFullscreen()"
       >
         <mat-icon>fullscreen</mat-icon>
       </button>

@@ -18,7 +18,7 @@ export class RowRunnerComponent implements AfterViewInit {
   public speed = 20;
   public lines: string[];
   public isRowRunnerActive = false;
-  private fullScreen = false;
+  public fullScreen = false;
 
   constructor(
     private readonly functions: AngularFireFunctions,
@@ -28,11 +28,11 @@ export class RowRunnerComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.feedService.article.subscribe((article) => {
-      this.article = article ?? null;
-      if (this.article) {
+      if (article) {
+        this.article = article;
         this.lines = this.textService.splitIntoLines(
           this.dummyDiv.nativeElement,
-          article?.content
+          article.content
         );
       }
     });
