@@ -3,12 +3,12 @@ import { Routes, RouterModule } from '@angular/router';
 import { RowRunnerComponent } from './row-runner/row-runner.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/', pathMatch: 'full'},
-  { path: 'rowrunner', component: RowRunnerComponent}
+  { path: '', redirectTo: 'rowrunner', pathMatch: 'full' },
+  { path: 'rowrunner', component: RowRunnerComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
