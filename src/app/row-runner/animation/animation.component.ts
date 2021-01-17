@@ -1,15 +1,17 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-animation',
   templateUrl: './animation.component.html',
   styleUrls: ['./animation.component.sass'],
 })
-export class AnimationComponent implements OnInit {
+export class AnimationComponent implements OnInit, OnDestroy {
   @Input() lines: string[];
   @Input() speed: number;
 
   public content;
+
+  private terminate = false;
 
   ngOnInit(): void {
     this.animate(this.lines).then(() => console.log('animation done'));
@@ -18,12 +20,22 @@ export class AnimationComponent implements OnInit {
   private async animate(content: string[]): Promise<void> {
     for (const line of [...content]) {
       await this.animateLine(line);
+      const element = document.documentElement;
+      if (element.scrollHeight > element.clientHeight) {
+        this.content = '';
+      }
+      if (this.terminate) {
+        break;
+      }
     }
   }
 
   private async animateLine(line: string): Promise<void> {
     for (const char of [...line]) {
       await this.placeCharacter(char);
+      if (this.terminate) {
+        break;
+      }
     }
   }
 
@@ -36,5 +48,9 @@ export class AnimationComponent implements OnInit {
         resolve();
       }, this.speed);
     });
+  }
+
+  ngOnDestroy(): void {
+    this.terminate = true;
   }
 }
