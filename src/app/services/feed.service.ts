@@ -38,7 +38,7 @@ export class FeedService {
       siteName: article.siteName,
       title: article.title,
       excerpt: article.excerpt,
-      content: article.textContent,
+      content: article.textContent.replace(/\u00a0/g, ' '),
     };
   }
 }
