@@ -20,7 +20,7 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
-      - name: Deploy to Firebase
+      - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
@@ -29,7 +29,7 @@ jobs:
           projectId: ready-e9b4e
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
-      - name: Deploy to Firebase
+      - name: Deploy to Firebase Functions
         uses: w9jds/firebase-action@master
         with:
           args: deploy
