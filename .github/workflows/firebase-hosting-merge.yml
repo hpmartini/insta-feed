@@ -20,7 +20,8 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build-prod
-      - run: ls -l dist && cat dist/index.html
+      - run: ls -l dist
+      - run: cat dist/index.html
       - name: Deploy to Firebase Functions
         uses: w9jds/firebase-action@master
         with:
