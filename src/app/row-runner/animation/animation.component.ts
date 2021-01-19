@@ -1,4 +1,13 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Input,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { concatMap, delay } from 'rxjs/operators';
+import { from, of, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-animation',
@@ -6,51 +15,40 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
   styleUrls: ['./animation.component.sass'],
 })
 export class AnimationComponent implements OnInit, OnDestroy {
-  @Input() lines: string[];
+  @ViewChild('rowRunner', { static: false }) rowRunner: ElementRef;
+
+  @Input() lines: string;
   @Input() speed: number;
 
   public content;
 
-  private terminate = false;
+  private obs: Subscription;
 
   ngOnInit(): void {
-    this.animate(this.lines).then(() => console.log('animation done'));
+    this.obs = from(this.lines)
+      .pipe(
+        concatMap((x) => of(x).pipe(delay(this.speed)))
+      )
+      .subscribe((char) => {
+        this.placeCharacter(char);
+      });
   }
 
-  private async animate(content: string[]): Promise<void> {
-    for (const line of [...content]) {
-      await this.animateLine(line);
-      const element = document.documentElement;
-      if (element.scrollHeight > element.clientHeight) {
-        this.content = '';
-      }
-      if (this.terminate) {
-        break;
-      }
+  private placeCharacter(char: string): void {
+    this.content = this.content?.slice(0, -2);
+    this.content += char;
+    this.content += ' ▉';
+    if (this.isEndOFLineReached(this.rowRunner.nativeElement)) {
+      this.content += '- ';
     }
-  }
-
-  private async animateLine(line: string): Promise<void> {
-    for (const char of [...line]) {
-      await this.placeCharacter(char);
-      if (this.terminate) {
-        break;
-      }
-    }
-  }
-
-  private placeCharacter(char): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        this.content = this.content?.slice(0, -2);
-        this.content += char;
-        this.content += ' ▉';
-        resolve();
-      }, this.speed);
-    });
   }
 
   ngOnDestroy(): void {
-    this.terminate = true;
+    this.obs.unsubscribe();
+  }
+
+  private isEndOFLineReached(element): boolean {
+    console.log('check for line break');
+    return element.scrollWidth > element.clientWidth;
   }
 }

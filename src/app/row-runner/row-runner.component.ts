@@ -28,13 +28,15 @@ export class RowRunnerComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.feedService.article.subscribe((article) => {
-      if (article) {
-        this.article = article;
-        this.lines = this.textService.splitIntoLines(
-          this.dummyDiv.nativeElement,
-          article.content
-        );
+      if (!article) {
+        return;
       }
+
+      this.article = article;
+      this.lines = this.textService.splitIntoLines(
+        this.dummyDiv.nativeElement,
+        article.content
+      );
     });
 
     this.feedService.getArticleByUrl(this.url);
