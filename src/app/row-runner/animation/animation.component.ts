@@ -7,7 +7,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { concatMap, delay, map } from 'rxjs/operators';
+import { concatMap, delay, map, tap } from 'rxjs/operators';
 import { from, Observable, of, Subscription } from 'rxjs';
 
 @Component({
@@ -21,7 +21,7 @@ export class AnimationComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() lines: string;
   @Input() speed: number;
 
-  public content;
+  public content = '';
 
   private animation: Subscription;
 
@@ -42,7 +42,7 @@ export class AnimationComponent implements OnInit, OnDestroy, AfterViewInit {
           }
           return word.concat(' ');
         }),
-        // mergeMap((word) => from(word).pipe(delay(40))),
+        tap(() => this.clearContent()),
         concatMap((word) =>
           from(word).pipe(concatMap((char) => this.getCharDelayed(char)))
         )
@@ -60,7 +60,7 @@ export class AnimationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private placeCharacter(char: string): void {
-    this.content = this.content?.slice(0, -2);
+    this.content = this.content.slice(0, -2);
     this.content += char;
     this.content += ' ▉';
     if (this.isEndOFLineReached()) {
@@ -79,11 +79,18 @@ export class AnimationComponent implements OnInit, OnDestroy, AfterViewInit {
   private clearIfEndOfPage(): void {
     const documentElement = document.documentElement;
     if (documentElement.scrollHeight > documentElement.clientHeight) {
-      this.content = '';
+      this.clearContent();
     }
   }
 
   ngOnDestroy(): void {
     this.animation.unsubscribe();
+    this.clearContent();
+  }
+
+  private clearContent(): void {
+    if (this.content.length) {
+      this.content = '';
+    }
   }
 }
