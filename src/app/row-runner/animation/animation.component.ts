@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   Input,
@@ -6,15 +7,15 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { concatMap, delay } from 'rxjs/operators';
-import { from, of, Subscription } from 'rxjs';
+import { concatMap, delay, map } from 'rxjs/operators';
+import { from, Observable, of, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-animation',
   templateUrl: './animation.component.html',
   styleUrls: ['./animation.component.sass'],
 })
-export class AnimationComponent implements OnInit, OnDestroy {
+export class AnimationComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('rowRunner', { static: false }) rowRunner: ElementRef;
 
   @Input() lines: string;
@@ -22,29 +23,47 @@ export class AnimationComponent implements OnInit, OnDestroy {
 
   public content;
 
-  private obs: Subscription;
+  private animation: Subscription;
 
-  ngOnInit(): void {
-    this.obs = from(this.lines)
-      .pipe(concatMap((x) => of(x).pipe(delay(this.speed))))
-      .subscribe((char) => {
-        this.placeCharacter(char);
-        console.log('scrollHeight', this.rowRunner.nativeElement.scrollHeight);
-        console.log('clientHeight', this.rowRunner.nativeElement.clientHeight);
-        if (
-          this.rowRunner.nativeElement.scrollHeight >
-          this.rowRunner.nativeElement.clientHeight
-        ) {
-          this.content = '';
-        }
-      });
+  ngAfterViewInit(): void {
+    this.startAnimation();
+  }
+
+  ngOnInit(): void {}
+
+  private startAnimation(): void {
+    this.animation = from(this.lines.split(' '))
+      .pipe(
+        map((word) => {
+          this.content += word;
+          if (this.isEndOFLineReached()) {
+            this.content.slice(0, -word.length);
+            // todo: return hyphenated word
+          }
+          return word.concat(' ');
+        }),
+        // mergeMap((word) => from(word).pipe(delay(40))),
+        concatMap((word) =>
+          from(word).pipe(concatMap((char) => this.getCharDelayed(char)))
+        )
+      )
+      .subscribe((char) => this.animate(char));
+  }
+
+  private getCharDelayed(char: string): Observable<string> {
+    return of(char).pipe(delay(this.speed));
+  }
+
+  private animate(char: string): void {
+    this.placeCharacter(char);
+    this.clearIfEndOfPage();
   }
 
   private placeCharacter(char: string): void {
-    // this.content = this.content?.slice(0, -2);
+    this.content = this.content?.slice(0, -2);
     this.content += char;
-    // this.content += ' ▉';
-    if (this.isEndOFLineReached(this.rowRunner.nativeElement)) {
+    this.content += ' ▉';
+    if (this.isEndOFLineReached()) {
       console.log('end of line');
       this.content = this.content.slice(0, -1);
       this.content += '&shy;';
@@ -52,12 +71,19 @@ export class AnimationComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    this.obs.unsubscribe();
+  private isEndOFLineReached(): boolean {
+    const element = this.rowRunner.nativeElement;
+    return element.scrollWidth > element.clientWidth;
   }
 
-  private isEndOFLineReached(element): boolean {
-    console.log('check for line break');
-    return element.scrollWidth > element.clientWidth;
+  private clearIfEndOfPage(): void {
+    const documentElement = document.documentElement;
+    if (documentElement.scrollHeight > documentElement.clientHeight) {
+      this.content = '';
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.animation.unsubscribe();
   }
 }
