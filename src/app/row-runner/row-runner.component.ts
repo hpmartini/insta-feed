@@ -15,7 +15,7 @@ export class RowRunnerComponent implements AfterViewInit {
   private url = 'https://rss.sueddeutsche.de/rss/Topthemen';
 
   public article: Article;
-  public speed = 20;
+  public speed = 30;
   public lines: string[];
   public isRowRunnerActive = false;
   public fullScreen = false;
