@@ -36,9 +36,11 @@
     </div>
   </div>
 
-  <div *ngIf="!isRowRunnerActive" class="article-content">
-    {{ this.article?.content }}
-  </div>
+  <article *ngIf="!isRowRunnerActive" class="article-content" lang="de">
+    <p>
+      {{ this.article?.content }}
+    </p>
+  </article>
 
   <div class="animationContainer">
     <app-animation
