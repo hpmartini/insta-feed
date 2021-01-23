@@ -1,16 +1,15 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { Article } from '../model/article';
 import { FeedService } from '../services/feed.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-row-runner',
   templateUrl: './row-runner.component.html',
   styleUrls: ['./row-runner.component.sass'],
 })
-export class RowRunnerComponent implements AfterViewInit {
-  private url = 'https://rss.sueddeutsche.de/rss/Topthemen';
-
+export class RowRunnerComponent implements OnInit {
   public article: Article;
   public speed = 30;
   public lines: string[];
@@ -19,19 +18,19 @@ export class RowRunnerComponent implements AfterViewInit {
 
   constructor(
     private readonly functions: AngularFireFunctions,
-    private readonly feedService: FeedService
+    private readonly feedService: FeedService,
+    private readonly route: ActivatedRoute
   ) {}
 
-  ngAfterViewInit(): void {
-    this.feedService.article.subscribe((article) => {
-      if (!article) {
-        return;
-      }
+  ngOnInit(): void {
+    this.feedService.article.subscribe(
+      (article) => (this.article = article ?? null)
+    );
 
-      this.article = article;
+    this.route.paramMap.subscribe((route) => {
+      const url = 'https://'.concat(route.get('url'));
+      this.feedService.getArticleByUrl(url);
     });
-
-    this.feedService.getArticleByUrl(this.url);
   }
 
   toggleActive(): void {

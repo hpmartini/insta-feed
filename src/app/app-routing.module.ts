@@ -4,7 +4,7 @@ import { RowRunnerComponent } from './row-runner/row-runner.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'rowrunner', pathMatch: 'full' },
-  { path: 'rowrunner', component: RowRunnerComponent },
+  { path: 'rowrunner/:url', component: RowRunnerComponent },
 ];
 
 @NgModule({
