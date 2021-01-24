@@ -28,6 +28,8 @@
     "@angular/router": "~11.0.5",
     "@mozilla/readability": "^0.4.0",
     "firebase": "^8.2.3",
+    "hyphenation-lang-de": "^0.2.1",
+    "hypher": "^0.2.5",
     "prettier": "^2.2.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",

@@ -6,8 +6,12 @@ import {
   OnDestroy,
   ViewChild,
 } from '@angular/core';
-import { concatMap, delay, map, tap } from 'rxjs/operators';
+import { concatMap, delay } from 'rxjs/operators';
 import { from, Observable, of, Subscription } from 'rxjs';
+
+const Hypher = require('hypher');
+const german = require('hyphenation-lang-de');
+let hyphen = null;
 
 @Component({
   selector: 'app-animation',
@@ -24,6 +28,10 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
 
   private animation: Subscription;
 
+  constructor() {
+    hyphen = new Hypher(german);
+  }
+
   ngAfterViewInit(): void {
     this.startAnimation();
   }
@@ -31,8 +39,7 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
   private startAnimation(): void {
     this.animation = from(this.inputText.split(' '))
       .pipe(
-        map((word) => this.hyphenateOrReturn(word)),
-        tap(() => (this.output = '')),
+        concatMap((word) => this.hyphenateOrReturn(word)),
         concatMap((word) => this.getWordWithDelayedCharacters(word))
       )
       .subscribe((char) => this.animate(char));
@@ -43,13 +50,14 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
    * @param word Current word
    * @private
    */
-  private hyphenateOrReturn(word: string): string {
-    this.output += word;
-    if (this.isEndOFLineReached()) {
-      this.output.slice(0, -word.length);
-      // todo: return hyphenated word
-    }
-    return word.concat(' ');
+  private hyphenateOrReturn(word: string): Observable<any> {
+    // this.output += word;
+    // if (this.isEndOFLineReached()) {
+    //   console.log(hyphen.hyphenate(word));
+    //   // todo: return hyphenated word
+    // }
+    // this.output.slice(0, -word.length);
+    return of(word.concat(' ')).pipe(delay(1));
   }
 
   /***
@@ -58,6 +66,12 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
    * @private
    */
   private getWordWithDelayedCharacters(word: string): Observable<string> {
+    // this.output += word;
+    // if (this.isEndOFLineReached()) {
+    //   console.log(hyphen.hyphenate(word));
+    //   // todo: return hyphenated word
+    // }
+    // this.output.slice(0, -word.length);
     return from(word).pipe(
       concatMap((char) => this.getCharacterWithDelay(char))
     );
@@ -94,8 +108,8 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
     if (this.isEndOFLineReached()) {
       // todo: remove when hyphenation is implemented
       console.log('end of line');
-      this.output = this.output.slice(0, -1);
-      this.output += '&shy;';
+      this.output = this.output.slice(0, -2);
+      this.output += '&shy;<br>▉';
       this.output += char;
     }
   }
