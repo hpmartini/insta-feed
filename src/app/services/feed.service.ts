@@ -38,7 +38,9 @@ export class FeedService {
       siteName: article.siteName,
       title: article.title,
       excerpt: article.excerpt,
-      content: article.textContent.replace(/\u00a0/g, ' '),
+      content: article.textContent
+        .replace(/\u00a0/g, ' ')
+        .replace(/([a-zA-Z")]\.|\.")([A-Z])/g, '$1 $2'),
     };
   }
 }
