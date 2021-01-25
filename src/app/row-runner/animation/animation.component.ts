@@ -42,14 +42,18 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
   private startAnimation(): void {
     this.animation = from(this.inputText.split(' '))
       .pipe(
-        concatMap((word) => this.hyphenate(word)),
         concatMap((word) => this.getWordWithDelayedCharacters(word)),
         delay(300)
       )
       .subscribe((char) => this.animate(char));
   }
 
-  private hyphenate(word: string): string {
+  /***
+   * Creates a sequential list of Observables for each character
+   * @param word The current word to be animated
+   * @private
+   */
+  private getWordWithDelayedCharacters(word: string): Observable<string> {
     this.output = this.output.slice(0, -2);
     this.output += word;
     this.ref.detectChanges();
@@ -60,26 +64,6 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
     this.output = this.output.slice(0, -word.length);
     this.output += ' ▉';
     this.ref.detectChanges();
-
-    return word;
-  }
-
-  /***
-   * Creates a sequential list of Observables for each character
-   * @param word The current word to be animated
-   * @private
-   */
-  private getWordWithDelayedCharacters(word: string): Observable<string> {
-    // this.output = this.output.slice(0, -2);
-    // this.output += word;
-    // this.ref.detectChanges();
-    // if (this.isEndOFLineReached()) {
-    //   console.log(hyphen.hyphenate(word));
-    //   // todo: return hyphenated word
-    // }
-    // this.output = this.output.slice(0, -word.length);
-    // this.output += ' ▉';
-    // this.ref.detectChanges();
 
     return from(word.concat(' ')).pipe(
       concatMap((char) => this.getCharacterWithDelay(char))
