@@ -40,7 +40,7 @@ export class FeedService {
       excerpt: article.excerpt,
       content: article.textContent
         .replace(/\u00a0/g, ' ')
-        .replace(/([a-zA-Z")]\.|\.")([A-Z])/g, '$1 $2'),
+        .replace(/([a-zA-Z")]\.|[.:]?"|[:)]|[a-z][A-Z])([A-Z])/g, '$1 $2'),
     };
   }
 }

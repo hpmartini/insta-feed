@@ -1,5 +1,7 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
@@ -17,6 +19,7 @@ let hyphen = null;
   selector: 'app-animation',
   templateUrl: './animation.component.html',
   styleUrls: ['./animation.component.sass'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnimationComponent implements OnDestroy, AfterViewInit {
   @ViewChild('rowRunner', { static: false }) rowRunner: ElementRef;
@@ -28,7 +31,7 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
 
   private animation: Subscription;
 
-  constructor() {
+  constructor(private ref: ChangeDetectorRef) {
     hyphen = new Hypher(german);
   }
 
@@ -39,9 +42,26 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
   private startAnimation(): void {
     this.animation = from(this.inputText.split(' '))
       .pipe(
-        concatMap((word) => this.getWordWithDelayedCharacters(word))
+        concatMap((word) => this.hyphenate(word)),
+        concatMap((word) => this.getWordWithDelayedCharacters(word)),
+        delay(300)
       )
       .subscribe((char) => this.animate(char));
+  }
+
+  private hyphenate(word: string): string {
+    this.output = this.output.slice(0, -2);
+    this.output += word;
+    this.ref.detectChanges();
+    if (this.isEndOFLineReached()) {
+      console.log(hyphen.hyphenate(word));
+      // todo: return hyphenated word
+    }
+    this.output = this.output.slice(0, -word.length);
+    this.output += ' ▉';
+    this.ref.detectChanges();
+
+    return word;
   }
 
   /***
@@ -50,12 +70,17 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
    * @private
    */
   private getWordWithDelayedCharacters(word: string): Observable<string> {
+    // this.output = this.output.slice(0, -2);
     // this.output += word;
+    // this.ref.detectChanges();
     // if (this.isEndOFLineReached()) {
     //   console.log(hyphen.hyphenate(word));
     //   // todo: return hyphenated word
     // }
-    // this.output.slice(0, -word.length);
+    // this.output = this.output.slice(0, -word.length);
+    // this.output += ' ▉';
+    // this.ref.detectChanges();
+
     return from(word.concat(' ')).pipe(
       concatMap((char) => this.getCharacterWithDelay(char))
     );
@@ -89,20 +114,24 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
     if (this.isNewLine()) {
       if (char !== ' ') {
         this.output += char.concat(' ▉');
+        this.ref.detectChanges();
       }
     } else {
       this.output = this.output.slice(0, -2);
       this.output += char.concat(' ▉');
+      this.ref.detectChanges();
 
       if (this.isEndOFLineReached()) {
         this.output = this.output.slice(0, -2);
-        this.output += '&shy;<br>';
+        this.output += `
+  `;
+        this.ref.detectChanges();
       }
     }
   }
 
   private isNewLine(): boolean {
-    return this.output.slice(-4) === '<br>';
+    return this.output.slice(-2) === ' ';
   }
 
   /***
