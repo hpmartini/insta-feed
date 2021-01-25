@@ -39,25 +39,9 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
   private startAnimation(): void {
     this.animation = from(this.inputText.split(' '))
       .pipe(
-        concatMap((word) => this.hyphenateOrReturn(word)),
         concatMap((word) => this.getWordWithDelayedCharacters(word))
       )
       .subscribe((char) => this.animate(char));
-  }
-
-  /***
-   * Hyphenate the current word if the end of the line is reached
-   * @param word Current word
-   * @private
-   */
-  private hyphenateOrReturn(word: string): Observable<any> {
-    // this.output += word;
-    // if (this.isEndOFLineReached()) {
-    //   console.log(hyphen.hyphenate(word));
-    //   // todo: return hyphenated word
-    // }
-    // this.output.slice(0, -word.length);
-    return of(word.concat(' ')).pipe(delay(1));
   }
 
   /***
@@ -72,7 +56,7 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
     //   // todo: return hyphenated word
     // }
     // this.output.slice(0, -word.length);
-    return from(word).pipe(
+    return from(word.concat(' ')).pipe(
       concatMap((char) => this.getCharacterWithDelay(char))
     );
   }
@@ -102,16 +86,23 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
    * @private
    */
   private placeCharacter(char: string): void {
-    this.output = this.output.slice(0, -2);
-    this.output += char;
-    this.output += ' ▉';
-    if (this.isEndOFLineReached()) {
-      // todo: remove when hyphenation is implemented
-      console.log('end of line');
+    if (this.isNewLine()) {
+      if (char !== ' ') {
+        this.output += char.concat(' ▉');
+      }
+    } else {
       this.output = this.output.slice(0, -2);
-      this.output += '&shy;<br>▉';
-      this.output += char;
+      this.output += char.concat(' ▉');
+
+      if (this.isEndOFLineReached()) {
+        this.output = this.output.slice(0, -2);
+        this.output += '&shy;<br>';
+      }
     }
+  }
+
+  private isNewLine(): boolean {
+    return this.output.slice(-4) === '<br>';
   }
 
   /***
