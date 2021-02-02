@@ -30,8 +30,8 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
   public output = '';
 
   private animation: Subscription;
-  private lineBreak = `
-  `;
+  private lineBreak = '\n';
+  private previousWord: string;
 
   constructor(private ref: ChangeDetectorRef) {
     hyphen = new Hypher(german);
@@ -42,10 +42,26 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
   }
 
   private startAnimation(): void {
+    // const hyphenatedInput = this.inputText
+    //   .split(' ')
+    //   .map((word) => {
+    //     this.output += word.concat(' ');
+    //     this.ref.detectChanges();
+    //     if (this.isEndOFLineReached()) {
+    //       console.log('end of line');
+    //       return this.hyphenate(word);
+    //     }
+    //     return word;
+    //   })
+    //   .join(' ');
+    // this.output = '';
+    // this.ref.detectChanges();
+    // console.log(hyphenatedInput);
+
     this.animation = from(this.inputText.split(' '))
       .pipe(
         concatMap((word) => this.getWordWithDelayedCharacters(word)),
-        delay(300)
+        delay(200)
       )
       .subscribe((char) => this.animate(char));
   }
@@ -56,8 +72,6 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
    * @private
    */
   private getWordWithDelayedCharacters(word: string): Observable<string> {
-    word = this.hyphenate(word);
-
     return from(word.concat(' ')).pipe(
       concatMap((char) => this.getCharacterWithDelay(char))
     );
@@ -65,56 +79,44 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
 
   private hyphenate(word: string): string {
     const wordLength = word.length;
-    this.addDummy(word);
+    const syllables: string[] = hyphen.hyphenate(word);
 
-    if (this.isEndOFLineReached()) {
-      const syllables: string[] = hyphen.hyphenate(word);
-      let hyphenatedWord = '';
+    if (syllables.length === 1) {
+      return this.lineBreak.concat(word);
+    }
 
-      this.output = this.output.slice(0, -wordLength);
+    let hyphenatedWord = '';
+
+    this.output = this.output.slice(0, -(wordLength + 1));
+    this.ref.detectChanges();
+
+    for (const syllable of syllables) {
+      const index = syllables.indexOf(syllable);
+      this.output += syllable.concat('-');
       this.ref.detectChanges();
 
-      for (const syllable of syllables) {
-        const index = syllables.indexOf(syllable);
-        this.output += syllable.concat('-');
+      if (this.isEndOFLineReached()) {
+        word = hyphenatedWord.concat(
+          '-',
+          this.lineBreak,
+          syllables.slice(index, syllables.length - 1).join('')
+        );
+        this.output = this.output.slice(
+          0,
+          -(hyphenatedWord.length + syllable.length + 1)
+        );
         this.ref.detectChanges();
-
-        if (this.isEndOFLineReached()) {
-          word = hyphenatedWord.concat(
-            '-',
-            this.lineBreak,
-            syllables.slice(index, syllables.length - 1).join('')
-          );
-          this.output = this.output.slice(
-            0,
-            -(hyphenatedWord.length + syllable.length + 1)
-          );
-          this.ref.detectChanges();
-          break;
-        }
-
-        this.output = this.output.slice(0, -1);
-        hyphenatedWord += syllable;
+        break;
       }
 
-      this.output += this.lineBreak.concat(' ▉');
-      this.ref.detectChanges();
-    } else {
-      this.removeDummy(wordLength);
+      this.output = this.output.slice(0, -1);
+      hyphenatedWord += syllable;
     }
+
+    this.output += this.lineBreak.concat(' ▉');
+    this.ref.detectChanges();
+
     return word;
-  }
-
-  private addDummy(word: string): void {
-    this.output = this.output.slice(0, -2);
-    this.output += word;
-    this.ref.detectChanges();
-  }
-
-  private removeDummy(wordLength: number): void {
-    this.output = this.output.slice(0, -wordLength);
-    this.output += ' ▉';
-    this.ref.detectChanges();
   }
 
   /***
@@ -144,6 +146,7 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
   private placeCharacter(char: string): void {
     if (this.isNewLine()) {
       if (char !== ' ') {
+        this.output = this.output.slice(0, -1);
         this.output += char.concat(' ▉');
         this.ref.detectChanges();
       }
@@ -154,14 +157,14 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
 
       if (this.isEndOFLineReached()) {
         this.output = this.output.slice(0, -2);
-        this.output += this.lineBreak;
+        this.output += this.lineBreak.concat('⏎');
         this.ref.detectChanges();
       }
     }
   }
 
   private isNewLine(): boolean {
-    return this.output.slice(-2) === ' ';
+    return this.output.slice(-1) === '⏎';
   }
 
   /***
