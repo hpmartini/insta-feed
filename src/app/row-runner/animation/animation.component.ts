@@ -8,7 +8,7 @@ import {
   OnDestroy,
   ViewChild,
 } from '@angular/core';
-import { concatMap, delay } from 'rxjs/operators';
+import { concatMap, delay, map } from 'rxjs/operators';
 import { from, Observable, of, Subscription } from 'rxjs';
 
 const Hypher = require('hypher');
@@ -40,13 +40,7 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
     // const hyphenatedInput = this.inputText
     //   .split(' ')
     //   .map((word) => {
-    //     this.output += word.concat(' ');
-    //     this.ref.detectChanges();
-    //     if (this.isEndOFLineReached()) {
-    //       console.log('end of line');
-    //       return this.hyphenate(word);
-    //     }
-    //     return word;
+    //     return this.checkForHyphenation(word);
     //   })
     //   .join(' ');
     // this.output = '';
@@ -60,14 +54,29 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
       .subscribe((char) => this.animate(char));
   }
 
+  private checkForHyphenation(word: string): string {
+    console.log(word);
+    this.output += word.concat(' ');
+    this.ref.detectChanges();
+    if (this.isEndOFLineReached()) {
+      return this.hyphenate(word);
+    }
+    return word;
+  }
+
   /***
    * Creates a sequential list of Observables for each character
    * @param word The current word to be animated
    * @private
    */
   private getWordWithDelayedCharacters(word: string): Observable<string> {
-    return from(word.concat(' ')).pipe(
-      concatMap((char) => this.getCharacterWithDelay(char))
+    return of(word).pipe(
+      concatMap((value) => this.checkForHyphenation(value)),
+      concatMap((newWord) =>
+        from(newWord).pipe(
+          concatMap((char) => this.getCharacterWithDelay(char))
+        )
+      )
     );
   }
 
@@ -120,6 +129,7 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
    * @private
    */
   private getCharacterWithDelay(char: string): Observable<string> {
+    console.log(char);
     return of(char).pipe(delay(this.speed));
   }
 
@@ -139,15 +149,16 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
    * @private
    */
   private placeCharacter(char: string): void {
-    this.output = this.output.slice(0, this.isNewLine() ? -1 : -2);
+    // this.output = this.output.slice(0, this.isNewLine() ? -1 : -2);
+    this.output = this.output.slice(0, -2);
     this.output += char.concat(' ▉');
     this.ref.detectChanges();
 
-    if (this.isEndOFLineReached()) {
-      this.output = this.output.slice(0, -2);
-      this.output += this.lineBreak.concat('⏎');
-      this.ref.detectChanges();
-    }
+    // if (this.isEndOFLineReached()) {
+    //   this.output = this.output.slice(0, -2);
+    //   this.output += this.lineBreak.concat('⏎');
+    //   this.ref.detectChanges();
+    // }
   }
 
   private isNewLine(): boolean {
