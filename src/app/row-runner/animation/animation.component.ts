@@ -8,7 +8,7 @@ import {
   OnDestroy,
   ViewChild,
 } from '@angular/core';
-import { concatMap, delay, map } from 'rxjs/operators';
+import { concatMap, delay } from 'rxjs/operators';
 import { from, Observable, of, Subscription } from 'rxjs';
 
 const Hypher = require('hypher');
@@ -27,41 +27,24 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
   @Input() inputText: string;
   @Input() speed: number;
 
-  public output = '';
+  public output: string;
 
   private animation: Subscription;
   private lineBreak = '\n';
+  private caret = '▉';
 
   constructor(private ref: ChangeDetectorRef) {
     hyphen = new Hypher(german);
+    this.output = this.caret;
   }
 
   ngAfterViewInit(): void {
-    // const hyphenatedInput = this.inputText
-    //   .split(' ')
-    //   .map((word) => {
-    //     return this.checkForHyphenation(word);
-    //   })
-    //   .join(' ');
-    // this.output = '';
-    // this.ref.detectChanges();
-
     this.animation = from(this.inputText.split(' '))
       .pipe(
         concatMap((word) => this.getWordWithDelayedCharacters(word)),
         delay(200)
       )
-      .subscribe((char) => this.animate(char));
-  }
-
-  private checkForHyphenation(word: string): string {
-    console.log(word);
-    this.output += word.concat(' ');
-    this.ref.detectChanges();
-    if (this.isEndOFLineReached()) {
-      return this.hyphenate(word);
-    }
-    return word;
+      .subscribe();
   }
 
   /***
@@ -74,63 +57,88 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
       concatMap((value) => this.checkForHyphenation(value)),
       concatMap((newWord) =>
         from(newWord).pipe(
-          concatMap((char) => this.getCharacterWithDelay(char))
+          concatMap((char) => of(this.animate(char)).pipe(delay(this.speed)))
         )
       )
     );
   }
 
-  private hyphenate(word: string): string {
-    let resultWord = '';
-
-    this.output = this.output.slice(0, -(word.length + 1));
+  private checkForHyphenation(word: string): string {
+    this.output = this.output.slice(0, -1);
+    this.output += word;
+    this.ref.detectChanges();
+    if (this.isEndOFLineReached()) {
+      const result = this.hyphenate(word);
+      console.log(result);
+      return result.concat(' ');
+    }
+    this.output = this.output.slice(0, -word.length);
+    this.output += this.caret;
     this.ref.detectChanges();
 
+    return word.concat(' ');
+  }
+
+  private hyphenate(word: string): string {
+    let result = '';
+
+    // remove word from output
+    this.output = this.output.slice(0, -word.length);
+    this.ref.detectChanges();
+
+    // get syllables of word as array
     const syllables: string[] = hyphen.hyphenate(word);
 
+    // if the word has only one syllable
+    // return it and with a preceding linebreak
     if (syllables.length === 1) {
-      resultWord = this.lineBreak.concat(word);
-      this.output += resultWord;
+      result = this.lineBreak.concat(word);
+      this.output += result;
       this.ref.detectChanges();
-      return resultWord;
+      return result;
     }
 
     let hyphenatedWord = '';
+    // iterate through syllables
     for (const syllable of syllables) {
+      // add a hyphen to simulate the resulting length
       this.output += syllable.concat('-');
       this.ref.detectChanges();
 
       const index = syllables.indexOf(syllable);
+      // check if the end of the line is reached
       if (this.isEndOFLineReached()) {
-        resultWord = hyphenatedWord.concat(
+        // combine the syllables left of the hyphen
+        // with the syllables right of the hyphen
+        result = hyphenatedWord.concat(
           index ? '-' : '',
           this.lineBreak,
           syllables.slice(index, syllables.length).join('')
         );
-        this.output = this.output.slice(0, -(syllable.length + 1)).concat('-');
+        // remove the tested syllables from the output
+        this.output = this.output.slice(
+          0,
+          -(index ? hyphenatedWord.concat(syllable).length : syllable.length) -
+            1
+        );
         this.ref.detectChanges();
+
+        // exit the loop
         break;
       }
 
+      // remove the previously added hyphen
       this.output = this.output.slice(0, -1);
       this.ref.detectChanges();
+
+      // save the current syllable
       hyphenatedWord += syllable;
     }
 
     this.output += this.lineBreak;
     this.ref.detectChanges();
 
-    return resultWord;
-  }
-
-  /***
-   * Returns an Observable with delay of the current character
-   * @param char The character to be animated
-   * @private
-   */
-  private getCharacterWithDelay(char: string): Observable<string> {
-    console.log(char);
-    return of(char).pipe(delay(this.speed));
+    return result;
   }
 
   /***
@@ -138,9 +146,10 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
    * @param char The current character
    * @private
    */
-  private animate(char: string): void {
-    this.placeCharacter(char);
+  private animate(char: string): string {
+    this.placeCharacterAndCaret(char);
     this.clearIfEndOfPage();
+    return char;
   }
 
   /***
@@ -148,21 +157,10 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
    * @param char The current character
    * @private
    */
-  private placeCharacter(char: string): void {
-    // this.output = this.output.slice(0, this.isNewLine() ? -1 : -2);
+  private placeCharacterAndCaret(char: string): void {
     this.output = this.output.slice(0, -2);
-    this.output += char.concat(' ▉');
+    this.output += char.concat(' ', this.caret);
     this.ref.detectChanges();
-
-    // if (this.isEndOFLineReached()) {
-    //   this.output = this.output.slice(0, -2);
-    //   this.output += this.lineBreak.concat('⏎');
-    //   this.ref.detectChanges();
-    // }
-  }
-
-  private isNewLine(): boolean {
-    return this.output.slice(-1) === '⏎';
   }
 
   /***
