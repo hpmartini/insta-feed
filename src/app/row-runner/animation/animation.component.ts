@@ -8,7 +8,7 @@ import {
   OnDestroy,
   ViewChild,
 } from '@angular/core';
-import { concatMap, delay } from 'rxjs/operators';
+import { concatMap, delay, map } from 'rxjs/operators';
 import { from, Observable, of, Subscription } from 'rxjs';
 
 const Hypher = require('hypher');
@@ -55,8 +55,11 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
    * @private
    */
   private processWord(word: string): Observable<string> {
+    // sequentially process the current word and each of its characters
     return of(word).pipe(
-      concatMap((value) => this.checkForHyphenation(value)),
+      // add the word to the output and hyphenate it if necessary
+      map((value) => this.checkForHyphenation(value)),
+      // sequentially place each character to the output with delay
       concatMap((newWord) =>
         from(newWord).pipe(
           concatMap((char) => of(this.animate(char)).pipe(delay(this.speed)))
@@ -77,8 +80,9 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
 
     // check if the output reaches the end of the line
     if (this.isEndOFLineReached()) {
+      const hyphenatedWord = this.hyphenate(word).concat(' ');
       this.output += this.caret;
-      return this.hyphenate(word).concat(' ');
+      return hyphenatedWord;
     }
 
     // remove the current word from the output
@@ -113,7 +117,7 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
     // iterate through syllables
     for (const syllable of syllables) {
       // add a hyphen to simulate the resulting length
-      this.output += syllable.concat('-');
+      this.output += syllable.concat(syllable.slice(0, -1) === '-' ? '' : '-');
       this.ref.detectChanges();
 
       const index = syllables.indexOf(syllable);
