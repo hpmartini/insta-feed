@@ -92,10 +92,7 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
     // if the word has only one syllable
     // return it and with a preceding linebreak
     if (syllables.length === 1) {
-      result = this.lineBreak.concat(word);
-      this.output += result;
-      this.ref.detectChanges();
-      return result;
+      return this.lineBreak.concat(word);
     }
 
     let hyphenatedWord = '';
