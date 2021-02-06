@@ -1,10 +1,17 @@
 @use 'base'
 
 .row-runner
-  font-size: base.$active-font-size
-  line-height: base.$active-line-height
-  min-width: 23rem
-  max-width: 90vw
+  &--regular
+    font-size: base.$active-font-size_regular
+    line-height: base.$active-line-height_regular
+    min-width: 23rem
+    max-width: 90vw
+
+  &--mobile
+    font-size: base.$active-font-size_mobile
+    line-height: base.$active-line-height_mobile
+    max-width: 90vw
+
   padding: 10px
   margin: 0 auto
   background-color: silver

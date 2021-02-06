@@ -7,7 +7,11 @@
   />
 </div>
 
-<div class="content">
+<div
+  [ngClass.gt-xs]="{ 'content--regular': true }"
+  [ngClass.lt-sm]="{ 'content--mobile': true }"
+  class="content"
+>
   <div *ngIf="article" class="header">
     <div *ngIf="!fullScreen">
       <h1>{{ article?.title }}</h1>
@@ -36,13 +40,21 @@
     </div>
   </div>
 
-  <article *ngIf="!isRowRunnerActive" class="article-content" lang="de">
+  <article
+    *ngIf="!isRowRunnerActive"
+    class="article-content"
+    lang="de"
+    [ngClass.gt-xs]="{ 'article-content--regular': true }"
+  >
     <p>
       {{ this.article?.content }}
     </p>
   </article>
 
-  <div class="animationContainer">
+  <div
+    [ngClass.gt-xs]="{ 'animationContainer--regular': true }"
+    class="animationContainer"
+  >
     <app-animation
       *ngIf="isRowRunnerActive"
       [inputText]="article.content"

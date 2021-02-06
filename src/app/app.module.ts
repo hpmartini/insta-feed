@@ -11,7 +11,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AngularFireFunctionsModule } from '@angular/fire/functions';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { FlexModule } from '@angular/flex-layout';
+import { FlexLayoutModule, FlexModule } from '@angular/flex-layout';
 import { AnimationComponent } from './row-runner/animation/animation.component';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -28,6 +28,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatButtonModule,
     MatIconModule,
     FlexModule,
+    FlexLayoutModule,
   ],
   providers: [FeedService],
   bootstrap: [AppComponent],

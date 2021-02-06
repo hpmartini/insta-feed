@@ -1,4 +1,9 @@
 <!-- todo add responsive design -->
-<article lang="de" class="row-runner">
+<article
+  lang="de"
+  class="row-runner"
+  [ngClass.lt-sm]="{ mobile: true }"
+  [ngClass.gt-xs]="{ regular: true }"
+>
   <p #rowRunner>{{ output }}</p>
 </article>

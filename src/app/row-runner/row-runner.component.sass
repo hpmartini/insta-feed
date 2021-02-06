@@ -2,14 +2,25 @@
 @use 'spinner'
 
 .content
-  padding: 3rem 2rem 4rem 2rem
+  &--regular
+    padding: 3rem 2rem 4rem 2rem
+  &--mobile
+    padding: 1rem
+    h1
+      font-size: 1.2rem
+      line-height: 1.8rem
+    h2
+      font-size: 1.1rem
+      line-height: 1.7rem
 
   .header
     max-width: 35rem
     margin: 0 auto
 
   .article-content
-    min-width: 20rem
+    &--regular
+      min-width: 20rem
+
     max-width: 35rem
     margin: 0 auto
     p
@@ -19,8 +30,12 @@
       hyphens: auto
 
   .animationContainer
-    padding-left: 20px
-    padding-right: 20px
+    &--regular
+      padding-left: 20px
+      padding-right: 20px
+    &--mobile
+      padding-left: 0
+      padding-right: 0
 
   .buttonRow
     justify-content: center
