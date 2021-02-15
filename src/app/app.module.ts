@@ -14,9 +14,20 @@ import { MatButtonModule } from '@angular/material/button';
 import { FlexLayoutModule, FlexModule } from '@angular/flex-layout';
 import { AnimationComponent } from './row-runner/animation/animation.component';
 import { MatIconModule } from '@angular/material/icon';
+import { NavComponent } from './nav/nav.component';
+import { LayoutModule } from '@angular/cdk/layout';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
-  declarations: [AppComponent, RowRunnerComponent, AnimationComponent],
+  declarations: [
+    AppComponent,
+    RowRunnerComponent,
+    AnimationComponent,
+    NavComponent,
+  ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase, 'ready'),
     AngularFireFunctionsModule,
@@ -29,6 +40,11 @@ import { MatIconModule } from '@angular/material/icon';
     MatIconModule,
     FlexModule,
     FlexLayoutModule,
+    LayoutModule,
+    MatToolbarModule,
+    MatSidenavModule,
+    MatListModule,
+    BrowserAnimationsModule,
   ],
   providers: [FeedService],
   bootstrap: [AppComponent],
