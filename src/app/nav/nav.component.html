@@ -1,0 +1,82 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav
+    #drawer
+    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+    [mode]="(isHandset$ | async) ? 'over' : 'side'"
+    [opened]="(isHandset$ | async) === false"
+    class="sidenav"
+    fixedInViewport
+  >
+    <mat-toolbar fxLayoutAlign="space-between center">
+      <div fxLayoutAlign="start center">
+        <mat-icon>bookmark</mat-icon>
+        <span>Feeds</span>
+      </div>
+      <button mat-icon-button>
+        <mat-icon (click)="drawer.toggle()">arrow_left</mat-icon>
+      </button>
+    </mat-toolbar>
+    <div class="side-edit" fxLayoutAlign="start  center">
+      <span
+      ><button color="primary" mat-mini-fab>
+          <mat-icon>edit</mat-icon>
+        </button></span
+      >
+      <span
+      ><button color="primary" mat-mini-fab>
+          <mat-icon>add</mat-icon>
+        </button></span
+      >
+    </div>
+    <mat-nav-list class="article-list">
+      <a href="/rowrunner/rss.sueddeutsche.de%2Frss%2FTopthemen" mat-list-item>
+        <mat-icon>article</mat-icon>
+        Süddeutsche</a
+      >
+      <a href="/rowrunner/tagesschau.de%2Fxml%2Frss2" mat-list-item>
+        <mat-icon>article</mat-icon>
+        Tagesschau</a
+      >
+      <a href="/rowrunner/newsfeed.zeit.de%2Findex" mat-list-item>
+        <mat-icon>article</mat-icon>
+        Zeit</a
+      >
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <mat-toolbar-row
+        fxLayout="row"
+        [fxLayoutAlign]="drawer.opened ? 'end center' : 'space-between center'"
+      >
+        <button
+          (click)="drawer.toggle()"
+          *ngIf="!drawer.opened"
+          color="primary"
+          mat-mini-fab
+          type="button"
+        >
+          <mat-icon>menu</mat-icon>
+        </button>
+        <div class="main-navigation">
+          <span
+          ><button color="primary" mat-mini-fab>
+              <mat-icon>visibility</mat-icon>
+            </button>
+          </span>
+          <span
+          ><button color="primary" mat-mini-fab>
+              <mat-icon>text_rotation_none</mat-icon>
+            </button>
+          </span>
+          <span
+          ><button color="primary" mat-mini-fab>
+              <mat-icon>settings</mat-icon>
+            </button>
+          </span>
+        </div>
+      </mat-toolbar-row>
+    </mat-toolbar>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
