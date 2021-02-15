@@ -9,18 +9,21 @@
   >
     <mat-toolbar fxLayoutAlign="space-between center">
       <div fxLayoutAlign="start center">
-        <mat-icon>bookmark</mat-icon><span>Feeds</span>
+        <mat-icon>bookmark</mat-icon>
+        <span>Feeds</span>
       </div>
-      <mat-icon (click)="drawer.toggle()">arrow_left</mat-icon>
+      <button mat-icon-button>
+        <mat-icon (click)="drawer.toggle()">arrow_left</mat-icon>
+      </button>
     </mat-toolbar>
     <div class="side-edit" fxLayoutAlign="start  center">
       <span
-        ><button color="primary" mat-mini-fab>
+      ><button color="primary" mat-mini-fab>
           <mat-icon>edit</mat-icon>
         </button></span
       >
       <span
-        ><button color="primary" mat-mini-fab>
+      ><button color="primary" mat-mini-fab>
           <mat-icon>add</mat-icon>
         </button></span
       >
@@ -57,17 +60,17 @@
         </button>
         <div class="main-navigation">
           <span
-            ><button color="primary" mat-mini-fab>
+          ><button color="primary" mat-mini-fab>
               <mat-icon>visibility</mat-icon>
             </button>
           </span>
           <span
-            ><button color="primary" mat-mini-fab>
+          ><button color="primary" mat-mini-fab>
               <mat-icon>text_rotation_none</mat-icon>
             </button>
           </span>
           <span
-            ><button color="primary" mat-mini-fab>
+          ><button color="primary" mat-mini-fab>
               <mat-icon>settings</mat-icon>
             </button>
           </span>
