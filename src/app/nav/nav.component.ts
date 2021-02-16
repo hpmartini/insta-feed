@@ -1,7 +1,13 @@
-import { Component } from '@angular/core';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Observable } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import {Component} from '@angular/core';
+import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
+import {Observable} from 'rxjs';
+import {map, shareReplay} from 'rxjs/operators';
+
+export interface NavEntry {
+  title: string;
+  link: string;
+  icon?: string;
+}
 
 @Component({
   selector: 'app-nav',
@@ -9,6 +15,18 @@ import { map, shareReplay } from 'rxjs/operators';
   styleUrls: ['./nav.component.sass'],
 })
 export class NavComponent {
+  public navEntries: NavEntry[] = [
+    {
+      title: 'Süddeutsche', link: 'rss.sueddeutsche.de/rss/Topthemen', icon: 'panorama_photosphere',
+    },
+    {
+      title: 'Tagesschau', link: 'tagesschau.de/xml/rss2', icon: 'article'
+    },
+    {
+      title: 'Zeit', link: 'newsfeed.zeit.de/index', icon: 'alarm'
+    }
+  ];
+
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
     .pipe(
@@ -16,5 +34,6 @@ export class NavComponent {
       shareReplay()
     );
 
-  constructor(private breakpointObserver: BreakpointObserver) {}
+  constructor(private breakpointObserver: BreakpointObserver) {
+  }
 }
