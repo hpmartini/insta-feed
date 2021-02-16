@@ -29,18 +29,12 @@
       >
     </div>
     <mat-nav-list class="article-list">
-      <a mat-list-item [routerLink]="['/rowrunner', 'rss.sueddeutsche.de/rss/Topthemen']" routerLinkActive="active">
-        <mat-icon>article</mat-icon>
-        Süddeutsche</a
+      <a #rla="routerLinkActive" *ngFor="let entry of navEntries" [routerLink]="['rowrunner', entry.link]"
+         mat-list-item routerLinkActive="active"
       >
-      <a mat-list-item [routerLink]="['rowrunner', 'tagesschau.de/xml/rss2']" routerLinkActive="active">
-        <mat-icon>article</mat-icon>
-        Tagesschau</a
-      >
-      <a mat-list-item [routerLink]="['rowrunner', 'newsfeed.zeit.de/index']" routerLinkActive="active">
-        <mat-icon>article</mat-icon>
-        Zeit</a
-      >
+        <mat-icon>{{ rla.isActive ? 'remove_red_eye' : entry.icon}}</mat-icon>
+        {{ entry.title }}
+      </a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
