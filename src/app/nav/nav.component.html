@@ -29,15 +29,15 @@
       >
     </div>
     <mat-nav-list class="article-list">
-      <a href="/rowrunner/rss.sueddeutsche.de%2Frss%2FTopthemen" mat-list-item>
+      <a mat-list-item [routerLink]="['/rowrunner', 'rss.sueddeutsche.de/rss/Topthemen']" routerLinkActive="active">
         <mat-icon>article</mat-icon>
         Süddeutsche</a
       >
-      <a href="/rowrunner/tagesschau.de%2Fxml%2Frss2" mat-list-item>
+      <a mat-list-item [routerLink]="['rowrunner', 'tagesschau.de/xml/rss2']" routerLinkActive="active">
         <mat-icon>article</mat-icon>
         Tagesschau</a
       >
-      <a href="/rowrunner/newsfeed.zeit.de%2Findex" mat-list-item>
+      <a mat-list-item [routerLink]="['rowrunner', 'newsfeed.zeit.de/index']" routerLinkActive="active">
         <mat-icon>article</mat-icon>
         Zeit</a
       >
@@ -46,8 +46,8 @@
   <mat-sidenav-content>
     <mat-toolbar color="primary">
       <mat-toolbar-row
-        fxLayout="row"
         [fxLayoutAlign]="drawer.opened ? 'end center' : 'space-between center'"
+        fxLayout="row"
       >
         <button
           (click)="drawer.toggle()"
