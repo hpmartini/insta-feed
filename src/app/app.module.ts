@@ -5,14 +5,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AngularFireModule } from '@angular/fire';
 import { environment } from '../environments/environment';
-import { RowRunnerComponent } from './row-runner/row-runner.component';
+import { RowRunnerComponent } from './pages/row-runner/row-runner.component';
 import { FeedService } from './services/feed.service';
 import { HttpClientModule } from '@angular/common/http';
 import { AngularFireFunctionsModule } from '@angular/fire/functions';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { FlexLayoutModule, FlexModule } from '@angular/flex-layout';
-import { AnimationComponent } from './row-runner/animation/animation.component';
+import { AnimationComponent } from './pages/row-runner/animation/animation.component';
 import { MatIconModule } from '@angular/material/icon';
 import { NavComponent } from './nav/nav.component';
 import { LayoutModule } from '@angular/cdk/layout';
@@ -20,6 +20,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HomeComponent } from './pages/home/home.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     RowRunnerComponent,
     AnimationComponent,
     NavComponent,
+    HomeComponent,
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase, 'ready'),

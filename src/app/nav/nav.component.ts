@@ -9,23 +9,25 @@ export interface NavEntry {
   icon?: string;
 }
 
+export const navEntries: NavEntry[] = [
+  {
+    title: 'Süddeutsche', link: 'rss.sueddeutsche.de/rss/Topthemen', icon: 'panorama_photosphere',
+  },
+  {
+    title: 'Tagesschau', link: 'tagesschau.de/xml/rss2', icon: 'article'
+  },
+  {
+    title: 'Zeit', link: 'newsfeed.zeit.de/index', icon: 'alarm'
+  }
+];
+
 @Component({
   selector: 'app-nav',
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.sass'],
 })
 export class NavComponent {
-  public navEntries: NavEntry[] = [
-    {
-      title: 'Süddeutsche', link: 'rss.sueddeutsche.de/rss/Topthemen', icon: 'panorama_photosphere',
-    },
-    {
-      title: 'Tagesschau', link: 'tagesschau.de/xml/rss2', icon: 'article'
-    },
-    {
-      title: 'Zeit', link: 'newsfeed.zeit.de/index', icon: 'alarm'
-    }
-  ];
+  public navEntries = navEntries;
 
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
