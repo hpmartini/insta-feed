@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { RowRunnerComponent } from './row-runner/row-runner.component';
+import { RowRunnerComponent } from './pages/row-runner/row-runner.component';
+import {HomeComponent} from './pages/home/home.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'rowrunner', pathMatch: 'full' },
+  { path: '', component: HomeComponent },
   { path: 'rowrunner/:url', component: RowRunnerComponent },
 ];
 

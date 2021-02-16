@@ -40,18 +40,23 @@
   <mat-sidenav-content>
     <mat-toolbar color="primary">
       <mat-toolbar-row
-        [fxLayoutAlign]="drawer.opened ? 'end center' : 'space-between center'"
+        fxLayoutAlign="space-between center"
         fxLayout="row"
       >
-        <button
-          (click)="drawer.toggle()"
-          *ngIf="!drawer.opened"
-          color="primary"
-          mat-mini-fab
-          type="button"
-        >
-          <mat-icon>menu</mat-icon>
-        </button>
+        <div>
+          <button
+            (click)="drawer.toggle()"
+            *ngIf="!drawer.opened"
+            color="primary"
+            mat-mini-fab
+            type="button"
+          >
+            <mat-icon>menu</mat-icon>
+          </button>
+          <button color="primary" mat-mini-fab routerLink="/" [ngClass]="{'homeButton': !drawer.opened}">
+            <mat-icon>home</mat-icon>
+          </button>
+        </div>
         <div class="main-navigation">
           <span
           ><button color="primary" mat-mini-fab>

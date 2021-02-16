@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFireFunctions } from '@angular/fire/functions';
-import { Article } from '../model/article';
-import { FeedService } from '../services/feed.service';
+import { Article } from '../../model/article';
+import { FeedService } from '../../services/feed.service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
