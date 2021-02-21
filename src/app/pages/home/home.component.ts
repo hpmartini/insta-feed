@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {navEntries} from '../../nav/nav.component';
 
 @Component({
   selector: 'app-home',
@@ -6,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./home.component.sass']
 })
 export class HomeComponent implements OnInit {
+
+  public navEntries = navEntries;
 
   constructor() { }
 

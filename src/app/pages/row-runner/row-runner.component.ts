@@ -15,6 +15,7 @@ export class RowRunnerComponent implements OnInit {
   public lines: string[];
   public isRowRunnerActive = false;
   public fullScreen = false;
+  private start: string;
 
   constructor(
     private readonly functions: AngularFireFunctions,
@@ -24,12 +25,17 @@ export class RowRunnerComponent implements OnInit {
 
   ngOnInit(): void {
     this.feedService.article.subscribe(
-      (article) => (this.article = article ?? null)
+      (article) => {
+        this.article = article ?? null;
+        if(this.article && this.start) {
+          this.toggleActiveFullscreen();
+        }
+      }
     );
 
     this.route.paramMap.subscribe((route) => {
+      this.start = route.get('start');
       const url = 'https://'.concat(route.get('url'));
-      console.log(url);
       this.feedService.getArticleByUrl(url.replace(/\\/g, '/'));
     });
   }
