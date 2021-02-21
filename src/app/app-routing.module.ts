@@ -5,6 +5,7 @@ import {HomeComponent} from './pages/home/home.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
+  { path: 'rowrunner/:url/:start', component: RowRunnerComponent },
   { path: 'rowrunner/:url', component: RowRunnerComponent },
 ];
 

@@ -9,6 +9,7 @@ export interface NavEntry {
   icon?: string;
 }
 
+// todo persist and get from firebase
 export const navEntries: NavEntry[] = [
   {
     title: 'Süddeutsche', link: 'rss.sueddeutsche.de/rss/Topthemen', icon: 'panorama_photosphere',
