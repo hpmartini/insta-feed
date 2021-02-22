@@ -7,6 +7,7 @@
     class="sidenav"
     fixedInViewport
   >
+    <!-- SIDENAV TOOLBAR -->
     <mat-toolbar fxLayoutAlign="space-between center">
       <div fxLayoutAlign="start center">
         <mat-icon>bookmark</mat-icon>
@@ -16,32 +17,70 @@
         <mat-icon (click)="drawer.toggle()">arrow_left</mat-icon>
       </button>
     </mat-toolbar>
+
+    <!-- SIDENAV CONTROLS -->
     <div class="side-edit" fxLayoutAlign="start  center">
       <span
-      ><button color="primary" mat-mini-fab>
+      ><button (click)="isEditMode = !isEditMode" color="primary" mat-mini-fab>
           <mat-icon>edit</mat-icon>
         </button></span
       >
       <span
-      ><button color="primary" mat-mini-fab>
+      ><button (click)="isAddMode = !isAddMode" color="primary" mat-mini-fab>
           <mat-icon>add</mat-icon>
         </button></span
       >
     </div>
-    <mat-nav-list class="article-list">
-      <a #rla="routerLinkActive" *ngFor="let entry of navEntries" [routerLink]="['rowrunner', entry.link]"
-         mat-list-item routerLinkActive="active"
-      >
-        <mat-icon>{{ rla.isActive ? 'remove_red_eye' : entry.icon}}</mat-icon>
-        {{ entry.title }}
-      </a>
+
+    <!-- SIDE NAV -->
+    <mat-nav-list
+      class="article-list"
+      fxLayout="column"
+      fxLayoutAlign="space-between"
+    >
+      <!--  FEED LIST  -->
+      <ng-container *ngFor="let entry of navEntries">
+        <div fxFlex="100" fxLayoutAlign="space-between center">
+          <a #rla="routerLinkActive" [routerLink]="['rowrunner', entry.link]"
+             fxLayout="row"
+             mat-list-item
+             routerLinkActive="active"
+          >
+            <span fxLayoutAlign="center center">
+              <mat-icon>{{ rla.isActive ? 'remove_red_eye' : entry.icon}}</mat-icon>
+              {{ entry.title }}
+            </span>
+          </a>
+          <button class="remove-feed" mat-mini-fab color="warn" *ngIf="isEditMode">
+            <mat-icon (click)="removeFeed($event)">remove_circle_outline</mat-icon>
+          </button>
+        </div>
+      </ng-container>
+
+      <!-- ADD FEED form -->
+      <form [formGroup]="newFeedForm" class="add-feed" *ngIf="isAddMode">
+        <mat-form-field appearance="fill">
+          <mat-label>Name</mat-label>
+          <input formControlName="name" matInput type="text">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>URL</mat-label>
+          <input formControlName="url" matInput type="text">
+        </mat-form-field>
+
+        <button (click)="addNewFeed()" color="primary" mat-flat-button type="submit">Hinzufügen</button>
+      </form>
+
     </mat-nav-list>
   </mat-sidenav>
+
+  <!-- HEADER TOOLBAR -->
   <mat-sidenav-content>
     <mat-toolbar color="primary">
       <mat-toolbar-row
-        fxLayoutAlign="space-between center"
         fxLayout="row"
+        fxLayoutAlign="space-between center"
       >
         <div>
           <button
@@ -53,18 +92,18 @@
           >
             <mat-icon>menu</mat-icon>
           </button>
-          <button color="primary" mat-mini-fab routerLink="/" [ngClass]="{'homeButton': !drawer.opened}">
+          <button [ngClass]="{'homeButton': !drawer.opened}" color="primary" mat-mini-fab routerLink="/">
             <mat-icon>home</mat-icon>
           </button>
         </div>
         <div class="main-navigation">
           <span
-          ><button color="primary" mat-mini-fab [routerLink]="['rowrunner', navEntries[0].link, true]">
+          ><button [routerLink]="['rowrunner', navEntries[0].link, true]" color="primary" mat-mini-fab>
               <mat-icon>visibility</mat-icon>
             </button>
           </span>
           <span
-          ><button color="primary" mat-mini-fab [routerLink]="['rowrunner', navEntries[0].link, true]">
+          ><button [routerLink]="['rowrunner', navEntries[0].link, true]" color="primary" mat-mini-fab>
               <mat-icon>text_rotation_none</mat-icon>
             </button>
           </span>
@@ -76,6 +115,8 @@
         </div>
       </mat-toolbar-row>
     </mat-toolbar>
+
+    <!-- CONTENT -->
     <div class="content">
       <router-outlet></router-outlet>
     </div>
