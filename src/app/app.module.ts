@@ -21,6 +21,8 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HomeComponent } from './pages/home/home.component';
+import { MatInputModule } from '@angular/material/input';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -47,6 +49,8 @@ import { HomeComponent } from './pages/home/home.component';
     MatSidenavModule,
     MatListModule,
     BrowserAnimationsModule,
+    MatInputModule,
+    ReactiveFormsModule,
   ],
   providers: [FeedService],
   bootstrap: [AppComponent],

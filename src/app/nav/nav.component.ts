@@ -1,7 +1,8 @@
-import {Component} from '@angular/core';
-import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
-import {Observable} from 'rxjs';
-import {map, shareReplay} from 'rxjs/operators';
+import { Component } from '@angular/core';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Observable } from 'rxjs';
+import { map, shareReplay } from 'rxjs/operators';
+import { FormControl, FormGroup } from '@angular/forms';
 
 export interface NavEntry {
   title: string;
@@ -12,14 +13,20 @@ export interface NavEntry {
 // todo persist and get from firebase
 export const navEntries: NavEntry[] = [
   {
-    title: 'Süddeutsche', link: 'rss.sueddeutsche.de/rss/Topthemen', icon: 'panorama_photosphere',
+    title: 'Süddeutsche',
+    link: 'rss.sueddeutsche.de/rss/Topthemen',
+    icon: 'panorama_photosphere',
   },
   {
-    title: 'Tagesschau', link: 'tagesschau.de/xml/rss2', icon: 'article'
+    title: 'Tagesschau',
+    link: 'tagesschau.de/xml/rss2',
+    icon: 'article',
   },
   {
-    title: 'Zeit', link: 'newsfeed.zeit.de/index', icon: 'alarm'
-  }
+    title: 'Zeit',
+    link: 'newsfeed.zeit.de/index',
+    icon: 'alarm',
+  },
 ];
 
 @Component({
@@ -29,6 +36,12 @@ export const navEntries: NavEntry[] = [
 })
 export class NavComponent {
   public navEntries = navEntries;
+  public isEditMode = false;
+  public isAddMode = false;
+  public newFeedForm = new FormGroup({
+    name: new FormControl(''),
+    url: new FormControl(''),
+  });
 
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
@@ -37,6 +50,13 @@ export class NavComponent {
       shareReplay()
     );
 
-  constructor(private breakpointObserver: BreakpointObserver) {
+  constructor(private breakpointObserver: BreakpointObserver) {}
+
+  addNewFeed(): void {
+    // todo
+  }
+
+  removeFeed($event: MouseEvent): void {
+    // todo
   }
 }
