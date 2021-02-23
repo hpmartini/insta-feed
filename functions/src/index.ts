@@ -1,7 +1,10 @@
 import * as functions from 'firebase-functions';
+import * as admin from 'firebase-admin';
 import * as express from 'express';
 import * as cors from 'cors';
 import * as Parser from 'rss-parser';
+
+admin.initializeApp();
 
 const fetch = require('node-fetch');
 
@@ -16,4 +19,24 @@ exports.getFeed = functions.https.onCall(
 
 exports.getArticle = functions.https.onCall(async (data) =>
   fetch(data.url).then((response: any) => response.text())
+);
+
+exports.addFeed = functions.https.onCall(async (data) =>
+  admin
+    .firestore()
+    .collection('feeds')
+    .doc(data.name)
+    .set({
+      name: data.name,
+      url: data.url,
+      icon: data.icon ?? 'article',
+    })
+);
+
+exports.getFeedList = functions.https.onCall(() =>
+  admin
+    .firestore()
+    .collection('feeds')
+    .get()
+    .then((snapshot) => snapshot.docs.map((doc) => doc.data()))
 );

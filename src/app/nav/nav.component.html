@@ -41,18 +41,18 @@
       <!--  FEED LIST  -->
       <ng-container *ngFor="let entry of navEntries">
         <div fxFlex="100" fxLayoutAlign="space-between center">
-          <a #rla="routerLinkActive" [routerLink]="['rowrunner', entry.link]"
+          <a #rla="routerLinkActive" [routerLink]="['rowrunner', entry.url]"
              fxLayout="row"
              mat-list-item
              routerLinkActive="active"
           >
             <span fxLayoutAlign="center center">
-              <mat-icon>{{ rla.isActive ? 'remove_red_eye' : entry.icon}}</mat-icon>
-              {{ entry.title }}
+              <mat-icon class="small-icon">{{ rla.isActive ? 'remove_red_eye' : entry.icon}}</mat-icon>
+              {{ entry.name }}
             </span>
           </a>
           <button *ngIf="isEditMode" class="remove-feed" color="warn" mat-mini-fab>
-            <mat-icon (click)="removeFeed($event)">remove_circle_outline</mat-icon>
+            <mat-icon class="remove-icon" (click)="removeFeed($event)">remove_circle_outline</mat-icon>
           </button>
         </div>
       </ng-container>
@@ -69,7 +69,13 @@
           <input formControlName="url" matInput type="text">
         </mat-form-field>
 
+        <span fxLayoutAlign="space-between">
         <button (click)="addNewFeed()" color="primary" mat-flat-button type="submit">Hinzufügen</button>
+        <button (click)="isAddMode = false" color="primary" mat-mini-fab type="submit">
+          <mat-icon class="clear-icon">clear</mat-icon>
+        </button>
+        </span>
+
       </form>
 
     </mat-nav-list>
@@ -96,14 +102,14 @@
             <mat-icon>home</mat-icon>
           </button>
         </div>
-        <div class="main-navigation">
+        <div class="main-navigation" *ngIf="navEntries">
           <span
-          ><button [routerLink]="['rowrunner', navEntries[0].link, true]" color="primary" mat-mini-fab>
+          ><button [routerLink]="['rowrunner', navEntries[0]?.url, true]" color="primary" mat-mini-fab>
               <mat-icon>visibility</mat-icon>
             </button>
           </span>
           <span
-          ><button [routerLink]="['rowrunner', navEntries[0].link, true]" color="primary" mat-mini-fab>
+          ><button [routerLink]="['rowrunner', navEntries[0]?.url, true]" color="primary" mat-mini-fab>
               <mat-icon>text_rotation_none</mat-icon>
             </button>
           </span>
@@ -117,8 +123,9 @@
     </mat-toolbar>
 
     <!-- CONTENT -->
-    <div class="content">
+    <div class="content" *ngIf="isNavEntriesLoaded">
       <router-outlet></router-outlet>
     </div>
+    <app-spinner [showSpinner]="!isNavEntriesLoaded"></app-spinner>
   </mat-sidenav-content>
 </mat-sidenav-container>
