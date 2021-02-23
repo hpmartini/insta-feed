@@ -1,11 +1,4 @@
-<!-- todo encapsulate into component -->
-<div *ngIf="!article" class="spinner-container">
-  <img
-    alt="spinner"
-    class="spinner"
-    src="/assets/icons/spinner_icon-icons.com_71082.svg"
-  />
-</div>
+<app-spinner [showSpinner]="!article"></app-spinner>
 
 <div
   [ngClass.gt-xs]="{ 'content--regular': true }"

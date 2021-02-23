@@ -2,6 +2,7 @@ import { ElementRef, Injectable, ViewChild } from '@angular/core';
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { Article } from '../model/article';
 import { BehaviorSubject } from 'rxjs';
+import { Feed } from '../model/feed';
 
 const Readability = require('@mozilla/readability');
 
@@ -12,9 +13,24 @@ export class FeedService {
   private emptyArticle: { siteName: ''; content: ''; excerpt: ''; title: '' };
 
   public article = new BehaviorSubject<Article>(null);
+  public feedList = new BehaviorSubject<[]>(null);
   public lines: string[];
 
   constructor(private readonly functions: AngularFireFunctions) {}
+
+  public addFeedToFirestore(feed: Feed): void {
+    const addFeed = this.functions.httpsCallable('addFeed');
+    addFeed(feed).subscribe((result) => {
+      if (result) {
+        this.getFeedListFromFirestore();
+      }
+    });
+  }
+
+  public getFeedListFromFirestore(): void {
+    const getFeedList = this.functions.httpsCallable('getFeedList');
+    getFeedList(null).subscribe((feedList) => this.feedList.next(feedList));
+  }
 
   public getArticleByUrl(url: string): void {
     this.article.next(this.emptyArticle);
