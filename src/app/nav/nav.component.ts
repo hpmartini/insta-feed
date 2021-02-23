@@ -3,6 +3,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { FormControl, FormGroup } from '@angular/forms';
+import { AnimationActiveService } from '../services/animation-active.service';
 
 export interface NavEntry {
   title: string;
@@ -38,6 +39,7 @@ export class NavComponent {
   public navEntries = navEntries;
   public isEditMode = false;
   public isAddMode = false;
+
   public newFeedForm = new FormGroup({
     name: new FormControl(''),
     url: new FormControl(''),
@@ -50,7 +52,10 @@ export class NavComponent {
       shareReplay()
     );
 
-  constructor(private breakpointObserver: BreakpointObserver) {}
+  constructor(
+    private readonly breakpointObserver: BreakpointObserver,
+    public readonly animationActiveService: AnimationActiveService
+  ) {}
 
   addNewFeed(): void {
     // todo

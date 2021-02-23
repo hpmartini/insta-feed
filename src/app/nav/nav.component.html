@@ -51,14 +51,14 @@
               {{ entry.title }}
             </span>
           </a>
-          <button class="remove-feed" mat-mini-fab color="warn" *ngIf="isEditMode">
+          <button *ngIf="isEditMode" class="remove-feed" color="warn" mat-mini-fab>
             <mat-icon (click)="removeFeed($event)">remove_circle_outline</mat-icon>
           </button>
         </div>
       </ng-container>
 
       <!-- ADD FEED form -->
-      <form [formGroup]="newFeedForm" class="add-feed" *ngIf="isAddMode">
+      <form *ngIf="isAddMode" [formGroup]="newFeedForm" class="add-feed">
         <mat-form-field appearance="fill">
           <mat-label>Name</mat-label>
           <input formControlName="name" matInput type="text">
@@ -77,7 +77,7 @@
 
   <!-- HEADER TOOLBAR -->
   <mat-sidenav-content>
-    <mat-toolbar color="primary">
+    <mat-toolbar *ngIf="!animationActiveService.isAnimationActive" color="primary">
       <mat-toolbar-row
         fxLayout="row"
         fxLayoutAlign="space-between center"
