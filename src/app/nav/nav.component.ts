@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
@@ -6,6 +6,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { AnimationActiveService } from '../services/animation-active.service';
 import { Feed } from '../model/feed';
 import { FeedService } from '../services/feed.service';
+import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 
 @Component({
   selector: 'app-nav',
@@ -17,21 +18,30 @@ export class NavComponent {
   public isEditMode = false;
   public isAddMode = false;
   public isNavEntriesLoaded = false;
+  public isHome = false;
 
   public newFeedForm = new FormGroup({
     name: new FormControl(''),
     url: new FormControl(''),
   });
-  isHandset$: Observable<boolean> = this.breakpointObserver
+  public isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
     .pipe(
       map((result) => result.matches),
       shareReplay()
     );
+  public isTablet$: Observable<boolean> = this.breakpointObserver
+    .observe(Breakpoints.Tablet)
+    .pipe(
+      map((result) => result.matches),
+      shareReplay()
+    );
+  public currentPage: string;
 
   constructor(
     private readonly breakpointObserver: BreakpointObserver,
     private readonly feedService: FeedService,
+    private readonly router: Router,
     public readonly animationActiveService: AnimationActiveService
   ) {
     this.feedService.feedList.subscribe((feedList) => {
@@ -41,6 +51,14 @@ export class NavComponent {
       }
     });
     this.feedService.getFeedListFromFirestore();
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        console.log(event.url);
+        this.isHome = event.url === '/';
+        console.log(this.isHome);
+        this.currentPage = event.url === '/' ? 'home' : '';
+      }
+    });
   }
 
   addNewFeed(): void {
