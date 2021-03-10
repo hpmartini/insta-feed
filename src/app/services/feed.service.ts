@@ -10,9 +10,16 @@ const Readability = require('@mozilla/readability');
 export class FeedService {
   @ViewChild('dummyDiv', { static: false }) dummyDiv: ElementRef;
 
-  private emptyArticle: { siteName: ''; content: ''; excerpt: ''; title: '' };
+  private emptyArticle: {
+    siteName: '';
+    content: '';
+    excerpt: '';
+    title: '';
+    url: '';
+  };
 
   public article = new BehaviorSubject<Article>(null);
+  public articleList = new BehaviorSubject<Article[]>(null);
   public feedList = new BehaviorSubject<[]>(null);
   public lines: string[];
 
@@ -32,11 +39,19 @@ export class FeedService {
     getFeedList(null).subscribe((feedList) => this.feedList.next(feedList));
   }
 
-  public getArticleByUrl(url: string): void {
+  public loadArticleList(url: string): void {
+    this.articleList.next([]);
+    const getFeed = this.functions.httpsCallable('getFeed');
+    getFeed({ url }).subscribe((result) => {
+      this.articleList.next(result.items);
+    });
+  }
+
+  public getArticleByUrl(url: string, index: number): void {
     this.article.next(this.emptyArticle);
     const getFeed = this.functions.httpsCallable('getFeed');
     getFeed({ url }).subscribe((result) =>
-      this.loadArticle(result.items[0].link)
+      this.loadArticle(result.items[index].link)
     );
   }
 
@@ -58,6 +73,7 @@ export class FeedService {
         .trim()
         .replace(/\s+/g, ' ')
         .replace(/([":])(["])/g, '$1 $2'),
+      url: article.link,
     };
   }
 }

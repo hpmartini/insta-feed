@@ -1,0 +1,8 @@
+<app-spinner [showSpinner]="!articleList.length"></app-spinner>
+
+<div *ngFor="let article of articleList">
+  <div [routerLink]="['rowrunner', article.url]">
+    <h1>{{ article.title }}</h1>
+    <h3>{{ article.excerpt }}</h3>
+  </div>
+</div>

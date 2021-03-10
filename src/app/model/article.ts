@@ -3,4 +3,5 @@ export interface Article {
   title: string;
   excerpt: string;
   content: string;
+  url: string;
 }

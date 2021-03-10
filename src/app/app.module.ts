@@ -24,6 +24,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SpinnerComponent } from './components/spinner/spinner.component';
+import { ArticlesComponent } from './pages/articles/articles.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
     NavComponent,
     HomeComponent,
     SpinnerComponent,
+    ArticlesComponent,
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase, 'ready'),
