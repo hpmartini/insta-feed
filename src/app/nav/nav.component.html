@@ -41,7 +41,7 @@
         <!--  FEED LIST  -->
         <ng-container *ngFor="let entry of navEntries">
           <div fxFlex="100" fxLayoutAlign="space-between center">
-            <a #rla="routerLinkActive" [routerLink]="['rowrunner', entry.url]"
+            <a #rla="routerLinkActive" [routerLink]="['article', entry.url]"
                fxLayout="row"
                mat-list-item
                routerLinkActive="active"
