@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FeedService } from '../../services/feed.service';
-import { Article } from '../../model/article';
 import { ActivatedRoute } from '@angular/router';
+import { FeedObject } from '../../model/FeedObject';
 
 @Component({
   selector: 'app-articles',
@@ -9,7 +9,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./articles.component.sass'],
 })
 export class ArticlesComponent implements OnInit {
-  private articleList: Article[];
+  private articleList: FeedObject[];
 
   constructor(
     private readonly feedService: FeedService,
