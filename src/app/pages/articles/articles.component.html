@@ -1,8 +1,15 @@
 <app-spinner [showSpinner]="!articleList.length"></app-spinner>
 
-<div *ngFor="let article of articleList">
-  <div [routerLink]="['rowrunner', article.url]">
-    <h1>{{ article.title }}</h1>
-    <h3>{{ article.excerpt }}</h3>
+<div class="article-list" fxLayout="row wrap" fxLayoutAlign="center" fxLayoutGap="32px">
+  <div *ngFor="let article of articleList" class="card-wrapper">
+    <mat-card>
+      <mat-card-header [routerLink]="['/rowrunner/', article.link]">
+        <h1>{{ article.title }}</h1>
+      </mat-card-header>
+
+      <mat-card-content>
+        <h3>{{ article.contentSnippet }}</h3>
+      </mat-card-content>
+    </mat-card>
   </div>
 </div>

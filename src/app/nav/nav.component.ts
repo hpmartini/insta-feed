@@ -53,9 +53,7 @@ export class NavComponent {
     this.feedService.getFeedListFromFirestore();
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
-        console.log(event.url);
         this.isHome = event.url === '/';
-        console.log(this.isHome);
         this.currentPage = event.url === '/' ? 'home' : '';
       }
     });

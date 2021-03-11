@@ -3,6 +3,7 @@ import { AngularFireFunctions } from '@angular/fire/functions';
 import { Article } from '../model/article';
 import { BehaviorSubject } from 'rxjs';
 import { Feed } from '../model/feed';
+import { FeedObject } from '../model/FeedObject';
 
 const Readability = require('@mozilla/readability');
 
@@ -19,7 +20,7 @@ export class FeedService {
   };
 
   public article = new BehaviorSubject<Article>(null);
-  public articleList = new BehaviorSubject<Article[]>(null);
+  public articleList = new BehaviorSubject<FeedObject[]>(null);
   public feedList = new BehaviorSubject<[]>(null);
   public lines: string[];
 
@@ -43,11 +44,18 @@ export class FeedService {
     this.articleList.next([]);
     const getFeed = this.functions.httpsCallable('getFeed');
     getFeed({ url }).subscribe((result) => {
-      this.articleList.next(result.items);
+      this.articleList.next(
+        result.items.map((item: FeedObject) => ({
+          ...item,
+          guid: item.guid.replace('https://', ''),
+          link: item.link.replace('https://', ''),
+        }))
+      );
     });
   }
 
   public getArticleByUrl(url: string, index: number): void {
+    console.log(url);
     this.article.next(this.emptyArticle);
     const getFeed = this.functions.httpsCallable('getFeed');
     getFeed({ url }).subscribe((result) =>
