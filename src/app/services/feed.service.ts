@@ -63,7 +63,7 @@ export class FeedService {
     );
   }
 
-  private loadArticle(url): void {
+  public loadArticle(url): void {
     const getArticle = this.functions.httpsCallable('getArticle');
     getArticle({ url }).subscribe((article) =>
       this.article.next(this.getParsedArticleWebSite(article))
