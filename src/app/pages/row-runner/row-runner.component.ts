@@ -36,7 +36,7 @@ export class RowRunnerComponent implements OnInit {
     this.route.paramMap.subscribe((route) => {
       this.start = route.get('start');
       const feedUrl = 'https://'.concat(route.get('url'));
-      this.feedService.getArticleByUrl(feedUrl.replace(/\\/g, '/'), 1);
+      this.feedService.loadArticle(feedUrl.replace(/\\/g, '/'));
     });
   }
 

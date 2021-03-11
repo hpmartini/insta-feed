@@ -1,15 +1,21 @@
 <app-spinner [showSpinner]="!articleList.length"></app-spinner>
 
-<div class="article-list" fxLayout="row wrap" fxLayoutAlign="center" fxLayoutGap="32px">
-  <div *ngFor="let article of articleList" class="card-wrapper">
-    <mat-card>
-      <mat-card-header [routerLink]="['/rowrunner/', article.link]">
-        <h1>{{ article.title }}</h1>
-      </mat-card-header>
+<div class="content-wrapper">
+  <div class="article-list" fxLayout="row wrap" fxLayoutAlign="center" fxLayoutGap="32px">
+    <div *ngFor="let article of articleList" class="card-wrapper"
+         [ngClass.lt-lg]="{'card-wrapper__desktop-small': true}"
+         [ngClass.lt-md]="{'card-wrapper__tablet': true}"
+         [ngClass.lt-sm]="{'card-wrapper__handheld': true}"
+    >
+      <mat-card>
+        <mat-card-header [routerLink]="['/rowrunner/', article.guid]">
+          <h1>{{ article.title }}</h1>
+        </mat-card-header>
 
-      <mat-card-content>
-        <h3>{{ article.contentSnippet }}</h3>
-      </mat-card-content>
-    </mat-card>
+        <mat-card-content>
+          <h3>{{ article.contentSnippet }}</h3>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
 </div>
