@@ -10,21 +10,16 @@ import { FeedService } from './services/feed.service';
 import { HttpClientModule } from '@angular/common/http';
 import { AngularFireFunctionsModule } from '@angular/fire/functions';
 import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
 import { FlexLayoutModule, FlexModule } from '@angular/flex-layout';
 import { AnimationComponent } from './pages/row-runner/animation/animation.component';
-import { MatIconModule } from '@angular/material/icon';
 import { NavComponent } from './nav/nav.component';
 import { LayoutModule } from '@angular/cdk/layout';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HomeComponent } from './pages/home/home.component';
-import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { ArticlesComponent } from './pages/articles/articles.component';
+import { MaterialModule } from './material.module';
 
 @NgModule({
   declarations: [
@@ -43,18 +38,12 @@ import { ArticlesComponent } from './pages/articles/articles.component';
     AppRoutingModule,
     HttpClientModule,
     CommonModule,
-    MatButtonModule,
-    MatButtonModule,
-    MatIconModule,
     FlexModule,
     FlexLayoutModule,
     LayoutModule,
-    MatToolbarModule,
-    MatSidenavModule,
-    MatListModule,
     BrowserAnimationsModule,
-    MatInputModule,
     ReactiveFormsModule,
+    MaterialModule,
   ],
   providers: [FeedService],
   bootstrap: [AppComponent],
