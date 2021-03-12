@@ -4,22 +4,17 @@
   .article-list
     margin: 16px 0 16px 16px
     .card-wrapper
-      flex: 0 1 calc(33.3% - 48px)
-      &__desktop-small
-        flex: 0 1 calc(50% - 140px)
-      &__tablet
-        flex: 0 1 calc(50% - 48px)
-      &__handheld
-        flex: 0 1 calc(75% - 48px)
       display: flex
-      height: 270px
       margin-bottom: 32px
+      margin-right: 32px
+      padding: 8px
       overflow: hidden
       text-overflow: ellipsis
       .mat-card
-        height: 230px
-        cursor: pointer
+        height: 350px
+        width: 300px
         .mat-card-header
+          cursor: pointer
           .mat-card-header-text
             margin: 0
           h1
@@ -31,3 +26,7 @@
           h3
             max-height: 80px
             overflow: hidden
+        .mat-card-actions
+          padding: 0 42px 0 42px
+        .mat-card-footer
+          padding: 0 32px 16px 32px
