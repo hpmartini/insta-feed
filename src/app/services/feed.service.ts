@@ -21,17 +21,20 @@ export class FeedService {
 
   public article = new BehaviorSubject<Article>(null);
   public articleList = new BehaviorSubject<FeedObject[]>(null);
+  public updatingFeedList = new BehaviorSubject<boolean>(false);
   public feedList = new BehaviorSubject<[]>(null);
   public lines: string[];
 
   constructor(private readonly functions: AngularFireFunctions) {}
 
   public addFeedToFirestore(feed: Feed): void {
+    this.updatingFeedList.next(true);
     const addFeed = this.functions.httpsCallable('addFeed');
     addFeed(feed).subscribe((result) => {
       if (result) {
         this.getFeedListFromFirestore();
       }
+      this.updatingFeedList.next(false);
     });
   }
 
@@ -83,5 +86,13 @@ export class FeedService {
         .replace(/([":])(["])/g, '$1 $2'),
       url: article.link,
     };
+  }
+
+  deleteFeed(feedName: string): void {
+    this.updatingFeedList.next(true);
+    const deleteFeed = this.functions.httpsCallable('deleteFeed');
+    deleteFeed({ name: feedName }).subscribe(() =>
+      this.updatingFeedList.next(false)
+    );
   }
 }

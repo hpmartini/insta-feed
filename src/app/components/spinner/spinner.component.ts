@@ -7,4 +7,5 @@ import { Component, Input } from '@angular/core';
 })
 export class SpinnerComponent {
   @Input() showSpinner = true;
+  @Input() fullHeight = true;
 }

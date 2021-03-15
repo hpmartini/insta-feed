@@ -19,6 +19,7 @@ export class NavComponent {
   public isAddMode = false;
   public isNavEntriesLoaded = false;
   public isHome = false;
+  public isFeedListUpdating = false;
 
   public newFeedForm = new FormGroup({
     name: new FormControl(''),
@@ -64,14 +65,25 @@ export class NavComponent {
       name: this.newFeedForm.value.name,
       url: this.newFeedForm.value.url,
     };
+    this.feedService.updatingFeedList.subscribe(
+      (updating) => (this.isFeedListUpdating = updating)
+    );
 
     this.feedService.addFeedToFirestore(feed);
     this.isAddMode = false;
     this.feedService.getFeedListFromFirestore();
     this.newFeedForm.reset();
+    console.log(this.isNavEntriesLoaded);
   }
 
-  removeFeed($event: MouseEvent): void {
-    // todo
+  deleteFeed(feedName: string): void {
+    this.feedService.updatingFeedList.subscribe(
+      (updating) => (this.isFeedListUpdating = updating)
+    );
+    this.feedService.deleteFeed(feedName);
+    this.isEditMode = false;
+    this.feedService.getFeedListFromFirestore();
+    this.newFeedForm.reset();
+    console.log(this.isNavEntriesLoaded);
   }
 }

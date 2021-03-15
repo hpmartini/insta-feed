@@ -9,7 +9,7 @@ import { FeedObject } from '../../model/FeedObject';
   styleUrls: ['./articles.component.sass'],
 })
 export class ArticlesComponent implements OnInit {
-  private articleList: FeedObject[];
+  public articleList: FeedObject[];
 
   constructor(
     private readonly feedService: FeedService,

@@ -33,6 +33,10 @@ exports.addFeed = functions.https.onCall(async (data) =>
     })
 );
 
+exports.deleteFeed = functions.https.onCall(async (data) =>
+  admin.firestore().collection('feeds').doc(data.name).delete()
+);
+
 exports.getFeedList = functions.https.onCall(() =>
   admin
     .firestore()
