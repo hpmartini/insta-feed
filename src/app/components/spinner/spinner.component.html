@@ -1,4 +1,4 @@
-<div *ngIf="showSpinner" class="spinner-container">
+<div *ngIf="showSpinner" [ngClass]="{'spinner-container__full-height': fullHeight}" class="spinner-container">
   <img
     alt="spinner"
     class="spinner"

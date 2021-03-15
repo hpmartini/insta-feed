@@ -51,11 +51,21 @@
                 {{ entry.name }}
               </span>
           </a>
-          <button *ngIf="isEditMode" class="remove-feed" color="warn" mat-mini-fab>
-            <mat-icon (click)="removeFeed($event)" class="remove-icon">remove_circle_outline</mat-icon>
+          <button
+            (click)="deleteFeed(entry.name)"
+            *ngIf="isEditMode"
+            class="remove-feed"
+            color="warn"
+            mat-mini-fab
+          >
+            <mat-icon class="remove-icon">
+              remove_circle_outline
+            </mat-icon>
           </button>
         </div>
       </ng-container>
+
+      <app-spinner [fullHeight]="false" [showSpinner]="isFeedListUpdating"></app-spinner>
 
       <!-- ADD FEED form -->
       <form *ngIf="isAddMode" [formGroup]="newFeedForm" class="add-feed">
