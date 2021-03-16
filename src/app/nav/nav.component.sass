@@ -1,13 +1,23 @@
 .sidenav
   width: 200px
+  z-index: 100
+
+.app-toolbar
+  position: sticky
+  position: -webkit-sticky
+  top: 0
+  right: 0
+  z-index: 10
+
+.app-sidenav
+  position: relative
+  z-index: 100
+  .mat-drawer-container,
+  .mat-drawer-content
+    overflow: unset
 
 .sidenav .mat-toolbar
   background: inherit
-
-.mat-toolbar.mat-primary
-  position: sticky
-  top: 0
-  z-index: 1
 
 .homeButton.mat-mini-fab
   margin-left: 1rem

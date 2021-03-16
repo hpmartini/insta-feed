@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
@@ -6,7 +6,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { AnimationActiveService } from '../services/animation-active.service';
 import { Feed } from '../model/feed';
 import { FeedService } from '../services/feed.service';
-import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
+import { NavigationStart, Router } from '@angular/router';
 
 @Component({
   selector: 'app-nav',
