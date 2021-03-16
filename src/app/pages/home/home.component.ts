@@ -13,16 +13,6 @@ export class HomeComponent implements OnInit {
       url: 'rss.sueddeutsche.de/rss/Topthemen',
       icon: 'panorama_photosphere',
     },
-    {
-      name: 'Tagesschau',
-      url: 'tagesschau.de/xml/rss2',
-      icon: 'article',
-    },
-    {
-      name: 'Zeit',
-      url: 'newsfeed.zeit.de/index',
-      icon: 'alarm',
-    },
   ];
 
   constructor() {}

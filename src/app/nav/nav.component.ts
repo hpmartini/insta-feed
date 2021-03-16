@@ -58,6 +58,9 @@ export class NavComponent {
         this.currentPage = event.url === '/' ? 'home' : '';
       }
     });
+    this.feedService.updatingFeedList.subscribe(
+      (updating) => (this.isFeedListUpdating = updating)
+    );
   }
 
   addNewFeed(): void {
@@ -65,25 +68,32 @@ export class NavComponent {
       name: this.newFeedForm.value.name,
       url: this.newFeedForm.value.url,
     };
-    this.feedService.updatingFeedList.subscribe(
-      (updating) => (this.isFeedListUpdating = updating)
-    );
 
     this.feedService.addFeedToFirestore(feed);
     this.isAddMode = false;
     this.feedService.getFeedListFromFirestore();
     this.newFeedForm.reset();
-    console.log(this.isNavEntriesLoaded);
+
+    // todo show snackbar on success
   }
 
   deleteFeed(feedName: string): void {
-    this.feedService.updatingFeedList.subscribe(
-      (updating) => (this.isFeedListUpdating = updating)
-    );
+    // todo ask for confirmation
     this.feedService.deleteFeed(feedName);
     this.isEditMode = false;
-    this.feedService.getFeedListFromFirestore();
-    this.newFeedForm.reset();
-    console.log(this.isNavEntriesLoaded);
+    const index = this.navEntries.findIndex((feed) => feed.name === feedName);
+    this.navEntries.splice(index, 1);
+
+    // todo show snackbar on success
+  }
+
+  toggleEditMode(): void {
+    this.isEditMode = !this.isEditMode;
+    this.isAddMode = false;
+  }
+
+  toggleAddMode(): void {
+    this.isAddMode = !this.isAddMode;
+    this.isEditMode = false;
   }
 }
