@@ -25,12 +25,12 @@
       <!-- SIDENAV CONTROLS -->
       <div class="side-edit" fxLayoutAlign="start  center">
         <span
-        ><button (click)="isEditMode = !isEditMode" color="primary" mat-mini-fab>
+        ><button (click)="toggleEditMode()" color="primary" mat-mini-fab>
             <mat-icon>edit</mat-icon>
           </button></span
         >
         <span
-        ><button (click)="isAddMode = !isAddMode" color="primary" mat-mini-fab>
+        ><button (click)="toggleAddMode()" color="primary" mat-mini-fab>
             <mat-icon>add</mat-icon>
           </button></span
         >
