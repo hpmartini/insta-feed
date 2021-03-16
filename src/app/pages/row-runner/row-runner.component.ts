@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { Article } from '../../model/article';
 import { FeedService } from '../../services/feed.service';
@@ -10,13 +10,13 @@ import { AnimationActiveService } from '../../services/animation-active.service'
   templateUrl: './row-runner.component.html',
   styleUrls: ['./row-runner.component.sass'],
 })
-export class RowRunnerComponent implements OnInit {
+export class RowRunnerComponent implements OnInit, OnDestroy {
   public article: Article;
   public speed = 30;
   public lines: string[];
   public isRowRunnerActive = false;
   public fullScreen = false;
-  private start: string;
+  public isAutostart = false;
 
   constructor(
     private readonly functions: AngularFireFunctions,
@@ -28,13 +28,14 @@ export class RowRunnerComponent implements OnInit {
   ngOnInit(): void {
     this.feedService.article.subscribe((article) => {
       this.article = article ?? null;
-      if (this.article && this.start) {
+      if (this.article && this.isAutostart) {
+        this.isAutostart = false;
         this.toggleActiveFullscreen();
       }
     });
 
     this.route.paramMap.subscribe((route) => {
-      this.start = route.get('start');
+      this.isAutostart = route.get('isAutostart') === 'true';
       const feedUrl = 'https://'.concat(route.get('url'));
       this.feedService.loadArticle(feedUrl.replace(/\\/g, '/'));
     });
@@ -50,5 +51,9 @@ export class RowRunnerComponent implements OnInit {
     this.isRowRunnerActive = !this.isRowRunnerActive;
     this.fullScreen = !this.fullScreen;
     this.animationActiveService.isAnimationActive = this.isRowRunnerActive;
+  }
+
+  ngOnDestroy(): void {
+    this.animationActiveService.isAnimationActive = false;
   }
 }

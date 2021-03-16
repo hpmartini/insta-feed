@@ -7,7 +7,7 @@ import { ArticlesComponent } from './pages/articles/articles.component';
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'article/:url', component: ArticlesComponent },
-  { path: 'rowrunner/:url/:start', component: RowRunnerComponent },
+  { path: 'rowrunner/:url/:isAutostart', component: RowRunnerComponent },
   { path: 'rowrunner/:url', component: RowRunnerComponent },
 ];
 

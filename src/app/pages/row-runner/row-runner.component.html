@@ -1,11 +1,11 @@
-<app-spinner [showSpinner]="!article"></app-spinner>
+<app-spinner [showSpinner]="!article || isAutostart"></app-spinner>
 
 <div
   [ngClass.gt-xs]="{ 'content--regular': true }"
   [ngClass.lt-sm]="{ 'content--mobile': true }"
   class="page-content"
 >
-  <div *ngIf="article" class="header">
+  <div *ngIf="article && !isAutostart" class="header">
     <div *ngIf="!fullScreen">
       <h1>{{ article?.title }}</h1>
       <h2>{{ article?.excerpt }}</h2>
@@ -34,7 +34,7 @@
   </div>
 
   <article
-    *ngIf="!isRowRunnerActive"
+    *ngIf="!isRowRunnerActive && !isAutostart"
     class="article-content"
     lang="de"
     [ngClass.gt-xs]="{ 'article-content--regular': true }"
