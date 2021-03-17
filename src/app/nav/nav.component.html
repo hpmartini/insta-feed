@@ -1,5 +1,3 @@
-
-
 <!-- SIDENAV + CONTENT-->
 <div class="app-sidenav">
   <mat-sidenav-container>
@@ -8,32 +6,46 @@
       [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
       [mode]="(isHandset$ | async) ? 'over' : 'side'"
       [opened]="(isHandset$ | async) === false"
+      [position]="(isHandset$ | async) ? 'end' : 'start'"
       class="sidenav"
       fixedInViewport
     >
       <!-- SIDENAV TOOLBAR -->
       <mat-toolbar fxLayoutAlign="space-between center">
-        <div fxLayoutAlign="start center">
-          <mat-icon>bookmark</mat-icon>
-          <span>Feeds</span>
-        </div>
-        <button mat-icon-button>
-          <mat-icon (click)="drawer.toggle()">arrow_left</mat-icon>
+        <span class="sidenav__toolbar" fxLayout="row" fxLayoutAlign="space-between" fxFlex.gt-sm="100">
+          <button mat-icon-button fxHide.gt-sm="true">
+            <mat-icon (click)="drawer.toggle()">arrow_right</mat-icon>
+          </button>
+          <span class="sidenav__toolbar__feed-link" fxLayoutAlign="start center" routerLink="/">
+            <mat-icon>bookmark</mat-icon>
+            <span>Feeds</span>
+          </span>
+          <button mat-icon-button fxHide.xs="true">
+            <mat-icon (click)="drawer.toggle()">arrow_left</mat-icon>
+          </button>
+        </span>
+
+        <button color="primary" mat-icon-button fxHide.gt-sm="true">
+          <mat-icon>settings</mat-icon>
         </button>
       </mat-toolbar>
 
       <!-- SIDENAV CONTROLS -->
-      <div class="side-edit" fxLayoutAlign="start  center">
-        <span
-        ><button (click)="toggleEditMode()" color="primary" mat-mini-fab>
+      <div
+        class="side-edit"
+        fxLayoutAlign="start  center"
+        fxLayoutAlign.xs="end  center"
+      >
+        <span>
+          <button (click)="toggleEditMode()" color="primary" mat-button>
             <mat-icon>edit</mat-icon>
-          </button></span
-        >
-        <span
-        ><button (click)="toggleAddMode()" color="primary" mat-mini-fab>
-            <mat-icon>add</mat-icon>
-          </button></span
-        >
+          </button>
+        </span>
+        <span>
+          <button (click)="toggleAddMode()" color="primary" mat-button>
+            <mat-icon>add_circle</mat-icon>
+          </button>
+        </span>
       </div>
 
       <!-- SIDE NAV -->
@@ -45,13 +57,17 @@
         <!--  FEED LIST  -->
         <ng-container *ngFor="let entry of navEntries">
           <div fxFlex="100" fxLayoutAlign="space-between center">
-            <a #rla="routerLinkActive" [routerLink]="['article', entry.url]"
-               fxLayout="row"
-               mat-list-item
-               routerLinkActive="active"
+            <a
+              #rla="routerLinkActive"
+              [routerLink]="['article', entry.url]"
+              fxLayout="row"
+              mat-list-item
+              routerLinkActive="active"
             >
               <span fxLayoutAlign="center center">
-                <mat-icon class="small-icon">{{ rla.isActive ? 'remove_red_eye' : entry.icon}}</mat-icon>
+                <mat-icon class="small-icon">{{
+                  rla.isActive ? "remove_red_eye" : entry.icon
+                  }}</mat-icon>
                 {{ entry.name }}
               </span>
             </a>
@@ -62,36 +78,47 @@
               color="warn"
               mat-mini-fab
             >
-              <mat-icon class="remove-icon">
-                remove_circle_outline
-              </mat-icon>
+              <mat-icon class="remove-icon"> remove_circle_outline</mat-icon>
             </button>
           </div>
         </ng-container>
 
-        <app-spinner [fullHeight]="false" [showSpinner]="isFeedListUpdating"></app-spinner>
+        <app-spinner
+          [fullHeight]="false"
+          [showSpinner]="isFeedListUpdating"
+        ></app-spinner>
 
         <!-- ADD FEED form -->
         <form *ngIf="isAddMode" [formGroup]="newFeedForm" class="add-feed">
           <mat-form-field appearance="fill">
             <mat-label>Name</mat-label>
-            <input formControlName="name" matInput type="text">
+            <input formControlName="name" matInput type="text"/>
           </mat-form-field>
 
           <mat-form-field appearance="fill">
             <mat-label>URL</mat-label>
-            <input formControlName="url" matInput type="text">
+            <input formControlName="url" matInput type="text"/>
           </mat-form-field>
 
           <span fxLayoutAlign="space-between">
-          <button (click)="addNewFeed()" color="primary" mat-flat-button type="submit">Hinzufügen</button>
-          <button (click)="isAddMode = false" color="primary" mat-mini-fab type="submit">
-            <mat-icon class="clear-icon">clear</mat-icon>
-          </button>
+            <button
+              (click)="addNewFeed()"
+              color="primary"
+              mat-button
+              type="submit"
+            >
+              <mat-icon>check_circle_outline</mat-icon>
+            </button>
+            <button
+              (click)="isAddMode = false"
+              color="primary"
+              mat-button
+              type="submit"
+            >
+              <mat-icon>cancel</mat-icon>
+            </button>
           </span>
-
         </form>
-
       </mat-nav-list>
     </mat-sidenav>
 
@@ -99,12 +126,19 @@
     <mat-sidenav-content>
       <!-- HEADER TOOLBAR -->
       <div class="app-toolbar">
-        <mat-toolbar *ngIf="!animationActiveService.isAnimationActive" color="primary">
-
+        <mat-toolbar
+          *ngIf="!animationActiveService.isAnimationActive"
+          color="primary"
+        >
           <mat-toolbar-row
             fxLayout="row"
             fxLayoutAlign="space-between center"
           >
+            <div fxHide.gt-xs="">
+              <a mat-button routerLink="/">
+                <h1>RowRunner</h1>
+              </a>
+            </div>
             <div>
               <button
                 (click)="drawer.toggle()"
@@ -115,34 +149,53 @@
               >
                 <mat-icon>menu</mat-icon>
               </button>
-              <button [ngClass]="{'homeButton': !drawer.opened}" color="primary" mat-mini-fab routerLink="/">
+              <button
+                fxHide.xs="true"
+                [ngClass]="{ homeButton: !drawer.opened }"
+                color="primary"
+                mat-mini-fab
+                routerLink="/"
+              >
                 <mat-icon>home</mat-icon>
               </button>
             </div>
-            <div *ngIf="navEntries" class="main-navigation">
-        <span>
-          <button [routerLink]="['rowrunner', navEntries[0]?.url, true]" color="primary" mat-mini-fab>
-            <mat-icon>visibility</mat-icon>
-          </button>
-        </span>
+            <div *ngIf="navEntries" class="main-navigation" fxHide.xs="true">
               <span>
-          <button [routerLink]="['rowrunner', navEntries[0]?.url, true]" color="primary" mat-mini-fab>
-            <mat-icon>text_rotation_none</mat-icon>
-          </button>
-        </span>
+                <button
+                  [routerLink]="['rowrunner', navEntries[0]?.url, true]"
+                  color="primary"
+                  mat-mini-fab
+                >
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </span>
               <span>
-          <button color="primary" mat-mini-fab>
-            <mat-icon>settings</mat-icon>
-          </button>
-        </span>
+                <button
+                  [routerLink]="['rowrunner', navEntries[0]?.url, true]"
+                  color="primary"
+                  mat-mini-fab
+                >
+                  <mat-icon>text_rotation_none</mat-icon>
+                </button>
+              </span>
+              <span>
+                <button color="primary" mat-mini-fab>
+                  <mat-icon>settings</mat-icon>
+                </button>
+              </span>
             </div>
           </mat-toolbar-row>
         </mat-toolbar>
       </div>
 
-      <div *ngIf="isNavEntriesLoaded"
+      <div
+        *ngIf="isNavEntriesLoaded"
+        [ngClass]="{
+          content__tablet: (isTablet$ | async),
+          content__handset: (isHandset$ | async)
+        }"
         class="content"
-        [ngClass]="{'content__tablet': (isTablet$ | async)}">
+      >
         <router-outlet></router-outlet>
       </div>
       <app-spinner [showSpinner]="!isNavEntriesLoaded"></app-spinner>
