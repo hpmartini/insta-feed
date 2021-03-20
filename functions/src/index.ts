@@ -44,3 +44,26 @@ exports.getFeedList = functions.https.onCall(() =>
     .get()
     .then((snapshot) => snapshot.docs.map((doc) => doc.data()))
 );
+
+exports.loadSettings = functions.https.onCall(async () =>
+  admin
+    .firestore()
+    .collection('user')
+    .doc('settings')
+    .get()
+    .then((snapshot) => snapshot.data())
+);
+
+exports.saveSettings = functions.https.onCall(async (data) =>
+  admin
+    .firestore()
+    .collection('user')
+    .doc('settings')
+    .set(
+      {
+        speed: data.speed ?? null,
+        defaultFeed: data.defaultFeed ?? null,
+      },
+      { merge: true }
+    )
+);

@@ -25,7 +25,7 @@
           </button>
         </span>
 
-        <button color="primary" mat-icon-button fxHide.gt-sm="true">
+        <button color="primary" mat-icon-button fxHide.gt-sm="true" [routerLink]="['/settings/']">
           <mat-icon>settings</mat-icon>
         </button>
       </mat-toolbar>
@@ -179,7 +179,7 @@
                 </button>
               </span>
               <span>
-                <button color="primary" mat-mini-fab>
+                <button color="primary" mat-mini-fab [routerLink]="['/settings/']">
                   <mat-icon>settings</mat-icon>
                 </button>
               </span>

@@ -26,6 +26,11 @@ export class RowRunnerComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.feedService.loadingSettings.subscribe(
+      (settings) => (this.speed = settings?.speed ?? this.speed)
+    );
+    this.feedService.loadSettings();
+
     this.feedService.article.subscribe((article) => {
       this.article = article ?? null;
       if (this.article && this.isAutostart) {

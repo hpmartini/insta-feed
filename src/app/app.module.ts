@@ -16,10 +16,11 @@ import { NavComponent } from './nav/nav.component';
 import { LayoutModule } from '@angular/cdk/layout';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HomeComponent } from './pages/home/home.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { ArticlesComponent } from './pages/articles/articles.component';
 import { MaterialModule } from './material.module';
+import { SettingsComponent } from './pages/settings/settings.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { MaterialModule } from './material.module';
     HomeComponent,
     SpinnerComponent,
     ArticlesComponent,
+    SettingsComponent,
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase, 'ready'),
@@ -44,6 +46,7 @@ import { MaterialModule } from './material.module';
     BrowserAnimationsModule,
     ReactiveFormsModule,
     MaterialModule,
+    FormsModule,
   ],
   providers: [FeedService],
   bootstrap: [AppComponent],
