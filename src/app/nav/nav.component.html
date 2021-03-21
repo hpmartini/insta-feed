@@ -17,7 +17,7 @@
             <mat-icon (click)="drawer.toggle()">arrow_right</mat-icon>
           </button>
           <span class="sidenav__toolbar__feed-link" fxLayoutAlign="start center" routerLink="/">
-            <mat-icon>bookmark</mat-icon>
+            <mat-icon color="primary">bookmark</mat-icon>
             <span>Feeds</span>
           </span>
           <button mat-icon-button fxHide.xs="true">
@@ -65,7 +65,7 @@
               routerLinkActive="active"
             >
               <span fxLayoutAlign="center center">
-                <mat-icon class="small-icon">{{
+                <mat-icon color="primary" class="small-icon">{{
                   rla.isActive ? "remove_red_eye" : entry.icon
                   }}</mat-icon>
                 {{ entry.name }}
