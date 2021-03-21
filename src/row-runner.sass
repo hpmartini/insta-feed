@@ -1,0 +1,16 @@
+@import "~@angular/material/theming"
+
+@include mat-core()
+
+$rr-primary: mat-palette($mat-blue, 800, 600, 900)
+$rr-accent: mat-palette($mat-indigo, 500, 200, 800)
+$rr-warn: mat-palette($mat-purple, 600, 200, 900)
+
+$rr-theme: mat-light-theme($rr-primary, $rr-accent, $rr-warn)
+
+@include angular-material-theme($rr-theme)
+
+$rr-dark-theme: mat-dark-theme($rr-primary, $rr-accent, $rr-warn)
+
+.dark
+  @include angular-material-theme($rr-dark-theme)

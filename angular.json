@@ -28,7 +28,7 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
+              "src/row-runner.sass",
               "src/styles.sass"
             ],
             "stylePreprocessorOptions": {
