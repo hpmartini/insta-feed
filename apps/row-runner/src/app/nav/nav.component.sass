@@ -1,0 +1,56 @@
+.sidenav
+  width: 200px
+  z-index: 100
+  &__toolbar:hover
+    background-color: #eeeeee
+    &__feed-link
+      cursor: pointer
+
+.app-toolbar
+  position: sticky
+  position: -webkit-sticky
+  top: 0
+  right: 0
+  z-index: 10
+
+.app-sidenav
+  position: relative
+  z-index: 100
+  .mat-drawer-container,
+  .mat-drawer-content
+    overflow: unset
+
+.sidenav .mat-toolbar
+  background: inherit
+
+.homeButton.mat-mini-fab
+  margin-left: 1rem
+
+.main-navigation
+  span
+    margin-left: 1rem
+
+.side-edit
+  padding: 0 16px
+  //button
+  //  transform: scale(0.65)
+
+.feed-list
+  mat-icon.small-icon
+    transform: scale(0.8)
+  mat-icon.clear-icon
+    transform: translateY(-2px)
+
+.active
+  font-weight: bold
+  background-color: #eeeeee
+
+.add-feed
+  padding: 20px
+  mat-form-field
+    width: 100%
+
+.remove-feed
+  transform: scale(0.7)
+  mat-icon.remove-icon
+    transform: scale(1.2) translateY(-1px)

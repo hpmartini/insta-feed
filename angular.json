@@ -17,18 +17,18 @@
       }
     },
     "@nrwl/angular:application": {
-      "style": "scss",
+      "style": "sass",
       "linter": "eslint",
       "unitTestRunner": "jest",
       "e2eTestRunner": "cypress"
     },
     "@nrwl/angular:library": {
-      "style": "scss",
+      "style": "sass",
       "linter": "eslint",
       "unitTestRunner": "jest"
     },
     "@nrwl/angular:component": {
-      "style": "scss"
+      "style": "sass"
     }
   },
   "projects": {
@@ -51,7 +51,10 @@
               "apps/row-runner/src/favicon.ico",
               "apps/row-runner/src/assets"
             ],
-            "styles": ["apps/row-runner/src/styles.scss"],
+            "styles": [
+              "apps/row-runner/src/row-runner.sass",
+              "apps/row-runner/src/styles.sass"
+            ],
             "scripts": []
           },
           "configurations": {

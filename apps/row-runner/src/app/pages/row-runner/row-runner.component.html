@@ -1,0 +1,57 @@
+<insta-feed-spinner [showSpinner]="!article || isAutostart"></insta-feed-spinner>
+
+<div
+  [ngClass.gt-xs]="{ 'content--regular': true }"
+  [ngClass.lt-sm]="{ 'content--mobile': true }"
+  class="page-content"
+>
+  <div *ngIf="article && !isAutostart" class="header">
+    <div *ngIf="!fullScreen">
+      <h1>{{ article?.title }}</h1>
+      <h2>{{ article?.excerpt }}</h2>
+    </div>
+
+    <div class="buttonRow" fxLayout="row">
+      <button
+        (click)="toggleActive()"
+        class="toggleSrt"
+        color="primary"
+        mat-fab
+      >
+        <mat-icon *ngIf="!isRowRunnerActive">double_arrow</mat-icon>
+        <mat-icon *ngIf="isRowRunnerActive">cancel</mat-icon>
+      </button>
+      <button
+        (click)="toggleActiveFullscreen()"
+        *ngIf="!isRowRunnerActive"
+        class="toggleSrt"
+        color="primary"
+        mat-fab
+      >
+        <mat-icon>fullscreen</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <article
+    *ngIf="!isRowRunnerActive && !isAutostart"
+    class="article-content"
+    lang="de"
+    [ngClass.gt-xs]="{ 'article-content--regular': true }"
+  >
+    <p>
+      {{ this.article?.content }}
+    </p>
+  </article>
+
+  <div
+    [ngClass.gt-xs]="{ 'animationContainer--regular': true }"
+    class="animationContainer"
+  >
+    <insta-feed-animation
+      *ngIf="isRowRunnerActive"
+      [inputText]="article.content"
+      [speed]="speed"
+    ></insta-feed-animation>
+  </div>
+</div>
