@@ -6,16 +6,14 @@ name: Deploy to Firebase Hosting on PR
 jobs:
   build_and_preview:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
+      - name: Install node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15'
       - name: Install dependencies
         run: npm ci
-      - name: Angular build
-        run: ng build
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_READY_E9B4E }}'
-          projectId: ready-e9b4e
-        env:
-          FIREBASE_CLI_PREVIEWS: hostingchannels
+      - name: Build
+        run: npm run build-prod
