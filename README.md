@@ -1,4 +1,5 @@
-
+[![Deploy to Firebase Hosting on merge](https://github.com/hpmartini/insta-feed/actions/workflows/firebase-hosting-merge.yml/badge.svg)](https://github.com/hpmartini/insta-feed/actions/workflows/firebase-hosting-merge.yml)
+[![Build on PR](https://github.com/hpmartini/insta-feed/actions/workflows/firebase-hosting-pull-request.yml/badge.svg)](https://github.com/hpmartini/insta-feed/actions/workflows/firebase-hosting-pull-request.yml)
 
 # InstaFeed
 

@@ -6,7 +6,7 @@
     ]
   },
   "hosting": {
-    "public": "dist/apps/rowrunner",
+    "public": "dist/apps/row-runner",
     "ignore": [
       "firebase.json",
       "**/.*",
