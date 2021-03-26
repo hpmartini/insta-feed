@@ -41,7 +41,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/apps/row-runner",
+            "outputPath": "public",
             "index": "apps/row-runner/src/index.html",
             "main": "apps/row-runner/src/main.ts",
             "polyfills": "apps/row-runner/src/polyfills.ts",

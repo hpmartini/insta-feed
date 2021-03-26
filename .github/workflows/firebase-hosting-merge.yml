@@ -21,7 +21,7 @@ jobs:
       - name: Build
         run: npm run build-prod
       - run: ls -l
-      - run: cat dist/apps/row-runner/index.html
+      - run: cat public/index.html
       - name: Deploy to Firebase Functions
         uses: w9jds/firebase-action@master
         with:
