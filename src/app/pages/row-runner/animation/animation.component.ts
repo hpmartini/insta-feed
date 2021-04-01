@@ -6,6 +6,7 @@ import {
   ElementRef,
   Input,
   OnDestroy,
+  OnInit,
   ViewChild,
 } from '@angular/core';
 import { concatMap, delay, map } from 'rxjs/operators';
@@ -21,7 +22,7 @@ let hyphen = null;
   styleUrls: ['./animation.component.sass'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AnimationComponent implements OnDestroy, AfterViewInit {
+export class AnimationComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('rowRunner', { static: false }) rowRunner: ElementRef;
 
   @Input() inputText: string;
@@ -33,7 +34,9 @@ export class AnimationComponent implements OnDestroy, AfterViewInit {
   private lineBreak = '\n';
   private caret = '▉';
 
-  constructor(private ref: ChangeDetectorRef) {
+  constructor(private ref: ChangeDetectorRef) {}
+
+  ngOnInit(): void {
     hyphen = new Hypher(german);
     this.output = this.caret;
   }
