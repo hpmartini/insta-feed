@@ -12,14 +12,6 @@ const Readability = require('@mozilla/readability');
 export class FeedService {
   @ViewChild('dummyDiv', { static: false }) dummyDiv: ElementRef;
 
-  private emptyArticle: {
-    siteName: '';
-    content: '';
-    excerpt: '';
-    title: '';
-    url: '';
-  };
-
   public article = new BehaviorSubject<Article>(null);
   public articleList = new BehaviorSubject<FeedObject[]>(null);
   public updatingFeedList = new BehaviorSubject<boolean>(false);
@@ -58,15 +50,6 @@ export class FeedService {
         }))
       );
     });
-  }
-
-  public getArticleByUrl(url: string, index: number): void {
-    console.log(url);
-    this.article.next(this.emptyArticle);
-    const getFeed = this.functions.httpsCallable('getFeed');
-    getFeed({ url }).subscribe((result) =>
-      this.loadArticle(result.items[index].link)
-    );
   }
 
   public loadArticle(url): void {
