@@ -5,7 +5,7 @@
       #drawer
       [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
       [mode]="(isHandset$ | async) ? 'over' : 'side'"
-      [opened]="(isHandset$ | async) === false"
+      [opened]="(isHandset$ | async) === false && !animationActiveService.isAnimationActive"
       [position]="(isHandset$ | async) ? 'end' : 'start'"
       class="sidenav"
       fixedInViewport
