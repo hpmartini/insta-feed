@@ -1,28 +1,33 @@
+@use '_bend_shadow'
+
 .content-wrapper
   max-width: 1200px
   margin: 0 auto
   .article-list
     margin: 16px 0 16px 16px
     .card-wrapper
+      position: relative
       display: flex
-      margin-bottom: 32px
-      margin-right: 32px
-      padding: 8px
+      //margin-bottom: 32px
+      //margin-right: 32px
+      padding: 32px
       overflow: hidden
       text-overflow: ellipsis
       .mat-card
         height: 350px
         width: 300px
+        box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)
         .mat-card-header
           cursor: pointer
           .mat-card-header-text
-            margin: 0
+            margin: 0 0 0 8px
           h2
             max-height: 95px
             overflow: hidden
             margin-right: 8px
         .mat-card-content
           padding: 16px
+          cursor: pointer
           h3
             max-height: 80px
             overflow: hidden
@@ -30,3 +35,29 @@
           padding: 0 42px 0 42px
         .mat-card-footer
           padding: 0 32px 16px 32px
+    .card-wrapper:before, .card-wrapper:after
+      z-index: -1
+      position: absolute
+      content: ""
+      bottom: 45px
+      left: 42px
+      width: 38%
+      top: 80%
+      max-width: 300px
+      background: #777
+      -webkit-box-shadow: 0 15px 10px rgba(7,7,7,0.23)
+      -moz-box-shadow: 0 15px 10px rgba(7,7,7,0.23)
+      box-shadow: 0 15px 10px rgba(7,7,7,0.23)
+      -webkit-transform: rotate(bend_shadow.$rotation_left)
+      -moz-transform: rotate(bend_shadow.$rotation_left)
+      -o-transform: rotate(bend_shadow.$rotation_left)
+      -ms-transform: rotate(bend_shadow.$rotation_left)
+      transform: rotate(bend_shadow.$rotation_left)
+    .card-wrapper:after
+      -webkit-transform: rotate(bend_shadow.$rotation_right)
+      -moz-transform: rotate(bend_shadow.$rotation_right)
+      -o-transform: rotate(bend_shadow.$rotation_right)
+      -ms-transform: rotate(bend_shadow.$rotation_right)
+      transform: rotate(bend_shadow.$rotation_right)
+      right: 42px
+      left: auto

@@ -1,7 +1,7 @@
 <app-spinner [showSpinner]="!articleList.length"></app-spinner>
 
 <div class="content-wrapper">
-  <div class="article-list" fxLayout="row wrap" fxLayoutAlign="center" fxLayoutGap="32px">
+  <div class="article-list" fxLayout="row wrap" fxLayoutAlign="center">
     <div *ngFor="let article of articleList" class="card-wrapper">
       <mat-card fxLayout="column" fxLayoutAlign="space-between">
         <div>
@@ -9,7 +9,7 @@
             <h2>{{ article.title }}</h2>
           </mat-card-header>
 
-          <mat-card-content>
+          <mat-card-content [routerLink]="['/rowrunner/', article.guid]">
             <h3>{{ article.contentSnippet }}</h3>
           </mat-card-content>
         </div>
