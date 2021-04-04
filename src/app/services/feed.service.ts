@@ -4,7 +4,7 @@ import { Article } from '../model/article';
 import { BehaviorSubject } from 'rxjs';
 import { Feed } from '../model/feed';
 import { FeedObject } from '../model/FeedObject';
-import { SettingsObject } from '../model/SettingsObject';
+import { Settings } from '../model/settings';
 
 const Readability = require('@mozilla/readability');
 
@@ -17,7 +17,7 @@ export class FeedService {
   public updatingFeedList = new BehaviorSubject<boolean>(false);
   public feedList = new BehaviorSubject<[]>(null);
   public savingSettings = new BehaviorSubject<boolean>(false);
-  public loadingSettings = new BehaviorSubject<SettingsObject>(null);
+  public loadingSettings = new BehaviorSubject<Settings>(null);
   public lines: string[];
 
   constructor(private readonly functions: AngularFireFunctions) {}
@@ -82,7 +82,7 @@ export class FeedService {
     );
   }
 
-  saveSettings(settings: SettingsObject): void {
+  saveSettings(settings: Settings): void {
     this.savingSettings.next(true);
     const settingsFunction = this.functions.httpsCallable('saveSettings');
     settingsFunction({ ...settings }).subscribe(() =>
