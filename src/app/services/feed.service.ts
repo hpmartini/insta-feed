@@ -89,11 +89,4 @@ export class FeedService {
       this.savingSettings.next(false)
     );
   }
-
-  loadSettings(): void {
-    const settingsFunction = this.functions.httpsCallable('loadSettings');
-    settingsFunction(null).subscribe((result) =>
-      this.loadingSettings.next(result)
-    );
-  }
 }
