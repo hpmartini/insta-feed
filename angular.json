@@ -32,7 +32,9 @@
               "src/styles.sass"
             ],
             "stylePreprocessorOptions": {
-              "includePaths": ["src/app/theme"]
+              "includePaths": [
+                "src/app/theme"
+              ]
             },
             "scripts": []
           },
@@ -135,6 +137,7 @@
   },
   "defaultProject": "insta-feed",
   "cli": {
-    "analytics": false
+    "analytics": false,
+    "defaultCollection": "@ngrx/schematics"
   }
 }
