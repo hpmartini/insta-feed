@@ -4,6 +4,7 @@ import { Article } from '../../model/article';
 import { FeedService } from '../../services/feed.service';
 import { ActivatedRoute } from '@angular/router';
 import { AnimationActiveService } from '../../services/animation-active.service';
+import { SettingsFacade } from '../../+state/settings/settings.facade';
 
 @Component({
   selector: 'app-row-runner',
@@ -22,14 +23,14 @@ export class RowRunnerComponent implements OnInit, OnDestroy {
     private readonly functions: AngularFireFunctions,
     private readonly feedService: FeedService,
     private readonly route: ActivatedRoute,
-    private readonly animationActiveService: AnimationActiveService
+    private readonly animationActiveService: AnimationActiveService,
+    private readonly settingsFacade: SettingsFacade
   ) {}
 
   ngOnInit(): void {
-    this.feedService.loadingSettings.subscribe(
+    this.settingsFacade.settings$.subscribe(
       (settings) => (this.speed = settings?.speed ?? this.speed)
     );
-    this.feedService.loadSettings();
 
     this.feedService.article.subscribe((article) => {
       this.article = article ?? null;

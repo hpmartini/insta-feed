@@ -21,6 +21,13 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
 import { ArticlesComponent } from './pages/articles/articles.component';
 import { MaterialModule } from './material.module';
 import { SettingsComponent } from './pages/settings/settings.component';
+import { StoreModule } from '@ngrx/store';
+import * as fromSettings from './+state/settings/settings.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { SettingsEffects } from './+state/settings/settings.effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { SettingsService } from './+state/settings/settings.service';
+import { SettingsFacade } from './+state/settings/settings.facade';
 
 @NgModule({
   declarations: [
@@ -47,8 +54,17 @@ import { SettingsComponent } from './pages/settings/settings.component';
     ReactiveFormsModule,
     MaterialModule,
     FormsModule,
+    StoreModule.forRoot({}),
+    EffectsModule.forRoot([]),
+    StoreModule.forFeature(
+      fromSettings.settingsFeatureKey,
+      fromSettings.reducer,
+      { metaReducers: fromSettings.metaReducers }
+    ),
+    EffectsModule.forFeature([SettingsEffects]),
+    !environment.production ? StoreDevtoolsModule.instrument() : [],
   ],
-  providers: [FeedService],
+  providers: [FeedService, SettingsService, SettingsFacade],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

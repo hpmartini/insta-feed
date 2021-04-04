@@ -1,4 +1,4 @@
-export interface SettingsObject {
+export interface Settings {
   speed?: number;
   defaultFeed?: string;
 }
