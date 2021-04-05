@@ -27,6 +27,9 @@ export class SettingsComponent implements OnInit {
   }
 
   save(): void {
+    if (this.isSaving) {
+      return;
+    }
     this.feedService.saveSettings({ speed: this.speed });
   }
 }

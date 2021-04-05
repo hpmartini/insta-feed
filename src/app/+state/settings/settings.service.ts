@@ -11,15 +11,12 @@ export class SettingsService {
 
   saveSettings(settings: Settings): void {
     this.savingSettings.next(true);
-    const settingsFunction = this.functions.httpsCallable('saveSettings');
-    settingsFunction({ ...settings }).subscribe(() =>
-      this.savingSettings.next(false)
-    );
+    this.functions
+      .httpsCallable('saveSettings')({ ...settings })
+      .subscribe(() => this.savingSettings.next(false));
   }
 
   loadSettings(): Observable<any> {
-    console.log('load settings');
-    const settingsFunction = this.functions.httpsCallable('loadSettings');
-    return settingsFunction(null);
+    return this.functions.httpsCallable('loadSettings')(null);
   }
 }

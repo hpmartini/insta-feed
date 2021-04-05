@@ -17,7 +17,6 @@ export class SettingsFacade {
   ) {}
 
   loadSettings(): void {
-    console.log('facade');
     this.store.dispatch(fromSettingsActions.loadSettings());
   }
 }
