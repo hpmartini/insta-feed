@@ -1,10 +1,10 @@
 import { ElementRef, Injectable, ViewChild } from '@angular/core';
 import { AngularFireFunctions } from '@angular/fire/functions';
-import { BehaviorSubject } from 'rxjs';
-import { Feed } from '../model/feed';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Feed } from '../../model/feed';
 
 @Injectable()
-export class FeedService {
+export class FeedsService {
   @ViewChild('dummyDiv', { static: false }) dummyDiv: ElementRef;
   public updatingFeedList = new BehaviorSubject<boolean>(false);
   public feedList = new BehaviorSubject<[]>(null);
@@ -25,10 +25,8 @@ export class FeedService {
     });
   }
 
-  public getFeedListFromFirestore(): void {
-    this.CALLABLE('getFeedList')(null).subscribe((feedList) =>
-      this.feedList.next(feedList)
-    );
+  public getFeedListFromFirestore(): Observable<any> {
+    return this.CALLABLE('getFeedList')(null);
   }
 
   deleteFeed(feedName: string): void {

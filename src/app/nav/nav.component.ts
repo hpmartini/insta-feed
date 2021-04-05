@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AnimationActiveService } from '../services/animation-active.service';
 import { Feed } from '../model/feed';
-import { FeedService } from '../services/feed.service';
+import { FeedsService } from '../+state/feeds/feeds.service';
 import { NavigationStart, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
@@ -33,7 +33,7 @@ export class NavComponent implements OnInit {
     );
 
   constructor(
-    private readonly feedService: FeedService,
+    private readonly feedService: FeedsService,
     private readonly router: Router,
     public readonly animationActiveService: AnimationActiveService,
     private readonly breakpointObserver: BreakpointObserver

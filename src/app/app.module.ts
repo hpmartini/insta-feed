@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { AngularFireModule } from '@angular/fire';
 import { environment } from '../environments/environment';
 import { RowRunnerComponent } from './pages/row-runner/row-runner.component';
-import { FeedService } from './services/feed.service';
+import { FeedsService } from './+state/feeds/feeds.service';
 import { HttpClientModule } from '@angular/common/http';
 import { AngularFireFunctionsModule } from '@angular/fire/functions';
 import { CommonModule } from '@angular/common';
@@ -65,7 +65,7 @@ import { ArticleService } from './services/article.service';
     EffectsModule.forFeature([SettingsEffects]),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
   ],
-  providers: [FeedService, SettingsService, SettingsFacade, ArticleService],
+  providers: [FeedsService, SettingsService, SettingsFacade, ArticleService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

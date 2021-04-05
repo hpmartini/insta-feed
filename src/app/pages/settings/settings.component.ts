@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FeedService } from '../../services/feed.service';
+import { FeedsService } from '../../+state/feeds/feeds.service';
 import { SettingsFacade } from '../../+state/settings/settings.facade';
 
 @Component({
@@ -12,7 +12,7 @@ export class SettingsComponent implements OnInit {
   public isSaving = false;
 
   constructor(
-    private readonly feedService: FeedService,
+    private readonly feedService: FeedsService,
     private readonly settingsFacade: SettingsFacade
   ) {}
 
