@@ -30,6 +30,6 @@ export class SettingsComponent implements OnInit {
     if (this.isSaving) {
       return;
     }
-    this.feedService.saveSettings({ speed: this.speed });
+    this.settingsFacade.saveSettings({ speed: this.speed });
   }
 }
