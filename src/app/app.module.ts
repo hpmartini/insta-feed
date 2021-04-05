@@ -28,6 +28,7 @@ import { SettingsEffects } from './+state/settings/settings.effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { SettingsService } from './+state/settings/settings.service';
 import { SettingsFacade } from './+state/settings/settings.facade';
+import { BreakpointService } from './services/breakpoint.service';
 
 @NgModule({
   declarations: [
@@ -64,7 +65,7 @@ import { SettingsFacade } from './+state/settings/settings.facade';
     EffectsModule.forFeature([SettingsEffects]),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
   ],
-  providers: [FeedService, SettingsService, SettingsFacade],
+  providers: [FeedService, SettingsService, SettingsFacade, BreakpointService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
