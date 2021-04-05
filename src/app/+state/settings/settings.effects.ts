@@ -16,7 +16,6 @@ export class SettingsEffects {
     this.actions$.pipe(
       ofType(SettingsActions.loadSettings),
       mergeMap(() => {
-        console.log('effect');
         return this.settingsService.loadSettings().pipe(
           map((settings) => SettingsActions.loadSettingsSuccess({ settings })),
           catchError((error) =>
