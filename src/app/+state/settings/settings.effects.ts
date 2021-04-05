@@ -25,4 +25,19 @@ export class SettingsEffects {
       })
     )
   );
+
+  saveSettings$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(SettingsActions.saveSettings),
+      mergeMap((action) =>
+        this.settingsService.saveSettings(action.settings).pipe(
+          map((result) => SettingsActions.saveSettingsSuccess({ result })),
+          map(() => SettingsActions.loadSettings()),
+          catchError((error) =>
+            of(SettingsActions.saveSettingsFailure({ error }))
+          )
+        )
+      )
+    )
+  );
 }

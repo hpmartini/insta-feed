@@ -4,6 +4,9 @@ import {
   loadSettings,
   loadSettingsFailure,
   loadSettingsSuccess,
+  saveSettings,
+  saveSettingsFailure,
+  saveSettingsSuccess,
 } from './settings.actions';
 import { Settings } from '../../model/settings';
 
@@ -32,20 +35,33 @@ export const metaReducers: MetaReducer<SettingsState>[] = !environment.productio
 
 export const settingsReducer = createReducer(
   initialState,
-  on(loadSettings, (state) => {
-    console.log('reducer');
-    return {
-      ...state,
-      isLoaded: false,
-      error: null,
-    };
-  }),
+  on(loadSettings, (state) => ({
+    ...state,
+    isLoaded: false,
+    error: null,
+  })),
   on(loadSettingsSuccess, (state, { settings }) => ({
     ...state,
     settings,
     isLoaded: true,
+    error: null,
   })),
   on(loadSettingsFailure, (state, { error }) => ({
+    ...state,
+    error,
+    isLoaded: true,
+  })),
+  on(saveSettings, (state) => ({
+    ...state,
+    isLoaded: false,
+    error: null,
+  })),
+  on(saveSettingsSuccess, (state) => ({
+    ...state,
+    isLoaded: true,
+    error: null,
+  })),
+  on(saveSettingsFailure, (state, { error }) => ({
     ...state,
     error,
     isLoaded: true,
