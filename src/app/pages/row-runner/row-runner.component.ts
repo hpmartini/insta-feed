@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { Article } from '../../model/article';
-import { FeedService } from '../../services/feed.service';
 import { ActivatedRoute } from '@angular/router';
 import { AnimationActiveService } from '../../services/animation-active.service';
 import { SettingsFacade } from '../../+state/settings/settings.facade';
+import { ArticleService } from '../../services/article.service';
 
 @Component({
   selector: 'app-row-runner',
@@ -21,7 +21,7 @@ export class RowRunnerComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly functions: AngularFireFunctions,
-    private readonly feedService: FeedService,
+    private readonly articleService: ArticleService,
     private readonly route: ActivatedRoute,
     private readonly animationActiveService: AnimationActiveService,
     private readonly settingsFacade: SettingsFacade
@@ -32,7 +32,7 @@ export class RowRunnerComponent implements OnInit, OnDestroy {
       (settings) => (this.speed = settings?.speed ?? this.speed)
     );
 
-    this.feedService.article.subscribe((article) => {
+    this.articleService.article.subscribe((article) => {
       this.article = article ?? null;
       if (this.article && this.isAutostart) {
         this.isAutostart = false;
@@ -43,7 +43,7 @@ export class RowRunnerComponent implements OnInit, OnDestroy {
     this.route.paramMap.subscribe((route) => {
       this.isAutostart = route.get('isAutostart') === 'true';
       const feedUrl = 'https://'.concat(route.get('url'));
-      this.feedService.loadArticle(feedUrl.replace(/\\/g, '/'));
+      this.articleService.loadArticle(feedUrl.replace(/\\/g, '/'));
     });
   }
 

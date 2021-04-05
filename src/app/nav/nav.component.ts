@@ -4,7 +4,9 @@ import { AnimationActiveService } from '../services/animation-active.service';
 import { Feed } from '../model/feed';
 import { FeedService } from '../services/feed.service';
 import { NavigationStart, Router } from '@angular/router';
-import { BreakpointService } from '../services/breakpoint.service';
+import { Observable } from 'rxjs';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { map, shareReplay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-nav',
@@ -18,24 +20,26 @@ export class NavComponent implements OnInit {
   public isNavEntriesLoaded = false;
   public isHome = false;
   public isFeedListUpdating = false;
-  public isHandset$;
-  public isTablet$;
   public currentPage: string;
   public newFeedForm = new FormGroup({
     name: new FormControl(''),
     url: new FormControl(''),
   });
+  public isHandset$: Observable<boolean> = this.breakpointObserver
+    .observe(Breakpoints.Handset)
+    .pipe(
+      map((result) => result.matches),
+      shareReplay()
+    );
 
   constructor(
     private readonly feedService: FeedService,
     private readonly router: Router,
     public readonly animationActiveService: AnimationActiveService,
-    public readonly breakpointService: BreakpointService
+    private readonly breakpointObserver: BreakpointObserver
   ) {}
 
   ngOnInit(): void {
-    this.isHandset$ = this.breakpointService.isHandset$;
-    this.isTablet$ = this.breakpointService.isTablet$;
     this.feedService.feedList.subscribe((feedList) => {
       if (feedList?.length > 0) {
         this.navEntries = feedList;
