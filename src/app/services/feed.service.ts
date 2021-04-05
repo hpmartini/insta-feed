@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Feed } from '../model/feed';
 import { FeedObject } from '../model/FeedObject';
 import { Settings } from '../model/settings';
+import { SettingsFacade } from '../+state/settings/settings.facade';
 
 const Readability = require('@mozilla/readability');
 
@@ -17,15 +18,18 @@ export class FeedService {
   public updatingFeedList = new BehaviorSubject<boolean>(false);
   public feedList = new BehaviorSubject<[]>(null);
   public savingSettings = new BehaviorSubject<boolean>(false);
-  public loadingSettings = new BehaviorSubject<Settings>(null);
   public lines: string[];
 
-  constructor(private readonly functions: AngularFireFunctions) {}
+  constructor(
+    private readonly functions: AngularFireFunctions,
+    private readonly settingsFacade: SettingsFacade
+  ) {}
+
+  private readonly CALLABLE = this.functions.httpsCallable;
 
   public addFeedToFirestore(feed: Feed): void {
     this.updatingFeedList.next(true);
-    const addFeed = this.functions.httpsCallable('addFeed');
-    addFeed(feed).subscribe((result) => {
+    this.CALLABLE('addFeed')(feed).subscribe((result) => {
       if (result) {
         this.getFeedListFromFirestore();
       }
@@ -34,14 +38,14 @@ export class FeedService {
   }
 
   public getFeedListFromFirestore(): void {
-    const getFeedList = this.functions.httpsCallable('getFeedList');
-    getFeedList(null).subscribe((feedList) => this.feedList.next(feedList));
+    this.CALLABLE('getFeedList')(null).subscribe((feedList) =>
+      this.feedList.next(feedList)
+    );
   }
 
   public loadArticleList(url: string): void {
     this.articleList.next([]);
-    const getFeed = this.functions.httpsCallable('getFeed');
-    getFeed({ url }).subscribe((result) => {
+    this.CALLABLE('getFeed')({ url }).subscribe((result) => {
       this.articleList.next(
         result.items.map((item: FeedObject) => ({
           ...item,
@@ -53,8 +57,7 @@ export class FeedService {
   }
 
   public loadArticle(url): void {
-    const getArticle = this.functions.httpsCallable('getArticle');
-    getArticle({ url }).subscribe((article) =>
+    this.CALLABLE('getArticle')({ url }).subscribe((article) =>
       this.article.next(this.getParsedArticleWebSite(article))
     );
   }
@@ -76,17 +79,16 @@ export class FeedService {
 
   deleteFeed(feedName: string): void {
     this.updatingFeedList.next(true);
-    const deleteFeed = this.functions.httpsCallable('deleteFeed');
-    deleteFeed({ name: feedName }).subscribe(() =>
+    this.CALLABLE('deleteFeed')({ name: feedName }).subscribe(() =>
       this.updatingFeedList.next(false)
     );
   }
 
   saveSettings(settings: Settings): void {
     this.savingSettings.next(true);
-    const settingsFunction = this.functions.httpsCallable('saveSettings');
-    settingsFunction({ ...settings }).subscribe(() =>
-      this.savingSettings.next(false)
-    );
+    this.CALLABLE('saveSettings')({ ...settings }).subscribe(() => {
+      this.savingSettings.next(false);
+      this.settingsFacade.loadSettings();
+    });
   }
 }
