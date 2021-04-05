@@ -12,20 +12,22 @@
     >
       <!-- SIDENAV TOOLBAR -->
       <mat-toolbar fxLayoutAlign="space-between center">
-        <span class="sidenav__toolbar" fxLayout="row" fxLayoutAlign="space-between" fxFlex.gt-sm="100">
-          <button mat-icon-button fxHide.gt-sm="true">
+        <span class="sidenav__toolbar" fxFlex.gt-sm="100" fxLayout="row" fxLayoutAlign="space-between">
+          <button fxHide.gt-sm="true" mat-icon-button>
             <mat-icon (click)="drawer.toggle()">arrow_right</mat-icon>
           </button>
-          <span class="sidenav__toolbar__feed-link" fxLayoutAlign="start center" routerLink="/">
+          <span (click)="drawer.close()" class="sidenav__toolbar__feed-link" fxLayoutAlign="start center"
+                routerLink="/">
             <mat-icon color="primary">bookmark</mat-icon>
             <span>Feeds</span>
           </span>
-          <button mat-icon-button fxHide.xs="true">
+          <button fxHide.xs="true" mat-icon-button>
             <mat-icon (click)="drawer.toggle()">arrow_left</mat-icon>
           </button>
         </span>
 
-        <button color="primary" mat-icon-button fxHide.gt-sm="true" [routerLink]="['/settings/']">
+        <button (click)="drawer.close()" [routerLink]="['/settings/']" color="primary" fxHide.gt-xs="true"
+                mat-icon-button>
           <mat-icon>settings</mat-icon>
         </button>
       </mat-toolbar>
@@ -59,13 +61,14 @@
           <div fxFlex="100" fxLayoutAlign="space-between center">
             <a
               #rla="routerLinkActive"
+              (click)="isHandset$ ? drawer.close() : null"
               [routerLink]="['article', entry.url]"
               fxLayout="row"
               mat-list-item
               routerLinkActive="active"
             >
               <span fxLayoutAlign="center center">
-                <mat-icon color="primary" class="small-icon">{{
+                <mat-icon class="small-icon" color="primary">{{
                   rla.isActive ? "remove_red_eye" : entry.icon
                   }}</mat-icon>
                 {{ entry.name }}
@@ -150,9 +153,9 @@
                 <mat-icon>menu</mat-icon>
               </button>
               <button
-                fxHide.xs="true"
                 [ngClass]="{ homeButton: !drawer.opened }"
                 color="primary"
+                fxHide.xs="true"
                 mat-mini-fab
                 routerLink="/"
               >
@@ -179,7 +182,7 @@
                 </button>
               </span>
               <span>
-                <button color="primary" mat-mini-fab [routerLink]="['/settings/']">
+                <button [routerLink]="['/settings/']" color="primary" mat-mini-fab>
                   <mat-icon>settings</mat-icon>
                 </button>
               </span>
@@ -191,8 +194,8 @@
       <div
         *ngIf="isNavEntriesLoaded"
         [ngClass]="{
-          content__tablet: (isTablet$ | async),
-          content__handset: (isHandset$ | async)
+          content__static: !animationActiveService.isAnimationActive,
+          content__static__handset: (isHandset$ | async) && !animationActiveService.isAnimationActive
         }"
         class="content"
       >
