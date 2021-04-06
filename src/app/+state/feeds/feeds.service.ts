@@ -19,13 +19,13 @@ export class FeedsService {
     this.updatingFeedList.next(true);
     this.CALLABLE('addFeed')(feed).subscribe((result) => {
       if (result) {
-        this.getFeedListFromFirestore();
+        this.loadFeeds();
       }
       this.updatingFeedList.next(false);
     });
   }
 
-  public getFeedListFromFirestore(): Observable<any> {
+  public loadFeeds(): Observable<any> {
     return this.CALLABLE('getFeedList')(null);
   }
 
