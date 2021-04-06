@@ -61,7 +61,7 @@
           <div fxFlex="100" fxLayoutAlign="space-between center">
             <a
               #rla="routerLinkActive"
-              (click)="isHandset$ ? drawer.close() : null"
+              (click)="isHandset ? drawer.close() : null"
               [routerLink]="['article', entry.url]"
               fxLayout="row"
               mat-list-item

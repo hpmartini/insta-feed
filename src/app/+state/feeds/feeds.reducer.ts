@@ -1,5 +1,5 @@
 import { Feed } from '../../model/feed';
-import { createReducer, on } from '@ngrx/store';
+import { Action, createReducer, on } from '@ngrx/store';
 import { loadFeeds, loadFeedsSuccess } from './feeds.actions';
 import { loadSettingsFailure } from '../settings/settings.actions';
 
@@ -39,3 +39,10 @@ export const feedReducer = createReducer(
     isLoaded: true,
   }))
 );
+
+export function reducer(
+  state: FeedsState | undefined,
+  action: Action
+): FeedsState {
+  return feedReducer(state, action);
+}

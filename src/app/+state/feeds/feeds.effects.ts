@@ -16,7 +16,7 @@ export class FeedsEffects {
     this.action$.pipe(
       ofType(FeedActions.loadFeeds),
       mergeMap(() => {
-        return this.feedsService.getFeedListFromFirestore().pipe(
+        return this.feedsService.loadFeeds().pipe(
           map((feeds) => FeedActions.loadFeedsSuccess({ feeds })),
           catchError((error) => of(FeedActions.loadFeedsFailure({ error })))
         );
