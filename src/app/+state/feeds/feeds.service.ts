@@ -15,14 +15,8 @@ export class FeedsService {
 
   private readonly CALLABLE = this.functions.httpsCallable;
 
-  public addFeedToFirestore(feed: Feed): void {
-    this.updatingFeedList.next(true);
-    this.CALLABLE('addFeed')(feed).subscribe((result) => {
-      if (result) {
-        this.loadFeeds();
-      }
-      this.updatingFeedList.next(false);
-    });
+  public addFeedToFirestore(feed: Feed): Observable<any> {
+    return this.CALLABLE('addFeed')(feed);
   }
 
   public loadFeeds(): Observable<any> {
