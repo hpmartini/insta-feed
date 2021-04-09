@@ -23,4 +23,18 @@ export class FeedsEffects {
       })
     )
   );
+
+  addFeed$ = createEffect(() =>
+    this.action$.pipe(
+      ofType(FeedActions.addFeed),
+      mergeMap((action) => {
+        return this.feedsService.addFeedToFirestore(action.feed).pipe(
+          map((result) =>
+            FeedActions.addFeedSuccess({ result, addedFeed: action.feed })
+          ),
+          catchError((error) => of(FeedActions.loadFeedsFailure({ error })))
+        );
+      })
+    )
+  );
 }

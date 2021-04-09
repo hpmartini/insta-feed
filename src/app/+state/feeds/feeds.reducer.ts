@@ -57,9 +57,9 @@ export const feedReducer = createReducer(
     isLoaded: false,
     error: null,
   })),
-  on(addFeedSuccess, (state, { feeds: feed }) => {
+  on(addFeedSuccess, (state, { addedFeed: addedFeed }) => {
     const feeds = state.feeds;
-    feeds.push(feed);
+    feeds.push(addedFeed);
     return {
       ...state,
       feeds,
