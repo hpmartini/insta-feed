@@ -71,7 +71,7 @@
                 <mat-icon class="small-icon" color="primary">{{
                   rla.isActive ? "remove_red_eye" : entry.icon
                   }}</mat-icon>
-                {{ entry.name }}
+                {{ entry.name ? entry.name : 'article' }}
               </span>
             </a>
             <button
