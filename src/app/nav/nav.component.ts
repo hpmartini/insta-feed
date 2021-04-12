@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AnimationActiveService } from '../services/animation-active.service';
 import { Feed } from '../model/feed';
-import { FeedService } from '../services/feed.service';
+import { FeedsService } from '../+state/feeds/feeds.service';
 import { NavigationStart, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { map, shareReplay } from 'rxjs/operators';
+import { map, shareReplay, tap } from 'rxjs/operators';
+import { FeedsFacade } from '../+state/feeds/feeds.facade';
 
 @Component({
   selector: 'app-nav',
@@ -25,37 +26,34 @@ export class NavComponent implements OnInit {
     name: new FormControl(''),
     url: new FormControl(''),
   });
+  public isHandset: boolean;
   public isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
     .pipe(
       map((result) => result.matches),
+      tap((result) => (this.isHandset = result)),
       shareReplay()
     );
 
   constructor(
-    private readonly feedService: FeedService,
+    private readonly feedService: FeedsService,
     private readonly router: Router,
     public readonly animationActiveService: AnimationActiveService,
-    private readonly breakpointObserver: BreakpointObserver
+    private readonly breakpointObserver: BreakpointObserver,
+    private readonly feedsFacade: FeedsFacade
   ) {}
 
   ngOnInit(): void {
-    this.feedService.feedList.subscribe((feedList) => {
-      if (feedList?.length > 0) {
-        this.navEntries = feedList;
-        this.isNavEntriesLoaded = true;
-      }
-    });
-    this.feedService.getFeedListFromFirestore();
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationStart) {
-        this.isHome = event.url === '/';
-        this.currentPage = event.url === '/' ? 'home' : '';
-      }
-    });
+    this.feedsFacade.feeds$.subscribe((feeds) => (this.navEntries = feeds));
+    this.feedsFacade.isLoaded$.subscribe(
+      (isLoaded) => (this.isNavEntriesLoaded = isLoaded)
+    );
+
     this.feedService.updatingFeedList.subscribe(
       (updating) => (this.isFeedListUpdating = updating)
     );
+
+    this.handleRouterParameters();
   }
 
   addNewFeed(): void {
@@ -64,9 +62,10 @@ export class NavComponent implements OnInit {
       url: this.newFeedForm.value.url,
     };
 
-    this.feedService.addFeedToFirestore(feed);
+    // this.feedService.addFeedToFirestore(feed);
+    this.feedsFacade.addFeed(feed);
     this.isAddMode = false;
-    this.feedService.getFeedListFromFirestore();
+    this.feedsFacade.loadFeeds();
     this.newFeedForm.reset();
 
     // todo show snackbar on success
@@ -90,5 +89,14 @@ export class NavComponent implements OnInit {
   toggleAddMode(): void {
     this.isAddMode = !this.isAddMode;
     this.isEditMode = false;
+  }
+
+  private handleRouterParameters(): void {
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        this.isHome = event.url === '/';
+        this.currentPage = event.url === '/' ? 'home' : '';
+      }
+    });
   }
 }
