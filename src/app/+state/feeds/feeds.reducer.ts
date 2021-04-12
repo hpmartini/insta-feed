@@ -1,18 +1,18 @@
 import { Feed } from '../../model/feed';
 import { Action, createReducer, on } from '@ngrx/store';
 import {
+  addFeed,
+  addFeedFailure,
+  addFeedSuccess,
+  deleteFeed,
+  deleteFeedFailure,
+  deleteFeedSuccess,
   loadFeeds,
   loadFeedsFailure,
   loadFeedsSuccess,
-  addFeed,
-  addFeedSuccess,
-  addFeedFailure,
-  deleteFeed,
-  deleteFeedSuccess,
-  deleteFeedFailure,
   updateFeed,
-  updateFeedSuccess,
   updateFeedFailure,
+  updateFeedSuccess,
 } from './feeds.actions';
 
 export const feedsFeatureKey = 'feeds';
@@ -58,7 +58,7 @@ export const feedReducer = createReducer(
     error: null,
   })),
   on(addFeedSuccess, (state, { addedFeed: addedFeed }) => {
-    const feeds = state.feeds;
+    const feeds = state.feeds.map((feed) => feed);
     feeds.push(addedFeed);
     return {
       ...state,

@@ -3,6 +3,7 @@ import * as fromFeeds from './feeds.reducer';
 import * as fromFeedsSelectors from './feeds.selectors';
 import * as fromFeedsActions from './feeds.actions';
 import { select, Store } from '@ngrx/store';
+import { Feed } from '../../model/feed';
 
 @Injectable()
 export class FeedsFacade {
@@ -14,5 +15,9 @@ export class FeedsFacade {
 
   loadFeeds(): void {
     this.store.dispatch(fromFeedsActions.loadFeeds());
+  }
+
+  addFeed(feed: Feed): void {
+    this.store.dispatch(fromFeedsActions.addFeed({ feed }));
   }
 }

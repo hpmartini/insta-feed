@@ -62,7 +62,8 @@ export class NavComponent implements OnInit {
       url: this.newFeedForm.value.url,
     };
 
-    this.feedService.addFeedToFirestore(feed);
+    // this.feedService.addFeedToFirestore(feed);
+    this.feedsFacade.addFeed(feed);
     this.isAddMode = false;
     this.feedsFacade.loadFeeds();
     this.newFeedForm.reset();
