@@ -1,13 +1,13 @@
 import { createAction, props } from '@ngrx/store';
 import { Settings } from '../../model/settings';
 
-const LOAD_SETTINGS = '[LoadSettings] Load LoadSettings';
-const LOAD_SETTINGS_SUCCESS = '[LoadSettings] Load LoadSettings Success';
-const LOAD_SETTINGS_ERROR = '[LoadSettings] Load LoadSettings Failure';
+const LOAD_SETTINGS = '[Facade oder save action] LoadSettings';
+const LOAD_SETTINGS_SUCCESS = '[Facade oder save action] LoadSettings Success';
+const LOAD_SETTINGS_ERROR = '[Facade oder save action] LoadSettings Failure';
 
-const SAVE_SETTINGS = '[SaveSettings] Save SaveSettings';
-const SAVE_SETTINGS_SUCCESS = '[SaveSettings] Save SaveSettings Success';
-const SAVE_SETTINGS_ERROR = '[SaveSettings] Save SaveSettings Failure';
+const SAVE_SETTINGS = '[Settings page] SaveSettings';
+const SAVE_SETTINGS_SUCCESS = '[Settings page] SaveSettings Success';
+const SAVE_SETTINGS_ERROR = '[Settings page] SaveSettings Failure';
 
 export const loadSettings = createAction(LOAD_SETTINGS);
 

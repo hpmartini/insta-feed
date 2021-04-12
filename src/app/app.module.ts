@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { AngularFireModule } from '@angular/fire';
 import { environment } from '../environments/environment';
 import { RowRunnerComponent } from './pages/row-runner/row-runner.component';
-import { FeedService } from './services/feed.service';
+import { FeedsService } from './+state/feeds/feeds.service';
 import { HttpClientModule } from '@angular/common/http';
 import { AngularFireFunctionsModule } from '@angular/fire/functions';
 import { CommonModule } from '@angular/common';
@@ -22,13 +22,16 @@ import { ArticlesComponent } from './pages/articles/articles.component';
 import { MaterialModule } from './material.module';
 import { SettingsComponent } from './pages/settings/settings.component';
 import { StoreModule } from '@ngrx/store';
-import * as fromSettings from './+state/settings/settings.reducer';
 import { EffectsModule } from '@ngrx/effects';
-import { SettingsEffects } from './+state/settings/settings.effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import * as fromSettings from './+state/settings/settings.reducer';
+import * as fromFeeds from './+state/feeds/feeds.reducer';
+import { SettingsEffects } from './+state/settings/settings.effects';
 import { SettingsService } from './+state/settings/settings.service';
 import { SettingsFacade } from './+state/settings/settings.facade';
+import { FeedsFacade } from './+state/feeds/feeds.facade';
 import { ArticleService } from './services/article.service';
+import { FeedsEffects } from './+state/feeds/feeds.effects';
 
 @NgModule({
   declarations: [
@@ -63,9 +66,17 @@ import { ArticleService } from './services/article.service';
       { metaReducers: fromSettings.metaReducers }
     ),
     EffectsModule.forFeature([SettingsEffects]),
+    StoreModule.forFeature(fromFeeds.feedsFeatureKey, fromFeeds.reducer),
+    EffectsModule.forFeature([FeedsEffects]),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
   ],
-  providers: [FeedService, SettingsService, SettingsFacade, ArticleService],
+  providers: [
+    FeedsService,
+    SettingsService,
+    SettingsFacade,
+    ArticleService,
+    FeedsFacade,
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
