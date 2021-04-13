@@ -20,4 +20,8 @@ export class FeedsFacade {
   addFeed(feed: Feed): void {
     this.store.dispatch(fromFeedsActions.addFeed({ feed }));
   }
+
+  deleteFeed(feed: Feed): void {
+    this.store.dispatch(fromFeedsActions.deleteFeed({ feed }));
+  }
 }
