@@ -71,12 +71,13 @@ export class NavComponent implements OnInit {
     // todo show snackbar on success
   }
 
-  deleteFeed(feedName: string): void {
+  deleteFeed(feed: Feed): void {
     // todo ask for confirmation
-    this.feedService.deleteFeed(feedName);
+    // this.feedService.deleteFeed(feedName);
+    this.feedsFacade.deleteFeed(feed);
     this.isEditMode = false;
-    const index = this.navEntries.findIndex((feed) => feed.name === feedName);
-    this.navEntries.splice(index, 1);
+    // const index = this.navEntries.findIndex((feed) => feed.name === feedName);
+    // this.navEntries.splice(index, 1);
 
     // todo show snackbar on success
   }

@@ -23,10 +23,7 @@ export class FeedsService {
     return this.CALLABLE('getFeedList')(null);
   }
 
-  deleteFeed(feedName: string): void {
-    this.updatingFeedList.next(true);
-    this.CALLABLE('deleteFeed')({ name: feedName }).subscribe(() =>
-      this.updatingFeedList.next(false)
-    );
+  public deleteFeed(feedName: string): Observable<any> {
+    return this.CALLABLE('deleteFeed')({ name: feedName });
   }
 }

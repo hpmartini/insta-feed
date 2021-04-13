@@ -78,16 +78,12 @@ export const feedReducer = createReducer(
     isLoaded: false,
     error: null,
   })),
-  on(deleteFeedSuccess, (state, { feeds: feed }) => {
-    const feeds = state.feeds;
-    feeds.splice(feeds.indexOf(feed));
-    return {
-      ...state,
-      feeds,
-      isLoaded: true,
-      error: null,
-    };
-  }),
+  on(deleteFeedSuccess, (state, { feed: feed }) => ({
+    ...state,
+    feeds: state.feeds.filter((f) => f.name !== feed.name),
+    isLoaded: true,
+    error: null,
+  })),
   on(deleteFeedFailure, (state, { error }) => ({
     ...state,
     error,
@@ -99,16 +95,14 @@ export const feedReducer = createReducer(
     isLoaded: false,
     error: null,
   })),
-  on(updateFeedSuccess, (state, { feeds: feed }) => {
-    const feeds = state.feeds;
-    feeds.splice(feeds.indexOf(feed)).push(feed);
-    return {
-      ...state,
-      feeds,
-      isLoaded: true,
-      error: null,
-    };
-  }),
+  on(updateFeedSuccess, (state, { feeds: updatedFeed }) => ({
+    ...state,
+    feeds: state.feeds.map((feed) =>
+      feed.name === updatedFeed.name ? updatedFeed : feed
+    ),
+    isLoaded: true,
+    error: null,
+  })),
   on(updateFeedFailure, (state, { error }) => ({
     ...state,
     error,

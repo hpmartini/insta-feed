@@ -69,13 +69,13 @@
             >
               <span fxLayoutAlign="center center">
                 <mat-icon class="small-icon" color="primary">{{
-                  rla.isActive ? "remove_red_eye" : entry.icon
+                  rla.isActive ? "remove_red_eye" : entry.icon ? entry.icon : 'article'
                   }}</mat-icon>
-                {{ entry.name ? entry.name : 'article' }}
+                {{ entry.name }}
               </span>
             </a>
             <button
-              (click)="deleteFeed(entry.name)"
+              (click)="deleteFeed(entry)"
               *ngIf="isEditMode"
               class="remove-feed"
               color="warn"

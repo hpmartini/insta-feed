@@ -37,4 +37,16 @@ export class FeedsEffects {
       })
     )
   );
+
+  deleteFeed$ = createEffect(() =>
+    this.action$.pipe(
+      ofType(FeedActions.deleteFeed),
+      mergeMap((action) => {
+        return this.feedsService.deleteFeed(action.feed.name).pipe(
+          map(() => FeedActions.deleteFeedSuccess({ feed: action.feed })),
+          catchError((error) => of(FeedActions.deleteFeedFailure({ error })))
+        );
+      })
+    )
+  );
 }
