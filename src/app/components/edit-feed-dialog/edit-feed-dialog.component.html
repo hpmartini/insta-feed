@@ -1,0 +1,30 @@
+<form [formGroup]="feedForm" class="add-feed">
+  <mat-form-field appearance="fill">
+    <mat-label>Name</mat-label>
+    <input formControlName="name" matInput type="text" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>URL</mat-label>
+    <input formControlName="url" matInput type="text"/>
+  </mat-form-field>
+
+  <span fxLayoutAlign="space-between">
+    <button
+      (click)="updateFeed()"
+      color="primary"
+      mat-button
+      type="submit"
+    >
+      <mat-icon>check_circle_outline</mat-icon>
+    </button>
+    <button
+      (click)="close()"
+      color="primary"
+      mat-button
+      type="submit"
+    >
+      <mat-icon>cancel</mat-icon>
+    </button>
+  </span>
+</form>

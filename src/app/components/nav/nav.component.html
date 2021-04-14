@@ -57,42 +57,58 @@
         fxLayoutAlign="space-between"
       >
         <!--  FEED LIST  -->
-        <ng-container *ngFor="let entry of navEntries">
+        <ng-container *ngFor="let feed of navEntries; let i = index">
           <div fxFlex="100" fxLayoutAlign="space-between center">
             <a
+              *ngIf="!isEditMode"
               #rla="routerLinkActive"
               (click)="isHandset ? drawer.close() : null"
-              [routerLink]="['article', entry.url]"
+              [routerLink]="['article', feed.url]"
               fxLayout="row"
               mat-list-item
               routerLinkActive="active"
             >
               <span fxLayoutAlign="center center">
                 <mat-icon class="small-icon" color="primary">{{
-                  rla.isActive ? "remove_red_eye" : entry.icon ? entry.icon : 'article'
+                  rla.isActive ? "remove_red_eye" : feed.icon ? feed.icon : 'article'
                   }}</mat-icon>
-                {{ entry.name }}
+                {{ feed.name }}
               </span>
             </a>
-            <button
-              (click)="deleteFeed(entry)"
+
+            <a
               *ngIf="isEditMode"
+              fxLayout="row"
+              mat-list-item
+              routerLinkActive="active"
+              (click)="openEditDialog(feed)"
+            >
+              <span fxLayoutAlign="center center">
+                <mat-icon class="small-icon" color="primary">edit</mat-icon>
+                {{ feed.name }}
+              </span>
+            </a>
+
+
+            <button
+              *ngIf="isEditMode"
+              (click)="deleteFeed(feed)"
               class="remove-feed"
               color="warn"
               mat-mini-fab
             >
-              <mat-icon class="remove-icon"> remove_circle_outline</mat-icon>
+              <mat-icon class="remove-icon">remove_circle_outline</mat-icon>
             </button>
           </div>
         </ng-container>
 
-        <app-spinner
-          [fullHeight]="false"
-          [showSpinner]="isFeedListUpdating"
-        ></app-spinner>
+<!--        <app-spinner-->
+<!--          [fullHeight]="false"-->
+<!--          [showSpinner]="isFeedListUpdating"-->
+<!--        ></app-spinner>-->
 
         <!-- ADD FEED form -->
-        <form *ngIf="isAddMode" [formGroup]="newFeedForm" class="add-feed">
+        <form *ngIf="isAddMode" [formGroup]="feedForm" class="add-feed">
           <mat-form-field appearance="fill">
             <mat-label>Name</mat-label>
             <input formControlName="name" matInput type="text"/>
