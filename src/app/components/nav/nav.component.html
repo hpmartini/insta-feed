@@ -75,7 +75,6 @@
                 {{ feed.name }}
               </span>
             </a>
-
             <a
               *ngIf="isEditMode"
               fxLayout="row"
@@ -88,8 +87,6 @@
                 {{ feed.name }}
               </span>
             </a>
-
-
             <button
               *ngIf="isEditMode"
               (click)="deleteFeed(feed)"
@@ -101,12 +98,6 @@
             </button>
           </div>
         </ng-container>
-
-<!--        <app-spinner-->
-<!--          [fullHeight]="false"-->
-<!--          [showSpinner]="isFeedListUpdating"-->
-<!--        ></app-spinner>-->
-
         <!-- ADD FEED form -->
         <form *ngIf="isAddMode" [formGroup]="feedForm" class="add-feed">
           <mat-form-field appearance="fill">
