@@ -15,38 +15,50 @@ export class FeedsEffects {
   loadFeeds$ = createEffect(() =>
     this.action$.pipe(
       ofType(FeedActions.loadFeeds),
-      mergeMap(() => {
-        return this.feedsService.loadFeeds().pipe(
+      mergeMap(() =>
+        this.feedsService.loadFeeds().pipe(
           map((feeds) => FeedActions.loadFeedsSuccess({ feeds })),
           catchError((error) => of(FeedActions.loadFeedsFailure({ error })))
-        );
-      })
+        )
+      )
     )
   );
 
   addFeed$ = createEffect(() =>
     this.action$.pipe(
       ofType(FeedActions.addFeed),
-      mergeMap((action) => {
-        return this.feedsService.addFeedToFirestore(action.feed).pipe(
+      mergeMap((action) =>
+        this.feedsService.addFeedToFirestore(action.feed).pipe(
           map((result) =>
             FeedActions.addFeedSuccess({ result, addedFeed: action.feed })
           ),
           catchError((error) => of(FeedActions.loadFeedsFailure({ error })))
-        );
-      })
+        )
+      )
     )
   );
 
   deleteFeed$ = createEffect(() =>
     this.action$.pipe(
       ofType(FeedActions.deleteFeed),
-      mergeMap((action) => {
-        return this.feedsService.deleteFeed(action.feed.name).pipe(
+      mergeMap((action) =>
+        this.feedsService.deleteFeed(action.feed.name).pipe(
           map(() => FeedActions.deleteFeedSuccess({ feed: action.feed })),
           catchError((error) => of(FeedActions.deleteFeedFailure({ error })))
-        );
-      })
+        )
+      )
+    )
+  );
+
+  updateFeed$ = createEffect(() =>
+    this.action$.pipe(
+      ofType(FeedActions.updateFeed),
+      mergeMap((action) =>
+        this.feedsService.addFeedToFirestore(action.feed).pipe(
+          map(() => FeedActions.updateFeedSuccess({ feed: action.feed })),
+          catchError((error) => of(FeedActions.updateFeedFailure({ error })))
+        )
+      )
     )
   );
 }

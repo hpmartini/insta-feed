@@ -24,4 +24,8 @@ export class FeedsFacade {
   deleteFeed(feed: Feed): void {
     this.store.dispatch(fromFeedsActions.deleteFeed({ feed }));
   }
+
+  updateFeed(feed: Feed): void {
+    this.store.dispatch(fromFeedsActions.updateFeed({ feed }));
+  }
 }

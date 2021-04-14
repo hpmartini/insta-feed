@@ -12,7 +12,7 @@ import { AngularFireFunctionsModule } from '@angular/fire/functions';
 import { CommonModule } from '@angular/common';
 import { FlexLayoutModule, FlexModule } from '@angular/flex-layout';
 import { AnimationComponent } from './pages/row-runner/animation/animation.component';
-import { NavComponent } from './nav/nav.component';
+import { NavComponent } from './components/nav/nav.component';
 import { LayoutModule } from '@angular/cdk/layout';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HomeComponent } from './pages/home/home.component';
@@ -32,6 +32,7 @@ import { SettingsFacade } from './+state/settings/settings.facade';
 import { FeedsFacade } from './+state/feeds/feeds.facade';
 import { ArticleService } from './services/article.service';
 import { FeedsEffects } from './+state/feeds/feeds.effects';
+import { EditFeedDialogComponent } from './components/edit-feed-dialog/edit-feed-dialog.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { FeedsEffects } from './+state/feeds/feeds.effects';
     SpinnerComponent,
     ArticlesComponent,
     SettingsComponent,
+    EditFeedDialogComponent,
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase, 'ready'),

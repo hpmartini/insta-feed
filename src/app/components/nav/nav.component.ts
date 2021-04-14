@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { AnimationActiveService } from '../services/animation-active.service';
-import { Feed } from '../model/feed';
-import { FeedsService } from '../+state/feeds/feeds.service';
+import { AnimationActiveService } from '../../services/animation-active.service';
+import { Feed } from '../../model/feed';
 import { NavigationStart, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map, shareReplay, tap } from 'rxjs/operators';
-import { FeedsFacade } from '../+state/feeds/feeds.facade';
+import { FeedsFacade } from '../../+state/feeds/feeds.facade';
+import { MatDialog } from '@angular/material/dialog';
+import { EditFeedDialogComponent } from '../edit-feed-dialog/edit-feed-dialog.component';
 
 @Component({
   selector: 'app-nav',
@@ -20,9 +21,8 @@ export class NavComponent implements OnInit {
   public isAddMode = false;
   public isNavEntriesLoaded = false;
   public isHome = false;
-  public isFeedListUpdating = false;
   public currentPage: string;
-  public newFeedForm = new FormGroup({
+  public feedForm = new FormGroup({
     name: new FormControl(''),
     url: new FormControl(''),
   });
@@ -36,11 +36,11 @@ export class NavComponent implements OnInit {
     );
 
   constructor(
-    private readonly feedService: FeedsService,
     private readonly router: Router,
     public readonly animationActiveService: AnimationActiveService,
     private readonly breakpointObserver: BreakpointObserver,
-    private readonly feedsFacade: FeedsFacade
+    private readonly feedsFacade: FeedsFacade,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -49,36 +49,26 @@ export class NavComponent implements OnInit {
       (isLoaded) => (this.isNavEntriesLoaded = isLoaded)
     );
 
-    this.feedService.updatingFeedList.subscribe(
-      (updating) => (this.isFeedListUpdating = updating)
-    );
-
     this.handleRouterParameters();
   }
 
   addNewFeed(): void {
     const feed: Feed = {
-      name: this.newFeedForm.value.name,
-      url: this.newFeedForm.value.url,
+      name: this.feedForm.value.name,
+      url: this.feedForm.value.url,
     };
 
-    // this.feedService.addFeedToFirestore(feed);
     this.feedsFacade.addFeed(feed);
     this.isAddMode = false;
-    this.feedsFacade.loadFeeds();
-    this.newFeedForm.reset();
+    this.feedForm.reset();
 
     // todo show snackbar on success
   }
 
   deleteFeed(feed: Feed): void {
     // todo ask for confirmation
-    // this.feedService.deleteFeed(feedName);
     this.feedsFacade.deleteFeed(feed);
     this.isEditMode = false;
-    // const index = this.navEntries.findIndex((feed) => feed.name === feedName);
-    // this.navEntries.splice(index, 1);
-
     // todo show snackbar on success
   }
 
@@ -97,6 +87,19 @@ export class NavComponent implements OnInit {
       if (event instanceof NavigationStart) {
         this.isHome = event.url === '/';
         this.currentPage = event.url === '/' ? 'home' : '';
+      }
+    });
+  }
+
+  openEditDialog(feed: Feed): void {
+    const dialogRef = this.dialog.open(EditFeedDialogComponent, {
+      width: '250px',
+      data: { feed },
+      autoFocus: false,
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.isEditMode = false;
       }
     });
   }

@@ -20,7 +20,7 @@ const UPDATE_FEED_ERROR = '[Facade] UpdateFeed Failure';
 export const loadFeeds = createAction(LOAD_FEEDS);
 export const addFeed = createAction(ADD_FEED, props<{ feed: Feed }>());
 export const deleteFeed = createAction(DELETE_FEED, props<{ feed: Feed }>());
-export const updateFeed = createAction(UPDATE_FEED);
+export const updateFeed = createAction(UPDATE_FEED, props<{ feed: Feed }>());
 
 export const loadFeedsSuccess = createAction(
   LOAD_FEEDS_SUCCESS,
@@ -54,7 +54,7 @@ export const deleteFeedFailure = createAction(
 
 export const updateFeedSuccess = createAction(
   UPDATE_FEED_SUCCESS,
-  props<{ feeds: Feed }>()
+  props<{ feed: Feed }>()
 );
 
 export const updateFeedFailure = createAction(

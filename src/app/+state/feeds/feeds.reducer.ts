@@ -95,7 +95,7 @@ export const feedReducer = createReducer(
     isLoaded: false,
     error: null,
   })),
-  on(updateFeedSuccess, (state, { feeds: updatedFeed }) => ({
+  on(updateFeedSuccess, (state, { feed: updatedFeed }) => ({
     ...state,
     feeds: state.feeds.map((feed) =>
       feed.name === updatedFeed.name ? updatedFeed : feed
