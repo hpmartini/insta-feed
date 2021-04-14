@@ -6,7 +6,6 @@ import { Feed } from '../../model/feed';
 @Injectable()
 export class FeedsService {
   @ViewChild('dummyDiv', { static: false }) dummyDiv: ElementRef;
-  public updatingFeedList = new BehaviorSubject<boolean>(false);
   public feedList = new BehaviorSubject<[]>(null);
   public savingSettings = new BehaviorSubject<boolean>(false);
   public lines: string[];
