@@ -1,0 +1,26 @@
+<mat-toolbar class="login-register-toolbar" fxLayout="row" fxLayoutAlign="space-between center">
+  <h2>{{ getLoginRegisterTypeName() }}</h2>
+  <button mat-icon-button color="warn">
+    <mat-icon aria-label="Close dialog">close</mat-icon>
+  </button>
+</mat-toolbar>
+
+<mat-dialog-content>
+  <form [formGroup]="loginRegisterForm">
+    <div class="md-dialog-content">
+      <mat-form-field class="md-block">
+        <label>Username</label>
+        <input formControlName="email" matInput/>
+      </mat-form-field>
+      <mat-form-field class="md-block">
+        <label>Password</label>
+        <input formControlName="password" matInput type="password"/>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions fxLayout="row" fxLayoutAlign="space-between">
+  <a class="md-primary" href="">Forgot Password?</a>
+  <button mat-raised-button color="primary">{{ getLoginRegisterTypeName() }}</button>
+</mat-dialog-actions>

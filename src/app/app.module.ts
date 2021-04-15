@@ -33,6 +33,7 @@ import { FeedsFacade } from './+state/feeds/feeds.facade';
 import { ArticleService } from './services/article.service';
 import { FeedsEffects } from './+state/feeds/feeds.effects';
 import { EditFeedDialogComponent } from './components/edit-feed-dialog/edit-feed-dialog.component';
+import { LoginRegisterDialogComponent } from './components/login-register-dialog/login-register-dialog.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { EditFeedDialogComponent } from './components/edit-feed-dialog/edit-feed
     ArticlesComponent,
     SettingsComponent,
     EditFeedDialogComponent,
+    LoginRegisterDialogComponent,
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase, 'ready'),

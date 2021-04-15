@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Feed } from '../../model/feed';
 import { FeedsFacade } from '../../+state/feeds/feeds.facade';
@@ -13,7 +13,7 @@ export interface FeedDialogData {
   templateUrl: './edit-feed-dialog.component.html',
   styleUrls: ['./edit-feed-dialog.component.sass'],
 })
-export class EditFeedDialogComponent implements OnInit {
+export class EditFeedDialogComponent {
   public feedForm = new FormGroup({
     name: new FormControl(this.data.feed.name),
     url: new FormControl(this.data.feed.url),
@@ -24,8 +24,6 @@ export class EditFeedDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<EditFeedDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: FeedDialogData
   ) {}
-
-  ngOnInit(): void {}
 
   updateFeed(): void {
     const feed: Feed = {
