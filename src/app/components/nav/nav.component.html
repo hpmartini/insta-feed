@@ -132,7 +132,7 @@
       </mat-nav-list>
     </mat-sidenav>
 
-    <!-- CONTENT -->
+    <!-- SIDENAV CONTENT -->
     <mat-sidenav-content>
       <!-- HEADER TOOLBAR -->
       <div class="app-toolbar">
@@ -170,6 +170,13 @@
               </button>
             </div>
             <div *ngIf="navEntries" class="main-navigation" fxHide.xs="true">
+              <button mat-raised-button class="mat-elevation-z5" (click)="openLoginDialog()">
+                Login
+              </button>
+              <button mat-raised-button class="mat-elevation-z5" (click)="openRegisterDialog()">
+                Register
+              </button>
+
               <span>
                 <button
                   [routerLink]="['/rowrunner/', navEntries[0]?.url]"
