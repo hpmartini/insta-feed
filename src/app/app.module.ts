@@ -34,6 +34,7 @@ import { ArticleService } from './services/article.service';
 import { FeedsEffects } from './+state/feeds/feeds.effects';
 import { EditFeedDialogComponent } from './components/edit-feed-dialog/edit-feed-dialog.component';
 import { LoginRegisterDialogComponent } from './components/login-register-dialog/login-register-dialog.component';
+import { AngularFireAuthModule } from '@angular/fire/auth';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { LoginRegisterDialogComponent } from './components/login-register-dialog
   imports: [
     AngularFireModule.initializeApp(environment.firebase, 'ready'),
     AngularFireFunctionsModule,
+    AngularFireAuthModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,

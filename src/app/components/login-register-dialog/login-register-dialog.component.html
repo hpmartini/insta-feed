@@ -1,26 +1,40 @@
-<mat-toolbar class="login-register-toolbar" fxLayout="row" fxLayoutAlign="space-between center">
+<mat-toolbar
+  class="login-register-toolbar"
+  fxLayout="row"
+  fxLayoutAlign="space-between center"
+  color="primary"
+>
   <h2>{{ getLoginRegisterTypeName() }}</h2>
-  <button mat-icon-button color="warn">
-    <mat-icon aria-label="Close dialog">close</mat-icon>
+  <button mat-icon-button>
+    <mat-icon aria-label="Close dialog" (click)="dialogRef.close()">close</mat-icon>
   </button>
 </mat-toolbar>
 
 <mat-dialog-content>
   <form [formGroup]="loginRegisterForm">
     <div class="md-dialog-content">
-      <mat-form-field class="md-block">
-        <label>Username</label>
-        <input formControlName="email" matInput/>
+      <mat-form-field>
+        <mat-label>Username</mat-label>
+        <input formControlName="email" matInput type="text"/>
       </mat-form-field>
-      <mat-form-field class="md-block">
-        <label>Password</label>
+      <mat-form-field>
+        <mat-label>Password</mat-label>
         <input formControlName="password" matInput type="password"/>
       </mat-form-field>
     </div>
   </form>
 </mat-dialog-content>
 
-<mat-dialog-actions fxLayout="row" fxLayoutAlign="space-between">
-  <a class="md-primary" href="">Forgot Password?</a>
-  <button mat-raised-button color="primary">{{ getLoginRegisterTypeName() }}</button>
+<mat-dialog-actions class="login-dialog-action" fxLayout="row" fxLayoutAlign="space-between">
+  <div class="login-dialog-action__button-wrapper">
+    <a
+      class="login-dialog-action__button"
+      mat-raised-button
+      color="primary"
+      (click)="loginWithGoogle()"
+    >
+      <img class="login-dialog-action__button__img" src="assets/icons/G.png" alt="google">
+      Login mit Google
+    </a>
+  </div>
 </mat-dialog-actions>
