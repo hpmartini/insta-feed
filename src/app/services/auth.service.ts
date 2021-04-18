@@ -3,6 +3,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import firebase from 'firebase/app';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { FIREBASE_CONSTANTS } from '../constants/firebase.constants';
+import { User } from '../model/user';
 
 @Injectable({
   providedIn: 'root',
@@ -22,26 +23,25 @@ export class AuthService {
     return this.fireAuth
       .signInWithPopup(provider)
       .then((response) => this.resolveResponse(response.user))
-      .catch((error) => {
-        console.log(error);
-        window.alert(error);
-      });
+      .catch((error) => window.alert(error));
   }
 
-  private resolveResponse(user: firebase.User): Promise<void> {
-    console.log(user);
-    return this.firestore
-      .collection(FIREBASE_CONSTANTS.users)
-      .doc(user.uid)
-      .set(
-        {
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
-          emailVerified: user.emailVerified,
-        },
-        { merge: true }
-      );
+  private resolveResponse({
+    uid,
+    email,
+    displayName,
+    emailVerified,
+    photoURL,
+  }: User): Promise<void> {
+    return this.firestore.collection(FIREBASE_CONSTANTS.users).doc(uid).set(
+      {
+        uid,
+        email,
+        displayName,
+        photoURL,
+        emailVerified,
+      },
+      { merge: true }
+    );
   }
 }
