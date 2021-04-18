@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map, shareReplay, tap } from 'rxjs/operators';
 import { FeedsFacade } from '../../+state/feeds/feeds.facade';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { EditFeedDialogComponent } from '../edit-feed-dialog/edit-feed-dialog.component';
 import {
   LoginRegisterDialogComponent,
@@ -109,19 +109,10 @@ export class NavComponent implements OnInit {
   }
 
   openLoginDialog(): void {
-    this.openDialog(LoginRegisterType.login);
-  }
-
-  openRegisterDialog(): void {
-    this.openDialog(LoginRegisterType.register);
-  }
-
-  private openDialog(
-    type: LoginRegisterType
-  ): MatDialogRef<LoginRegisterDialogComponent, any> {
-    return this.dialog.open(LoginRegisterDialogComponent, {
+    this.dialog.open(LoginRegisterDialogComponent, {
       width: '423px',
-      data: { type },
+      data: { type: LoginRegisterType.login },
+      autoFocus: false,
     });
   }
 }

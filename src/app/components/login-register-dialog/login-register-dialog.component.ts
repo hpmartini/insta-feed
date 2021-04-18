@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { AuthService } from '../../services/auth.service';
 
 export enum LoginRegisterType {
   login,
@@ -24,10 +25,19 @@ export class LoginRegisterDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<LoginRegisterDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: LoginRegisterDialogData
+    @Inject(MAT_DIALOG_DATA) public data: LoginRegisterDialogData,
+    private readonly authService: AuthService
   ) {}
 
   getLoginRegisterTypeName(): string {
-    return this.data.type === LoginRegisterType.login ? 'Log in' : 'Register';
+    return this.data.type === LoginRegisterType.login
+      ? 'Einloggen'
+      : 'Registrieren';
+  }
+
+  loginWithGoogle(): void {
+    this.authService.loginWithGoogle().then(() => {
+      this.dialogRef.close();
+    });
   }
 }
