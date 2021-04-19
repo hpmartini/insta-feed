@@ -13,6 +13,7 @@ import {
   LoginRegisterDialogComponent,
   LoginRegisterType,
 } from '../login-register-dialog/login-register-dialog.component';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-nav',
@@ -44,7 +45,8 @@ export class NavComponent implements OnInit {
     public readonly animationActiveService: AnimationActiveService,
     private readonly breakpointObserver: BreakpointObserver,
     private readonly feedsFacade: FeedsFacade,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    public auth: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -114,5 +116,9 @@ export class NavComponent implements OnInit {
       data: { type: LoginRegisterType.login },
       autoFocus: false,
     });
+  }
+
+  logout(): void {
+    this.auth.logOut();
   }
 }

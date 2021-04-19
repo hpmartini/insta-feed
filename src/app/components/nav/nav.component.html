@@ -26,8 +26,14 @@
           </button>
         </span>
 
-        <button (click)="drawer.close()" [routerLink]="['/settings/']" color="primary" fxHide.gt-xs="true"
-                mat-icon-button>
+        <button
+          *ngIf="auth.user$ | async"
+          (click)="drawer.close()"
+          [routerLink]="['/settings/']"
+          color="primary"
+          fxHide.gt-xs="true"
+          mat-icon-button
+        >
           <mat-icon>settings</mat-icon>
         </button>
       </mat-toolbar>
@@ -170,30 +176,41 @@
               </button>
             </div>
             <div *ngIf="navEntries" class="main-navigation" fxHide.xs="true">
-              <button mat-raised-button class="mat-elevation-z5" (click)="openLoginDialog()">
-                Login/Register
+              <button *ngIf="auth.user$ | async as user; else login" mat-raised-button class="mat-elevation-z5"
+                      (click)="logout()">
+                Logout
               </button>
+              <ng-template #login>
+                <button mat-raised-button class="mat-elevation-z5" (click)="openLoginDialog()">
+                  Login/Register
+                </button>
+              </ng-template>
 
-              <span>
+              <span *ngIf="auth.user$ | async">
                 <button
+                  class="main-navigation__button"
                   [routerLink]="['/rowrunner/', navEntries[0]?.url]"
                   color="primary"
                   mat-mini-fab
                 >
                   <mat-icon>visibility</mat-icon>
                 </button>
-              </span>
-              <span>
                 <button
+                  class="main-navigation__button"
+                  *ngIf="auth.user$ | async"
                   [routerLink]="['/rowrunner/', navEntries[0]?.url, true]"
                   color="primary"
                   mat-mini-fab
                 >
                   <mat-icon>text_rotation_none</mat-icon>
                 </button>
-              </span>
-              <span>
-                <button [routerLink]="['/settings/']" color="primary" mat-mini-fab>
+                <button
+                  class="main-navigation__button"
+                  *ngIf="auth.user$ | async"
+                  [routerLink]="['/settings/']"
+                  color="primary"
+                  mat-mini-fab
+                >
                   <mat-icon>settings</mat-icon>
                 </button>
               </span>
