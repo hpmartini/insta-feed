@@ -10,16 +10,26 @@
   </button>
 </mat-toolbar>
 
-<mat-dialog-content>
+<mat-dialog-content class="login-dialog-content">
   <form [formGroup]="loginRegisterForm">
     <div class="md-dialog-content">
       <mat-form-field>
         <mat-label>Username</mat-label>
-        <input formControlName="email" matInput type="text"/>
+        <input
+          formControlName="email"
+          matInput
+          type="text"
+          placeholder="disabled"
+        >
       </mat-form-field>
       <mat-form-field>
         <mat-label>Password</mat-label>
-        <input formControlName="password" matInput type="password"/>
+        <input
+          formControlName="password"
+          matInput
+          type="password"
+          placeholder="disabled"
+        >
       </mat-form-field>
     </div>
   </form>

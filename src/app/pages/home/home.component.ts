@@ -1,12 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Feed } from '../../model/feed';
+import { AuthService } from '../../services/auth.service';
+import {
+  LoginRegisterDialogComponent,
+  LoginRegisterType,
+} from '../../components/login-register-dialog/login-register-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.sass'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
   public navEntries: Feed[] = [
     {
       name: 'Süddeutsche',
@@ -15,7 +21,16 @@ export class HomeComponent implements OnInit {
     },
   ];
 
-  constructor() {}
+  constructor(
+    public readonly authService: AuthService,
+    private readonly dialog: MatDialog
+  ) {}
 
-  ngOnInit(): void {}
+  openLoginDialog(): void {
+    this.dialog.open(LoginRegisterDialogComponent, {
+      width: '423px',
+      data: { type: LoginRegisterType.login },
+      autoFocus: false,
+    });
+  }
 }

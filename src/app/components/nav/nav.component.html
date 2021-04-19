@@ -12,12 +12,23 @@
     >
       <!-- SIDENAV TOOLBAR -->
       <mat-toolbar fxLayoutAlign="space-between center">
-        <span class="sidenav__toolbar" fxFlex.gt-sm="100" fxLayout="row" fxLayoutAlign="space-between">
-          <button fxHide.gt-sm="true" mat-icon-button>
+        <span
+          class="sidenav__toolbar"
+          fxFlex.gt-sm="100"
+          fxLayout="row"
+          fxLayoutAlign="space-between"
+        >
+          <button
+            fxHide.gt-sm="true"
+            mat-icon-button
+          >
             <mat-icon (click)="drawer.toggle()">arrow_right</mat-icon>
           </button>
-          <span (click)="drawer.close()" class="sidenav__toolbar__feed-link" fxLayoutAlign="start center"
-                routerLink="/">
+          <span
+            class="sidenav__toolbar__feed-link"
+            fxLayoutAlign="start center"
+            routerLink="/"
+          >
             <mat-icon color="primary">bookmark</mat-icon>
             <span>Feeds</span>
           </span>
@@ -40,6 +51,7 @@
 
       <!-- SIDENAV CONTROLS -->
       <div
+        *ngIf="auth.user$ | async"
         class="side-edit"
         fxLayoutAlign="start  center"
         fxLayoutAlign.xs="end  center"
@@ -58,6 +70,7 @@
 
       <!-- SIDE NAV -->
       <mat-nav-list
+        *ngIf="auth.user$ | async"
         class="feed-list"
         fxLayout="column"
         fxLayoutAlign="space-between"
@@ -166,6 +179,7 @@
                 <mat-icon>menu</mat-icon>
               </button>
               <button
+                *ngIf="auth.user$ | async"
                 [ngClass]="{ homeButton: !drawer.opened }"
                 color="primary"
                 fxHide.xs="true"
