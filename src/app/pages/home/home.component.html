@@ -5,7 +5,12 @@
 
   <h3>Trainiere deine SpeedReading-Skills mit deinem persönlichen Nachrichten-Feed</h3>
 
-  <div class="welcome-nav" fxLayout="row" fxLayoutAlign="space-between">
+  <div
+    *ngIf="authService.user$ | async; else login"
+    class="welcome-nav"
+    fxLayout="row"
+    fxLayoutAlign="space-between"
+  >
     <button [routerLink]="['rowrunner', navEntries[0].url]" color="primary" mat-flat-button>
       <mat-icon>visibility</mat-icon>
       Lesen
@@ -15,4 +20,15 @@
       Üben
     </button>
   </div>
+
+  <ng-template #login>
+    <button
+      color="primary"
+      mat-raised-button
+      class="mat-elevation-z12"
+      (click)="openLoginDialog()"
+    >
+      Login/Register
+    </button>
+  </ng-template>
 </div>

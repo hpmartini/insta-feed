@@ -19,7 +19,7 @@ export interface LoginRegisterDialogData {
 })
 export class LoginRegisterDialogComponent {
   public loginRegisterForm = new FormGroup({
-    email: new FormControl(''),
+    email: new FormControl('currently disabled'),
     password: new FormControl(''),
   });
 
