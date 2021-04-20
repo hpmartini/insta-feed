@@ -21,8 +21,35 @@ exports.getArticle = functions.https.onCall(async (data) =>
   fetch(data.url).then((response: any) => response.text())
 );
 
-exports.addFeed = functions.https.onCall(async (data) =>
-  admin
+exports.addFeed = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      'unauthenticated',
+      'this method is allowed only to registered users'
+    );
+  }
+
+  const doc = await admin
+    .firestore()
+    .collection('feeds')
+    .doc(data.name)
+    .get()
+    .then((docData) => docData.data());
+
+  if (!!doc) {
+    return admin
+      .firestore()
+      .collection('users')
+      .doc(context.auth?.uid)
+      .set({
+        subscribedFeeds: [],
+      })
+      .then();
+  }
+
+  // if doc NOT exists
+  admin.firestore().collection('feeds');
+  return admin
     .firestore()
     .collection('feeds')
     .doc(data.name)
@@ -30,8 +57,8 @@ exports.addFeed = functions.https.onCall(async (data) =>
       name: data.name,
       url: data.url,
       icon: data.icon ?? 'article',
-    })
-);
+    });
+});
 
 exports.deleteFeed = functions.https.onCall(async (data) =>
   admin.firestore().collection('feeds').doc(data.name).delete()
