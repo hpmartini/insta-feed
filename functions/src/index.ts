@@ -3,6 +3,7 @@ import * as admin from 'firebase-admin';
 import * as express from 'express';
 import * as cors from 'cors';
 import * as Parser from 'rss-parser';
+import * as firebase from 'firebase';
 
 admin.initializeApp();
 
@@ -29,35 +30,40 @@ exports.addFeed = functions.https.onCall(async (data, context) => {
     );
   }
 
-  const doc = await admin
+  const feed = await admin
     .firestore()
     .collection('feeds')
     .doc(data.name)
     .get()
     .then((docData) => docData.data());
-
-  if (!!doc) {
-    return admin
+  if (!feed) {
+    await admin
       .firestore()
-      .collection('users')
-      .doc(context.auth?.uid)
+      .collection('feeds')
+      .doc(data.name)
       .set({
-        subscribedFeeds: [],
+        name: data.name,
+        url: data.url,
+        icon: data.icon ?? 'article',
       })
       .then();
   }
-
-  // if doc NOT exists
-  admin.firestore().collection('feeds');
-  return admin
+  const user = await admin
     .firestore()
-    .collection('feeds')
-    .doc(data.name)
-    .set({
-      name: data.name,
-      url: data.url,
-      icon: data.icon ?? 'article',
+    .collection('users')
+    .doc(context.auth?.uid)
+    .get()
+    .then((userData) => userData.data());
+
+  if (user) {
+    user.update({
+      subscribedFeeds: firebase.default.firestore.FieldValue.arrayUnion(
+        data.name
+      ),
     });
+    return;
+  }
+  return;
 });
 
 exports.deleteFeed = functions.https.onCall(async (data) =>
