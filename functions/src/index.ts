@@ -3,7 +3,6 @@ import * as admin from 'firebase-admin';
 import * as express from 'express';
 import * as cors from 'cors';
 import * as Parser from 'rss-parser';
-import * as firebase from 'firebase';
 
 admin.initializeApp();
 
@@ -11,6 +10,8 @@ const fetch = require('node-fetch');
 
 const app = express();
 const parser = new Parser();
+
+const FEEDS = 'feeds';
 
 app.use(cors({ origin: true }));
 
@@ -21,59 +22,63 @@ exports.getFeed = functions.https.onCall(
 exports.getArticle = functions.https.onCall(async (data) =>
   fetch(data.url).then((response: any) => response.text())
 );
-
-exports.addFeed = functions.https.onCall(async (data, context) => {
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
-      'unauthenticated',
-      'this method is allowed only to registered users'
-    );
-  }
-
-  const feed = await admin
+exports.addOrUpdateFeed = functions.https.onCall(async (data) =>
+  admin
     .firestore()
-    .collection('feeds')
+    .collection(FEEDS)
     .doc(data.name)
-    .get()
-    .then((docData) => docData.data());
-  if (!feed) {
-    await admin
-      .firestore()
-      .collection('feeds')
-      .doc(data.name)
-      .set({
+    .set(
+      {
         name: data.name,
         url: data.url,
         icon: data.icon ?? 'article',
-      })
-      .then();
-  }
-  const user = await admin
-    .firestore()
-    .collection('users')
-    .doc(context.auth?.uid)
-    .get()
-    .then((userData) => userData.data());
+      },
+      { merge: true }
+    )
+);
 
-  if (user) {
-    user.update({
-      subscribedFeeds: firebase.default.firestore.FieldValue.arrayUnion(
-        data.name
-      ),
-    });
-    return;
+exports.addSubscribedUserToFeed = functions.firestore
+  .document('feeds/{name}')
+  .onCreate((snapshot, context) => {
+    const uid = context.auth?.uid;
+
+    if (!uid) {
+      throw new Error('Invalid authentication');
+    }
+
+    return admin
+      .firestore()
+      .collection(FEEDS)
+      .doc(name)
+      .update({
+        subscribingUsers: admin.firestore.FieldValue.arrayUnion(uid),
+      });
+  });
+
+exports.unsubscribeFeed = functions.https.onCall((data, context) => {
+  const uid = context.auth?.uid;
+
+  if (!uid) {
+    throw new Error('Invalid authentication');
   }
-  return;
+
+  return admin
+    .firestore()
+    .collection(FEEDS)
+    .doc(data.name)
+    .update({
+      subscribingUsers: admin.firestore.FieldValue.arrayRemove(uid),
+    });
 });
 
 exports.deleteFeed = functions.https.onCall(async (data) =>
-  admin.firestore().collection('feeds').doc(data.name).delete()
+  admin.firestore().collection(FEEDS).doc(data.name).delete()
 );
 
 exports.getFeedList = functions.https.onCall(() =>
   admin
     .firestore()
-    .collection('feeds')
+    .collection(FEEDS)
     .get()
     .then((snapshot) => snapshot.docs.map((doc) => doc.data()))
 );
