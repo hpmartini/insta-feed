@@ -22,7 +22,7 @@ export class FeedsService {
   public addFeedToFirestore(feed: Feed): Observable<any> {
     this.firestore.collection(FIREBASE_CONSTANTS.feeds).doc();
 
-    return this.CALLABLE('addFeed')(feed);
+    return this.CALLABLE('addOrUpdateFeed')(feed);
   }
 
   public loadFeeds(): Observable<any> {
