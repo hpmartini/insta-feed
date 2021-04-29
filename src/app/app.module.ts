@@ -34,7 +34,12 @@ import { ArticleService } from './services/article.service';
 import { FeedsEffects } from './+state/feeds/feeds.effects';
 import { EditFeedDialogComponent } from './components/edit-feed-dialog/edit-feed-dialog.component';
 import { LoginRegisterDialogComponent } from './components/login-register-dialog/login-register-dialog.component';
-import { AngularFireAuthModule } from '@angular/fire/auth';
+import {
+  AngularFireAuth,
+  AngularFireAuthModule,
+  USE_EMULATOR,
+} from '@angular/fire/auth';
+import { SETTINGS } from '@angular/fire/firestore';
 
 @NgModule({
   declarations: [
@@ -82,6 +87,22 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
     SettingsFacade,
     ArticleService,
     FeedsFacade,
+    AngularFireAuth,
+    {
+      provide: SETTINGS,
+      useValue:
+        environment.stage === 'emulator'
+          ? {
+              host: 'localhost:8080',
+              ssl: false,
+            }
+          : undefined,
+    },
+    {
+      provide: USE_EMULATOR,
+      useValue:
+        environment.stage === 'emulator' ? ['localhost', 4242] : undefined,
+    },
   ],
   bootstrap: [AppComponent],
 })

@@ -35,7 +35,8 @@ export class AuthService {
 
   async loginWithGoogle(): Promise<void> {
     const provider = new firebase.auth.GoogleAuthProvider();
-    const credentials = await this.fireAuth.signInWithPopup(provider);
+    await this.fireAuth.signInWithRedirect(provider);
+    const credentials = await this.fireAuth.getRedirectResult();
     return this.updateUserData(credentials.user);
   }
 
