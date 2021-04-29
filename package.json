@@ -10,7 +10,9 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "postinstall": "npm run install-functions",
-    "install-functions": "cd functions && npm install"
+    "install-functions": "cd functions && npm install",
+    "emulate": "ng build --c=emulator && firbase emulators:start",
+    "quick-emulate": "firebase emulators:start"
   },
   "private": true,
   "dependencies": {

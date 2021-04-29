@@ -4,10 +4,10 @@
 
 export const environment = {
   production: false,
-  stage: 'dev',
+  stage: 'emulator',
   firebase: {
     apiKey: 'AIzaSyBcImIk9eIHXepMI5fRDK4IGSkuIVv2vaQ',
-    authDomain: 'ready-e9b4e.firebaseapp.com',
+    authDomain: 'http://localhost:4242/auth',
     projectId: 'ready-e9b4e',
     storageBucket: 'ready-e9b4e.appspot.com',
     messagingSenderId: '790399774402',
