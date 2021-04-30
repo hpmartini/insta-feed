@@ -101,7 +101,7 @@ import { SETTINGS } from '@angular/fire/firestore';
     {
       provide: USE_EMULATOR,
       useValue:
-        environment.stage === 'emulator' ? ['localhost', 4242] : undefined,
+        environment.stage === 'emulator' ? ['localhost', 9099] : undefined,
     },
   ],
   bootstrap: [AppComponent],
