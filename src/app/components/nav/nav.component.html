@@ -234,7 +234,7 @@
       </div>
 
       <div
-        *ngIf="isNavEntriesLoaded"
+        *ngIf="isNavEntriesLoaded || !(auth.user$ | async)"
         [ngClass]="{
           content__static: !animationActiveService.isAnimationActive,
           content__static__handset: (isHandset$ | async) && !animationActiveService.isAnimationActive
@@ -243,7 +243,7 @@
       >
         <router-outlet></router-outlet>
       </div>
-      <app-spinner [showSpinner]="!isNavEntriesLoaded"></app-spinner>
+      <app-spinner [showSpinner]="(auth.user$ | async) && !isNavEntriesLoaded"></app-spinner>
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>

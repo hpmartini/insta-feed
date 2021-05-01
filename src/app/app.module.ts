@@ -39,6 +39,9 @@ import {
   AngularFireAuthModule,
   USE_EMULATOR,
 } from '@angular/fire/auth';
+import {
+  USE_EMULATOR as FUNCTIONS_EMULATOR,
+} from '@angular/fire/functions';
 import { SETTINGS } from '@angular/fire/firestore';
 
 @NgModule({
@@ -102,6 +105,10 @@ import { SETTINGS } from '@angular/fire/firestore';
       provide: USE_EMULATOR,
       useValue:
         environment.stage === 'emulator' ? ['localhost', 9099] : undefined,
+    },
+    {
+      provide: FUNCTIONS_EMULATOR,
+      useValue: environment.stage === 'emulator' ? ['localhost', 5001] : undefined,
     },
   ],
   bootstrap: [AppComponent],

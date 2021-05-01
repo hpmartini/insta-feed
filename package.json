@@ -6,13 +6,14 @@
     "start": "ng serve",
     "build": "ng build",
     "build-prod": "ng build --prod",
+    "build-emu": "ng build --c=emulator --watch",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "postinstall": "npm run install-functions",
     "install-functions": "cd functions && npm install",
     "emulate": "ng build --c=emulator && firbase emulators:start",
-    "quick-emulate": "firebase emulators:start"
+    "emulators": "firebase emulators:start --import=data --export-on-exit"
   },
   "private": true,
   "dependencies": {
