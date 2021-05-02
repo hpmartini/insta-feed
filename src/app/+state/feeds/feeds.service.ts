@@ -29,7 +29,7 @@ export class FeedsService {
     return this.CALLABLE('getFeedList')(null);
   }
 
-  public unsubscribe(feedName: string): Observable<any> {
-    return this.CALLABLE('unsubscribe')({ name: feedName });
+  public unsubscribe(feed: Feed): Observable<any> {
+    return this.CALLABLE('unsubscribe')(feed);
   }
 }

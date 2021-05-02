@@ -42,7 +42,7 @@ export class FeedsEffects {
     this.action$.pipe(
       ofType(FeedActions.deleteFeed),
       mergeMap((action) =>
-        this.feedsService.unsubscribe(action.feed.name).pipe(
+        this.feedsService.unsubscribe(action.feed).pipe(
           map(() => FeedActions.deleteFeedSuccess({ feed: action.feed })),
           catchError((error) => of(FeedActions.deleteFeedFailure({ error })))
         )
