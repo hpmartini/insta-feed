@@ -28,7 +28,7 @@ export class FeedsEffects {
     this.action$.pipe(
       ofType(FeedActions.addFeed),
       mergeMap((action) =>
-        this.feedsService.addFeedToFirestore(action.feed).pipe(
+        this.feedsService.subscribe(action.feed).pipe(
           map((result) =>
             FeedActions.addFeedSuccess({ result, addedFeed: action.feed })
           ),
@@ -42,7 +42,7 @@ export class FeedsEffects {
     this.action$.pipe(
       ofType(FeedActions.deleteFeed),
       mergeMap((action) =>
-        this.feedsService.deleteFeed(action.feed.name).pipe(
+        this.feedsService.unsubscribe(action.feed.name).pipe(
           map(() => FeedActions.deleteFeedSuccess({ feed: action.feed })),
           catchError((error) => of(FeedActions.deleteFeedFailure({ error })))
         )
@@ -54,7 +54,7 @@ export class FeedsEffects {
     this.action$.pipe(
       ofType(FeedActions.updateFeed),
       mergeMap((action) =>
-        this.feedsService.addFeedToFirestore(action.feed).pipe(
+        this.feedsService.subscribe(action.feed).pipe(
           map(() => FeedActions.updateFeedSuccess({ feed: action.feed })),
           catchError((error) => of(FeedActions.updateFeedFailure({ error })))
         )
