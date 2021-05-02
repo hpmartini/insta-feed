@@ -3,86 +3,86 @@ import * as admin from 'firebase-admin';
 import * as express from 'express';
 import * as cors from 'cors';
 import * as Parser from 'rss-parser';
+import {CallableContext} from 'firebase-functions/lib/providers/https';
 
 admin.initializeApp();
 
 const fetch = require('node-fetch');
-
 const app = express();
 const parser = new Parser();
-
 const FEEDS = 'feeds';
 
-app.use(cors({ origin: true }));
+app.use(cors({origin: true}));
 
+/***
+ * Parse and return feed by URL
+ */
 exports.getFeed = functions.https.onCall(
   async (data) => await parser.parseURL(data.url)
 );
 
+/***
+ * Fetch article from feed an return its text, acting as reverse proxy
+ * in order to prevent CORS errors
+ */
 exports.getArticle = functions.https.onCall(async (data) =>
   fetch(data.url).then((response: any) => response.text())
 );
-exports.addOrUpdateFeed = functions.https.onCall(async (data) =>
+
+/***
+ * Add new or update feed, adding the current user as subscriber
+ */
+exports.setFeed = functions.https.onCall(async (data, context) =>
   admin
     .firestore()
     .collection(FEEDS)
-    .doc(data.name)
+    .doc(data.url)
     .set(
       {
         name: data.name,
         url: data.url,
         icon: data.icon ?? 'article',
+        subscribers: admin.firestore.FieldValue.arrayUnion(getUid(context)),
       },
-      { merge: true }
+      {merge: true}
     )
 );
 
-exports.addSubscribedUserToFeed = functions.firestore
-  .document('feeds/{name}')
-  .onCreate((snapshot, context) => {
-    const uid = context.auth?.uid;
-
-    if (!uid) {
-      throw new Error('Invalid authentication');
-    }
-
-    return admin
-      .firestore()
-      .collection(FEEDS)
-      .doc(name)
-      .update({
-        subscribingUsers: admin.firestore.FieldValue.arrayUnion(uid),
-      });
-  });
-
-exports.unsubscribeFeed = functions.https.onCall((data, context) => {
-  const uid = context.auth?.uid;
-
-  if (!uid) {
-    throw new Error('Invalid authentication');
-  }
-
-  return admin
-    .firestore()
-    .collection(FEEDS)
-    .doc(data.name)
-    .update({
-      subscribingUsers: admin.firestore.FieldValue.arrayRemove(uid),
-    });
-});
-
-exports.deleteFeed = functions.https.onCall(async (data) =>
-  admin.firestore().collection(FEEDS).doc(data.name).delete()
-);
-
-exports.getFeedList = functions.https.onCall(() =>
+/***
+ * Unsubscribe feed by removing the current user from the feeds subscriber list
+ */
+exports.unsubscribe = functions.https.onCall((data, context) =>
   admin
     .firestore()
     .collection(FEEDS)
-    .get()
-    .then((snapshot) => snapshot.docs.map((doc) => doc.data()))
+    .doc(data.url)
+    .update({
+      subscribers: admin.firestore.FieldValue.arrayRemove(getUid(context)),
+    }));
+
+/***
+ * TODO convert to trigger or remove
+ */
+exports.deleteFeed = functions.https.onCall(async (data) =>
+  admin.firestore().collection(FEEDS).doc(data.url).delete()
 );
 
+/***
+ * Return the list of feeds subscribed by the current user
+ */
+exports.getFeedList = functions.https.onCall((data, context) =>
+  admin
+    .firestore()
+    .collection(FEEDS)
+    .where('subscribers', 'array-contains', getUid(context))
+    .get()
+    .then((snapshot) => snapshot.docs
+      .map((doc) => doc.data()))
+);
+
+/***
+ * TODO personalize
+ */
 exports.loadSettings = functions.https.onCall(async () =>
   admin
     .firestore()
@@ -92,6 +92,9 @@ exports.loadSettings = functions.https.onCall(async () =>
     .then((snapshot) => snapshot.data())
 );
 
+/***
+ * TODO personalize
+ */
 exports.saveSettings = functions.https.onCall(async (data) =>
   admin
     .firestore()
@@ -102,6 +105,21 @@ exports.saveSettings = functions.https.onCall(async (data) =>
         speed: data.speed ?? null,
         defaultFeed: data.defaultFeed ?? null,
       },
-      { merge: true }
+      {merge: true}
     )
 );
+
+/***
+ * Return UID or throw unauthenticated exception
+ */
+function getUid(context: CallableContext): string {
+  const uid = context.auth?.uid;
+  console.log('current user', uid);
+  if (!uid) {
+    throw new functions.https.HttpsError(
+      'unauthenticated',
+      'only authenticated users can subscribe to feeds'
+    );
+  }
+  return uid;
+}

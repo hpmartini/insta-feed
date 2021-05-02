@@ -19,17 +19,17 @@ export class FeedsService {
 
   private readonly CALLABLE = this.functions.httpsCallable;
 
-  public addFeedToFirestore(feed: Feed): Observable<any> {
+  public subscribe(feed: Feed): Observable<any> {
     this.firestore.collection(FIREBASE_CONSTANTS.feeds).doc();
 
-    return this.CALLABLE('addOrUpdateFeed')(feed);
+    return this.CALLABLE('setFeed')(feed);
   }
 
   public loadFeeds(): Observable<any> {
     return this.CALLABLE('getFeedList')(null);
   }
 
-  public deleteFeed(feedName: string): Observable<any> {
-    return this.CALLABLE('deleteFeed')({ name: feedName });
+  public unsubscribe(feedName: string): Observable<any> {
+    return this.CALLABLE('unsubscribe')({ name: feedName });
   }
 }
