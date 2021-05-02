@@ -14,6 +14,12 @@ const FEEDS = 'feeds';
 
 app.use(cors({origin: true}));
 
+interface Feed {
+  name: string;
+  url: string;
+  icon?: string;
+}
+
 /***
  * Parse and return feed by URL
  */
@@ -36,7 +42,7 @@ exports.setFeed = functions.https.onCall(async (data, context) =>
   admin
     .firestore()
     .collection(FEEDS)
-    .doc(data.url)
+    .doc(removeSlashesFromUrl(data))
     .set(
       {
         name: data.name,
@@ -55,7 +61,7 @@ exports.unsubscribe = functions.https.onCall((data, context) =>
   admin
     .firestore()
     .collection(FEEDS)
-    .doc(data.url)
+    .doc(removeSlashesFromUrl(data.url))
     .update({
       subscribers: admin.firestore.FieldValue.arrayRemove(getUid(context)),
     }));
@@ -64,7 +70,7 @@ exports.unsubscribe = functions.https.onCall((data, context) =>
  * TODO convert to trigger or remove
  */
 exports.deleteFeed = functions.https.onCall(async (data) =>
-  admin.firestore().collection(FEEDS).doc(data.url).delete()
+  admin.firestore().collection(FEEDS).doc(removeSlashesFromUrl(data.url)).delete()
 );
 
 /***
@@ -122,4 +128,11 @@ function getUid(context: CallableContext): string {
     );
   }
   return uid;
+}
+
+/***
+ * Remove slashes to use URL as identifier
+ */
+function removeSlashesFromUrl(feed: Feed): string {
+  return feed.url.replace('/', '_');
 }
