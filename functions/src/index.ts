@@ -14,12 +14,6 @@ const FEEDS = 'feeds';
 
 app.use(cors({origin: true}));
 
-interface Feed {
-  name: string;
-  url: string;
-  icon?: string;
-}
-
 /***
  * Parse and return feed by URL
  */
@@ -133,6 +127,6 @@ function getUid(context: CallableContext): string {
 /***
  * Remove slashes to use URL as identifier
  */
-function removeSlashesFromUrl(feed: Feed): string {
-  return feed.url.replace('/', '_');
+function removeSlashesFromUrl(url: string): string {
+  return url.replace('/', '_');
 }
