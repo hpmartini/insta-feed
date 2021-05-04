@@ -36,7 +36,7 @@ exports.setFeed = functions.https.onCall(async (data, context) =>
   admin
     .firestore()
     .collection(FEEDS)
-    .doc(removeSlashesFromUrl(data))
+    .doc(removeSlashesFromUrl(data.url))
     .set(
       {
         name: data.name,
@@ -114,7 +114,6 @@ exports.saveSettings = functions.https.onCall(async (data) =>
  */
 function getUid(context: CallableContext): string {
   const uid = context.auth?.uid;
-  console.log('current user', uid);
   if (!uid) {
     throw new functions.https.HttpsError(
       'unauthenticated',
@@ -128,5 +127,8 @@ function getUid(context: CallableContext): string {
  * Remove slashes to use URL as identifier
  */
 function removeSlashesFromUrl(url: string): string {
-  return url.replace('/', '_');
+  return url
+    .replace(/https?:\/\/(www\.)?/, '')
+    .replace(/\/$/, '')
+    .replace(/\//g, '_');
 }
