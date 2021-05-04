@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  stage: 'prod',
   // todo regenerate keys and parameterize them with env vars on GitHub
   firebase: {
     apiKey: 'AIzaSyBcImIk9eIHXepMI5fRDK4IGSkuIVv2vaQ',
