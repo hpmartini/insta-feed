@@ -50,3 +50,5 @@ Thumbs.db
 /.firebase
 *.log
 /data
+.angular/
+.angular/

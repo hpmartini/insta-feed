@@ -5,7 +5,7 @@ import * as fromFeedsActions from './feeds.actions';
 import { select, Store } from '@ngrx/store';
 import { Feed } from '../../model/feed';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class FeedsFacade {
   feeds$ = this.store.pipe(select(fromFeedsSelectors.getAllFeeds));
   isLoaded$ = this.store.pipe(select(fromFeedsSelectors.getFeedsIsLoaded));

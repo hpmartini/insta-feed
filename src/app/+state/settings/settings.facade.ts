@@ -5,7 +5,7 @@ import * as fromSettingsActions from './settings.actions';
 import * as fromSettingsSelectors from './settings.selectors';
 import { Settings } from '../../model/settings';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class SettingsFacade {
   settings$ = this.store.pipe(select(fromSettingsSelectors.getAllSettings));
   isLoaded$ = this.store.pipe(

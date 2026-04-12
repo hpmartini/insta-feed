@@ -5,7 +5,7 @@ import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/m
 import { MatFormField, MatLabel, MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatSlider } from '@angular/material/slider';
+import { MatSlider, MatSliderThumb } from '@angular/material/slider';
 import { MatButton } from '@angular/material/button';
 import { NgIf } from '@angular/common';
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
@@ -27,6 +27,7 @@ import { SpinnerComponent } from '../../components/spinner/spinner.component';
         FormsModule,
         MatHint,
         MatSlider,
+        MatSliderThumb,
         MatButton,
         NgIf,
         SpinnerComponent,
