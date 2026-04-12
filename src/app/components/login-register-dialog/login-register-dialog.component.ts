@@ -1,7 +1,13 @@
 import { Component, Inject } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { AuthService } from '../../services/auth.service';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton, MatAnchor } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
 
 export enum LoginRegisterType {
   login,
@@ -13,9 +19,23 @@ export interface LoginRegisterDialogData {
 }
 
 @Component({
-  selector: 'app-login-register-dialog',
-  templateUrl: './login-register-dialog.component.html',
-  styleUrls: ['./login-register-dialog.component.sass'],
+    selector: 'app-login-register-dialog',
+    templateUrl: './login-register-dialog.component.html',
+    styleUrls: ['./login-register-dialog.component.sass'],
+    standalone: true,
+    imports: [
+        MatToolbar,
+        MatIconButton,
+        MatIcon,
+        CdkScrollable,
+        MatDialogContent,
+        ReactiveFormsModule,
+        MatFormField,
+        MatLabel,
+        MatInput,
+        MatDialogActions,
+        MatAnchor,
+    ],
 })
 export class LoginRegisterDialogComponent {
   public loginRegisterForm = new FormGroup({

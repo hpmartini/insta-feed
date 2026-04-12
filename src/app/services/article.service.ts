@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { FeedObject } from '../model/FeedObject';
 import { Article } from '../model/article';
 import { BehaviorSubject } from 'rxjs';
-import { AngularFireFunctions } from '@angular/fire/functions';
+import { AngularFireFunctions } from '@angular/fire/compat/functions';
 
 const Readability = require('@mozilla/readability');
 

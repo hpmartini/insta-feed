@@ -1,0 +1,1 @@
+{"ast":null,"code":"export const FIREBASE_CONSTANTS = {\n  users: 'users',\n  feeds: 'feeds'\n};","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}

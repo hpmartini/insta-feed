@@ -3,11 +3,14 @@ import {SettingsFacade} from './+state/settings/settings.facade';
 import {FeedsFacade} from './+state/feeds/feeds.facade';
 import {AuthService} from './services/auth.service';
 import {User} from './model/user';
+import { NavComponent } from './components/nav/nav.component';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.sass'],
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.sass'],
+    standalone: true,
+    imports: [NavComponent],
 })
 export class AppComponent implements OnInit {
   title = 'insta-feed';

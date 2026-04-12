@@ -1,15 +1,30 @@
+import { NgClass } from "@angular/common";
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AngularFireFunctions } from '@angular/fire/functions';
+import { AngularFireFunctions } from '@angular/fire/compat/functions';
 import { Article } from '../../model/article';
 import { ActivatedRoute } from '@angular/router';
 import { AnimationActiveService } from '../../services/animation-active.service';
 import { SettingsFacade } from '../../+state/settings/settings.facade';
 import { ArticleService } from '../../services/article.service';
+import { SpinnerComponent } from '../../components/spinner/spinner.component';
+import { NgIf } from '@angular/common';
+import { MatFabButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { AnimationComponent } from './animation/animation.component';
 
 @Component({
-  selector: 'app-row-runner',
-  templateUrl: './row-runner.component.html',
-  styleUrls: ['./row-runner.component.sass'],
+    selector: 'app-row-runner',
+    templateUrl: './row-runner.component.html',
+    styleUrls: ['./row-runner.component.sass'],
+    standalone: true,
+    
+    imports: [NgClass, 
+        SpinnerComponent,
+        NgIf,
+        MatFabButton,
+        MatIcon,
+        AnimationComponent,
+    ],
 })
 export class RowRunnerComponent implements OnInit, OnDestroy {
   public article: Article;
