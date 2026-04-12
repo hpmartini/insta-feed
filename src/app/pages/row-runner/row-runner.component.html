@@ -13,6 +13,14 @@
 
     <div class="buttonRow" fxLayout="row">
       <button
+        (click)="toggleLanguage()"
+        class="toggleSrt"
+        color="accent"
+        mat-fab
+      >
+        <span>{{ activeLanguageDisplay }}</span>
+      </button>
+      <button
         (click)="toggleActive()"
         class="toggleSrt"
         color="primary"
@@ -52,6 +60,7 @@
       *ngIf="isRowRunnerActive"
       [inputText]="article.content"
       [speed]="speed"
+      [language]="activeLanguage"
     ></app-animation>
   </div>
 </div>

@@ -10,6 +10,7 @@ import { NgIf } from '@angular/common';
 import { MatFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { AnimationComponent } from './animation/animation.component';
+import { SupportedLanguage } from '../../services/chunking.service';
 
 @Component({
     selector: 'app-row-runner',
@@ -32,6 +33,15 @@ export class RowRunnerComponent implements OnInit, OnDestroy {
   public isRowRunnerActive = false;
   public fullScreen = false;
   public isAutostart = false;
+  public languageOverride: SupportedLanguage | null = null;
+
+  get activeLanguage(): SupportedLanguage {
+    return this.languageOverride || this.article?.language || 'de';
+  }
+
+  get activeLanguageDisplay(): string {
+    return this.activeLanguage.toUpperCase();
+  }
 
   constructor(
     private readonly articleService: ArticleService,
@@ -70,6 +80,10 @@ export class RowRunnerComponent implements OnInit, OnDestroy {
     this.isRowRunnerActive = !this.isRowRunnerActive;
     this.fullScreen = !this.fullScreen;
     this.animationActiveService.isAnimationActive = this.isRowRunnerActive;
+  }
+
+  toggleLanguage(): void {
+    this.languageOverride = this.activeLanguage === 'de' ? 'en' : 'de';
   }
 
   ngOnDestroy(): void {
