@@ -64,6 +64,9 @@ export class AnimationComponent implements OnInit, OnDestroy, AfterViewInit {
    * @private
    */
   private processWord(word: string): Observable<string> {
+    const multiplier = this.getChunkSpeedMultiplier(word);
+    const chunkSpeed = this.speed * multiplier;
+
     // sequentially process the current word and each of its characters
     return of(word).pipe(
       // add the word to the output and hyphenate it if necessary
@@ -71,10 +74,40 @@ export class AnimationComponent implements OnInit, OnDestroy, AfterViewInit {
       // sequentially place each character to the output with delay
       concatMap((newWord) =>
         from(newWord).pipe(
-          concatMap((char) => of(this.animate(char)).pipe(delay(this.speed)))
+          concatMap((char) => of(this.animate(char)).pipe(delay(chunkSpeed)))
         )
       )
     );
+  }
+
+  /**
+   * Adjust presentation speed dynamically based on word length, commas, and sentence endings.
+   * @param chunk The current chunk/word
+   * @private
+   */
+  private getChunkSpeedMultiplier(chunk: string): number {
+    const trimmed = chunk.trim();
+    if (!trimmed) return 1.0;
+    
+    const lastChar = trimmed.slice(-1);
+    
+    if (lastChar === '.' || lastChar === '!' || lastChar === '?') {
+      return 2.0;
+    }
+    
+    if (lastChar === ',' || lastChar === ';' || lastChar === ':') {
+      return 1.5;
+    }
+    
+    if (trimmed.length > 10) {
+      return 1.5;
+    }
+    
+    if (trimmed.length < 4) {
+      return 0.8;
+    }
+    
+    return 1.0;
   }
 
   /***
