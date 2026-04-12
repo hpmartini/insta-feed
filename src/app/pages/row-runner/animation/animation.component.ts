@@ -12,11 +12,7 @@ import {
 } from '@angular/core';
 import { concatMap, delay, map } from 'rxjs/operators';
 import { from, Observable, of, Subscription } from 'rxjs';
-
-declare const require: any;
-const Hypher = require('hypher');
-const german = require('hyphenation-lang-de');
-let hyphen = null;
+import { ChunkingService, SupportedLanguage } from '../../../services/chunking.service';
 
 @Component({
     selector: 'app-animation',
@@ -31,6 +27,7 @@ export class AnimationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Input() inputText: string;
   @Input() speed: number;
+  @Input() language: SupportedLanguage = 'de';
 
   public output: string;
 
@@ -38,10 +35,12 @@ export class AnimationComponent implements OnInit, OnDestroy, AfterViewInit {
   private lineBreak = '\n';
   private caret = '▉';
 
-  constructor(private ref: ChangeDetectorRef) {}
+  constructor(
+    private ref: ChangeDetectorRef,
+    private chunkingService: ChunkingService
+  ) {}
 
   ngOnInit(): void {
-    hyphen = new Hypher(german);
     this.output = this.caret;
   }
 
@@ -113,7 +112,7 @@ export class AnimationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.output = this.output.slice(0, -word.length);
 
     // get syllables of word as array
-    const syllables: string[] = hyphen.hyphenate(word);
+    const syllables: string[] = this.chunkingService.hyphenateWord(word, this.language);
 
     // if the word has only one syllable
     // return it and with a preceding linebreak
