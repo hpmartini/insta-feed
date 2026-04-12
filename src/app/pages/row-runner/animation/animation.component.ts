@@ -13,6 +13,7 @@ import {
 import { concatMap, delay, map } from 'rxjs/operators';
 import { from, Observable, of, Subscription } from 'rxjs';
 import { ChunkingService, SupportedLanguage } from '../../../services/chunking.service';
+import { NlpSplitterService } from '../../../services/nlp-splitter.service';
 
 @Component({
     selector: 'app-animation',
@@ -37,7 +38,8 @@ export class AnimationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private ref: ChangeDetectorRef,
-    private chunkingService: ChunkingService
+    private chunkingService: ChunkingService,
+    private nlpSplitter: NlpSplitterService
   ) {}
 
   ngOnInit(): void {
@@ -46,7 +48,7 @@ export class AnimationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit(): void {
     if (!this.inputText) return;
-    this.animation = from(this.inputText.split(' '))
+    this.animation = from(this.nlpSplitter.splitIntoChunks(this.inputText))
       .pipe(
         // sequentially subscribe to the processing of each word of the input array
         concatMap((word) => this.processWord(word)),
