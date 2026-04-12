@@ -1,35 +1,38 @@
-import { ElementRef, Injectable, ViewChild } from '@angular/core';
-import { AngularFireFunctions } from '@angular/fire/compat/functions';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { ElementRef, Injectable, ViewChild, inject } from '@angular/core';
+import { Functions, httpsCallable } from '@angular/fire/functions';
+import { Firestore, collection, doc } from '@angular/fire/firestore';
+import { BehaviorSubject, Observable, from } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Feed } from '../../model/feed';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FIREBASE_CONSTANTS } from '../../constants/firebase.constants';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class FeedsService {
-  @ViewChild('dummyDiv', { static: false }) dummyDiv: ElementRef;
-  public feedList = new BehaviorSubject<[]>(null);
+  @ViewChild('dummyDiv', { static: false }) dummyDiv!: ElementRef;
+  public feedList = new BehaviorSubject<any[] | null>(null);
   public savingSettings = new BehaviorSubject<boolean>(false);
-  public lines: string[];
+  public lines!: string[];
 
-  constructor(
-    private readonly functions: AngularFireFunctions,
-    private readonly firestore: AngularFirestore
-  ) {}
+  private readonly functions: Functions = inject(Functions);
+  private readonly firestore: Firestore = inject(Firestore);
 
-  private readonly CALLABLE = this.functions.httpsCallable;
+  constructor() {}
 
   public subscribe(feed: Feed): Observable<any> {
-    this.firestore.collection(FIREBASE_CONSTANTS.feeds).doc();
+    const feedsCollection = collection(this.firestore, FIREBASE_CONSTANTS.feeds);
+    doc(feedsCollection); // The original code created an empty doc reference but didn't use it
 
-    return this.CALLABLE('setFeed')(feed);
+    const setFeed = httpsCallable(this.functions, 'setFeed');
+    return from(setFeed(feed)).pipe(map(result => result.data));
   }
 
   public loadFeeds(): Observable<any> {
-    return this.CALLABLE('getFeedList')(null);
+    const getFeedList = httpsCallable(this.functions, 'getFeedList');
+    return from(getFeedList(null)).pipe(map(result => result.data));
   }
 
   public unsubscribe(feed: Feed): Observable<any> {
-    return this.CALLABLE('unsubscribe')(feed);
+    const unsubscribeFunc = httpsCallable(this.functions, 'unsubscribe');
+    return from(unsubscribeFunc(feed)).pipe(map(result => result.data));
   }
 }

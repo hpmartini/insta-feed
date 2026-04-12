@@ -1,6 +1,5 @@
 import { NgClass } from "@angular/common";
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AngularFireFunctions } from '@angular/fire/compat/functions';
 import { Article } from '../../model/article';
 import { ActivatedRoute } from '@angular/router';
 import { AnimationActiveService } from '../../services/animation-active.service';
@@ -27,15 +26,14 @@ import { AnimationComponent } from './animation/animation.component';
     ],
 })
 export class RowRunnerComponent implements OnInit, OnDestroy {
-  public article: Article;
+  public article!: Article | null;
   public speed = 30;
-  public lines: string[];
+  public lines!: string[];
   public isRowRunnerActive = false;
   public fullScreen = false;
   public isAutostart = false;
 
   constructor(
-    private readonly functions: AngularFireFunctions,
     private readonly articleService: ArticleService,
     private readonly route: ActivatedRoute,
     private readonly animationActiveService: AnimationActiveService,
@@ -57,7 +55,7 @@ export class RowRunnerComponent implements OnInit, OnDestroy {
 
     this.route.paramMap.subscribe((route) => {
       this.isAutostart = route.get('isAutostart') === 'true';
-      const feedUrl = 'https://'.concat(route.get('url'));
+      const feedUrl = 'https://'.concat(route.get('url') || '');
       this.articleService.loadArticle(feedUrl.replace(/\\/g, '/'));
     });
   }
