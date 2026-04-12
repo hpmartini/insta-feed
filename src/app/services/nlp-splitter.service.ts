@@ -33,6 +33,13 @@ export class NlpSplitterService {
         
         for (let j = 0; j < words.length; j++) {
           const word = words[j];
+          const prospectiveLength = currentChunk.length > 0 ? currentChunk.join(' ').length + 1 + word.length : word.length;
+          
+          if (currentChunk.length > 0 && prospectiveLength > 20) {
+            chunks.push(currentChunk.join(' '));
+            currentChunk = [];
+          }
+          
           currentChunk.push(word);
           
           if (currentChunk.length >= 3) {
