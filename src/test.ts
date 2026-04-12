@@ -7,19 +7,6 @@ import {
   platformBrowserDynamicTesting
 } from '@angular/platform-browser-dynamic/testing';
 import { provideMockStore } from '@ngrx/store/testing';
-<<<<<<< HEAD
-import { USE_EMULATOR as AUTH_EMULATOR } from '@angular/fire/compat/auth';
-import { USE_EMULATOR as FIRESTORE_EMULATOR } from '@angular/fire/compat/firestore';
-import { AngularFireModule } from '@angular/fire/compat';
-import { environment } from './environments/environment';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-
-=======
 
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
@@ -34,7 +21,6 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
->>>>>>> feat/v2-task1.2-firebase
 getTestBed().initTestEnvironment(
   BrowserDynamicTestingModule,
   platformBrowserDynamicTesting()
@@ -42,16 +28,11 @@ getTestBed().initTestEnvironment(
 
 beforeEach(() => {
   TestBed.configureTestingModule({
-<<<<<<< HEAD
-    imports: [AngularFireModule.initializeApp(environment.firebase)],
-    providers: [
-=======
     providers: [
       provideFirebaseApp(() => initializeApp(environment.firebase)),
       provideAuth(() => getAuth()),
       provideFirestore(() => getFirestore()),
       provideFunctions(() => getFunctions()),
->>>>>>> feat/v2-task1.2-firebase
       provideAnimations(),
       provideHttpClient(),
       provideHttpClientTesting(),
@@ -67,7 +48,3 @@ beforeEach(() => {
     ],
   });
 });
-<<<<<<< HEAD
-
-=======
->>>>>>> feat/v2-task1.2-firebase
