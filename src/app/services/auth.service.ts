@@ -24,7 +24,7 @@ export class AuthService {
   private getUserObservable(user: User | null): Observable<User | null> {
     if (user) {
       const userDocRef = doc(this.firestore, this.buildUserPath(user.uid));
-      return docData(userDocRef) as Observable<User | null>;
+      return docData(userDocRef, { idField: 'uid' }) as Observable<User | null>;
     } else {
       return of(null);
     }
