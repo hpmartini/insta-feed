@@ -6,7 +6,6 @@ import { Functions, httpsCallable } from '@angular/fire/functions';
 
 declare const require: any;
 const Readability = require('@mozilla/readability');
-const LanguageDetect = require('languagedetect');
 
 @Injectable({
   providedIn: 'root'
@@ -35,36 +34,42 @@ export class ArticleService {
 
   public loadArticle(url: string): void {
     const getArticle = httpsCallable(this.functions, 'getArticle');
-    from(getArticle({ url })).subscribe((result: any) =>
-      this.article.next(this.getParsedArticleWebSite(result.data))
+    from(getArticle({ url })).subscribe(async (result: any) =>
+      this.article.next(await this.getParsedArticleWebSite(result.data))
     );
   }
 
-  private getParsedArticleWebSite(result: string): Article {
+  private async getParsedArticleWebSite(result: string): Promise<Article> {
     const doc = new DOMParser().parseFromString(result, 'text/html');
     const article = new Readability.Readability(doc).parse();
     
     let language: 'de' | 'en' = 'de';
     try {
+      const ldModule = (await import('languagedetect')) as any;
+      const LanguageDetect = ldModule.default || ldModule;
       const lngDetector = new LanguageDetect();
-      // detect returns an array of arrays: [ [ 'english', 0.5 ], [ 'german', 0.4 ] ]
-      const detected = lngDetector.detect(article.textContent || '', 1);
-      if (detected && detected.length > 0 && detected[0][0] === 'english') {
-        language = 'en';
+      
+      const text = article?.textContent?.trim() || '';
+      // Only detect if there's enough text to prevent inaccurate results
+      if (text.length > 50) {
+        const detected = lngDetector.detect(text, 1);
+        if (detected && detected.length > 0 && detected[0][0] === 'english') {
+          language = 'en';
+        }
       }
     } catch (e) {
       console.error('Language detection failed', e);
     }
 
     return {
-      siteName: article.siteName,
-      title: article.title,
-      excerpt: article.excerpt,
-      content: article.textContent
+      siteName: article?.siteName || '',
+      title: article?.title || '',
+      excerpt: article?.excerpt || '',
+      content: (article?.textContent || '')
         .trim()
         .replace(/\s+/g, ' ')
         .replace(/([":])(["])/g, '$1 $2'),
-      url: article.link,
+      url: article?.link || '',
       language
     };
   }
