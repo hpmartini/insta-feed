@@ -4,4 +4,5 @@ export interface Article {
   excerpt: string;
   content: string;
   url: string;
+  language?: 'de' | 'en';
 }

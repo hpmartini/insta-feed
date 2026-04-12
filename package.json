@@ -39,6 +39,7 @@
     "hyphenation.de": "^0.2.1",
     "hyphenation.en-us": "^0.2.1",
     "hypher": "^0.2.5",
+    "languagedetect": "^2.0.0",
     "prettier": "^2.2.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",

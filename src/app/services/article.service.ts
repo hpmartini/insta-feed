@@ -6,6 +6,7 @@ import { Functions, httpsCallable } from '@angular/fire/functions';
 
 declare const require: any;
 const Readability = require('@mozilla/readability');
+const LanguageDetect = require('languagedetect');
 
 @Injectable({
   providedIn: 'root'
@@ -42,6 +43,19 @@ export class ArticleService {
   private getParsedArticleWebSite(result: string): Article {
     const doc = new DOMParser().parseFromString(result, 'text/html');
     const article = new Readability.Readability(doc).parse();
+    
+    let language: 'de' | 'en' = 'de';
+    try {
+      const lngDetector = new LanguageDetect();
+      // detect returns an array of arrays: [ [ 'english', 0.5 ], [ 'german', 0.4 ] ]
+      const detected = lngDetector.detect(article.textContent || '', 1);
+      if (detected && detected.length > 0 && detected[0][0] === 'english') {
+        language = 'en';
+      }
+    } catch (e) {
+      console.error('Language detection failed', e);
+    }
+
     return {
       siteName: article.siteName,
       title: article.title,
@@ -50,7 +64,8 @@ export class ArticleService {
         .trim()
         .replace(/\s+/g, ' ')
         .replace(/([":])(["])/g, '$1 $2'),
-      url: article.link, // Note: readability might not return 'link'. This was in original code.
+      url: article.link,
+      language
     };
   }
 }
