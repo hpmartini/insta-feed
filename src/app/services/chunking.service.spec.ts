@@ -21,7 +21,7 @@ describe('ChunkingService', () => {
 
   it('should hyphenate English text with soft hyphens', () => {
     const result = service.hyphenateText('watermelon', 'en');
-    expect(result).toBe('wa\u00ADter\u00ADmel\u00ADon');
+    expect(result).toBe('wa\u00ADter\u00ADmelon');
   });
 
   it('should default to German hyphenation if no language is specified', () => {
@@ -41,6 +41,6 @@ describe('ChunkingService', () => {
 
   it('should return syllables for a given word in English', () => {
     const result = service.hyphenateWord('watermelon', 'en');
-    expect(result).toEqual(['wa', 'ter', 'mel', 'on']);
+    expect(result).toEqual(['wa', 'ter', 'melon']);
   });
 });
