@@ -1,9 +1,9 @@
-import * as functions from 'firebase-functions';
+import * as functions from 'firebase-functions/v1';
 import * as admin from 'firebase-admin';
-import * as express from 'express';
-import * as cors from 'cors';
-import * as Parser from 'rss-parser';
-import {CallableContext} from 'firebase-functions/lib/providers/https';
+import express from 'express';
+import cors from 'cors';
+import Parser from 'rss-parser';
+import { CallableContext } from 'firebase-functions/v1/https';
 
 admin.initializeApp();
 
@@ -18,21 +18,21 @@ app.use(cors({origin: true}));
  * Parse and return feed by URL
  */
 exports.getFeed = functions.https.onCall(
-  async (data) => await parser.parseURL(data.url)
+  async (data: any) => await parser.parseURL(data.url)
 );
 
 /***
  * Fetch article from feed an return its text, acting as reverse proxy
  * in order to prevent CORS errors
  */
-exports.getArticle = functions.https.onCall(async (data) =>
+exports.getArticle = functions.https.onCall(async (data: any) =>
   fetch(data.url).then((response: any) => response.text())
 );
 
 /***
  * Add new or update feed, adding the current user as subscriber
  */
-exports.setFeed = functions.https.onCall(async (data, context) =>
+exports.setFeed = functions.https.onCall(async (data: any, context: CallableContext) =>
   admin
     .firestore()
     .collection(FEEDS)
@@ -51,7 +51,7 @@ exports.setFeed = functions.https.onCall(async (data, context) =>
 /***
  * Unsubscribe feed by removing the current user from the feeds subscriber list
  */
-exports.unsubscribe = functions.https.onCall((data, context) =>
+exports.unsubscribe = functions.https.onCall((data: any, context: CallableContext) =>
   admin
     .firestore()
     .collection(FEEDS)
@@ -63,14 +63,14 @@ exports.unsubscribe = functions.https.onCall((data, context) =>
 /***
  * TODO convert to trigger or remove
  */
-exports.deleteFeed = functions.https.onCall(async (data) =>
+exports.deleteFeed = functions.https.onCall(async (data: any) =>
   admin.firestore().collection(FEEDS).doc(removeSlashesFromUrl(data.url)).delete()
 );
 
 /***
  * Return the list of feeds subscribed by the current user
  */
-exports.getFeedList = functions.https.onCall((data, context) =>
+exports.getFeedList = functions.https.onCall((data: any, context: CallableContext) =>
   admin
     .firestore()
     .collection(FEEDS)
@@ -95,7 +95,7 @@ exports.loadSettings = functions.https.onCall(async () =>
 /***
  * TODO personalize
  */
-exports.saveSettings = functions.https.onCall(async (data) =>
+exports.saveSettings = functions.https.onCall(async (data: any) =>
   admin
     .firestore()
     .collection('user')
