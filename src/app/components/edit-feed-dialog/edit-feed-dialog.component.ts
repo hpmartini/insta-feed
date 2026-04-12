@@ -27,16 +27,18 @@ export interface FeedDialogData {
     ],
 })
 export class EditFeedDialogComponent {
-  public feedForm = new FormGroup({
-    name: new FormControl(this.data.feed.name),
-    url: new FormControl(this.data.feed.url),
-  });
+  public feedForm: FormGroup;
 
   constructor(
     private readonly feedsFacade: FeedsFacade,
     public dialogRef: MatDialogRef<EditFeedDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: FeedDialogData
-  ) {}
+  ) {
+    this.feedForm = new FormGroup({
+      name: new FormControl(this.data?.feed?.name),
+      url: new FormControl(this.data?.feed?.url),
+    });
+  }
 
   updateFeed(): void {
     const feed: Feed = {

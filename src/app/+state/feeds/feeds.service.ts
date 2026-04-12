@@ -5,7 +5,7 @@ import { Feed } from '../../model/feed';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FIREBASE_CONSTANTS } from '../../constants/firebase.constants';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class FeedsService {
   @ViewChild('dummyDiv', { static: false }) dummyDiv: ElementRef;
   public feedList = new BehaviorSubject<[]>(null);

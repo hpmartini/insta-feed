@@ -13,6 +13,7 @@ import {
 import { concatMap, delay, map } from 'rxjs/operators';
 import { from, Observable, of, Subscription } from 'rxjs';
 
+declare const require: any;
 const Hypher = require('hypher');
 const german = require('hyphenation-lang-de');
 let hyphen = null;
@@ -45,6 +46,7 @@ export class AnimationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    if (!this.inputText) return;
     this.animation = from(this.inputText.split(' '))
       .pipe(
         // sequentially subscribe to the processing of each word of the input array
@@ -233,7 +235,9 @@ export class AnimationComponent implements OnInit, OnDestroy, AfterViewInit {
    * Stop the animation and clear the output
    */
   ngOnDestroy(): void {
-    this.animation.unsubscribe();
+    if (this.animation) {
+      this.animation.unsubscribe();
+    }
     this.output = '';
   }
 }

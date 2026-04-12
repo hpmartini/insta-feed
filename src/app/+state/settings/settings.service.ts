@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { Settings } from '../../model/settings';
 import { AngularFireFunctions } from '@angular/fire/compat/functions';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class SettingsService {
   constructor(private readonly functions: AngularFireFunctions) {}
 

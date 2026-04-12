@@ -16,6 +16,7 @@ describe('AnimationComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AnimationComponent);
     component = fixture.componentInstance;
+    component.inputText = '';
     fixture.detectChanges();
   });
 

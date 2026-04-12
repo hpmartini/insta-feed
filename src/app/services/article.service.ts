@@ -4,9 +4,12 @@ import { Article } from '../model/article';
 import { BehaviorSubject } from 'rxjs';
 import { AngularFireFunctions } from '@angular/fire/compat/functions';
 
+declare const require: any;
 const Readability = require('@mozilla/readability');
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ArticleService {
   public article = new BehaviorSubject<Article>(null);
   public articleList = new BehaviorSubject<FeedObject[]>(null);
