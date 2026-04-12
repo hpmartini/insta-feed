@@ -12,10 +12,10 @@ import { SettingsService } from './app/+state/settings/settings.service';
 import { SettingsFacade } from './app/+state/settings/settings.facade';
 import { ArticleService } from './app/services/article.service';
 import { FeedsFacade } from './app/+state/feeds/feeds.facade';
-import { AngularFireAuth, USE_EMULATOR, AngularFireAuthModule } from '@angular/fire/compat/auth';
-import { SETTINGS } from '@angular/fire/compat/firestore';
-import { USE_EMULATOR as FUNCTIONS_EMULATOR, AngularFireFunctionsModule } from '@angular/fire/compat/functions';
-import { AngularFireModule } from '@angular/fire/compat';
+import { provideAuth, getAuth, connectAuthEmulator } from '@angular/fire/auth';
+import { provideFirestore, getFirestore, connectFirestoreEmulator } from '@angular/fire/firestore';
+import { provideFunctions, getFunctions, connectFunctionsEmulator } from '@angular/fire/functions';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { AppRoutingModule } from './app/app-routing.module';
 import { withInterceptorsFromDi, provideHttpClient } from '@angular/common/http';
@@ -34,30 +34,32 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
     providers: [
-        importProvidersFrom(AngularFireModule.initializeApp(environment.firebase, 'ready'), AngularFireFunctionsModule, AngularFireAuthModule, BrowserModule, AppRoutingModule, CommonModule, LayoutModule, ReactiveFormsModule, FormsModule, StoreModule.forRoot({}), EffectsModule.forRoot([]), StoreModule.forFeature(fromSettings.settingsFeatureKey, fromSettings.reducer, { metaReducers: fromSettings.metaReducers }), EffectsModule.forFeature([SettingsEffects]), StoreModule.forFeature(fromFeeds.feedsFeatureKey, fromFeeds.reducer), EffectsModule.forFeature([FeedsEffects]), !environment.production ? StoreDevtoolsModule.instrument() : []),
+        importProvidersFrom( BrowserModule, AppRoutingModule, CommonModule, LayoutModule, ReactiveFormsModule, FormsModule, StoreModule.forRoot({}), EffectsModule.forRoot([]), StoreModule.forFeature(fromSettings.settingsFeatureKey, fromSettings.reducer, { metaReducers: fromSettings.metaReducers }), EffectsModule.forFeature([SettingsEffects]), StoreModule.forFeature(fromFeeds.feedsFeatureKey, fromFeeds.reducer), EffectsModule.forFeature([FeedsEffects]), !environment.production ? StoreDevtoolsModule.instrument() : []),
         FeedsService,
         SettingsService,
         SettingsFacade,
         ArticleService,
         FeedsFacade,
-        AngularFireAuth,
-        {
-            provide: SETTINGS,
-            useValue: environment.stage === 'emulator'
-                ? {
-                    host: 'localhost:8080',
-                    ssl: false,
-                }
-                : undefined,
-        },
-        {
-            provide: USE_EMULATOR,
-            useValue: environment.stage === 'emulator' ? ['localhost', 9099] : undefined,
-        },
-        {
-            provide: FUNCTIONS_EMULATOR,
-            useValue: environment.stage === 'emulator' ? ['localhost', 5001] : undefined,
-        },
+        
+
+
+
+        provideFirebaseApp(() => initializeApp(environment.firebase)),
+        provideAuth(() => {
+          const auth = getAuth();
+          if (environment.stage === 'emulator') connectAuthEmulator(auth, 'http://localhost:9099');
+          return auth;
+        }),
+        provideFirestore(() => {
+          const firestore = getFirestore();
+          if (environment.stage === 'emulator') connectFirestoreEmulator(firestore, 'localhost', 8080);
+          return firestore;
+        }),
+        provideFunctions(() => {
+          const functions = getFunctions();
+          if (environment.stage === 'emulator') connectFunctionsEmulator(functions, 'localhost', 5001);
+          return functions;
+        }),
         provideHttpClient(withInterceptorsFromDi()),
         provideAnimations(),
     ]
