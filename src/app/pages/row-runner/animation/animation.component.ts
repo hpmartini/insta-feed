@@ -1,3 +1,4 @@
+import { NgClass } from "@angular/common";
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -17,10 +18,12 @@ const german = require('hyphenation-lang-de');
 let hyphen = null;
 
 @Component({
-  selector: 'app-animation',
-  templateUrl: './animation.component.html',
-  styleUrls: ['./animation.component.sass'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-animation',
+    templateUrl: './animation.component.html',
+    styleUrls: ['./animation.component.sass'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [NgClass],
 })
 export class AnimationComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('rowRunner', { static: false }) rowRunner: ElementRef;

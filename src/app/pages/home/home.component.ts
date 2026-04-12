@@ -6,11 +6,23 @@ import {
   LoginRegisterType,
 } from '../../components/login-register-dialog/login-register-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { NgIf, AsyncPipe } from '@angular/common';
+import { MatButton } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.sass'],
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.sass'],
+    standalone: true,
+    imports: [
+        NgIf,
+        MatButton,
+        RouterLink,
+        MatIcon,
+        AsyncPipe,
+    ],
 })
 export class HomeComponent {
   public navEntries: Feed[] = [

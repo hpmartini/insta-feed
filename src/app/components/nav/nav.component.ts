@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AnimationActiveService } from '../../services/animation-active.service';
 import { Feed } from '../../model/feed';
-import { NavigationStart, Router } from '@angular/router';
+import { NavigationStart, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Observable } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map, shareReplay, tap } from 'rxjs/operators';
@@ -14,11 +14,47 @@ import {
   LoginRegisterType,
 } from '../login-register-dialog/login-register-dialog.component';
 import { AuthService } from '../../services/auth.service';
+import { MatSidenavContainer, MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { MatIconButton, MatButton, MatMiniFabButton, MatAnchor } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgFor, NgClass, AsyncPipe } from '@angular/common';
+import { MatNavList, MatListItem } from '@angular/material/list';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { SpinnerComponent } from '../spinner/spinner.component';
 
 @Component({
-  selector: 'app-nav',
-  templateUrl: './nav.component.html',
-  styleUrls: ['./nav.component.sass'],
+    selector: 'app-nav',
+    templateUrl: './nav.component.html',
+    styleUrls: ['./nav.component.sass'],
+    standalone: true,
+    imports: [
+        MatSidenavContainer,
+        MatSidenav,
+        MatToolbar,
+        MatIconButton,
+        MatIcon,
+        RouterLink,
+        NgIf,
+        MatButton,
+        MatNavList,
+        NgFor,
+        MatListItem,
+        RouterLinkActive,
+        MatMiniFabButton,
+        ReactiveFormsModule,
+        MatFormField,
+        MatLabel,
+        MatInput,
+        MatSidenavContent,
+        MatToolbarRow,
+        MatAnchor,
+        NgClass,
+        RouterOutlet,
+        SpinnerComponent,
+        AsyncPipe,
+    ],
 })
 export class NavComponent implements OnInit {
   public navEntries: Feed[];

@@ -168,7 +168,6 @@
       }
     }
   },
-  "defaultProject": "insta-feed",
   "cli": {
     "analytics": false,
     "defaultCollection": "@ngrx/schematics"

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RowRunnerComponent } from './row-runner.component';
 
@@ -6,10 +6,10 @@ describe('RowRunnerComponent', () => {
   let component: RowRunnerComponent;
   let fixture: ComponentFixture<RowRunnerComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ RowRunnerComponent ]
-    })
+    imports: [RowRunnerComponent]
+})
       .compileComponents();
   }));
 

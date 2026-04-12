@@ -1,8 +1,8 @@
 import { ElementRef, Injectable, ViewChild } from '@angular/core';
-import { AngularFireFunctions } from '@angular/fire/functions';
+import { AngularFireFunctions } from '@angular/fire/compat/functions';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Feed } from '../../model/feed';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FIREBASE_CONSTANTS } from '../../constants/firebase.constants';
 
 @Injectable()

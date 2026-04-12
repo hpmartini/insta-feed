@@ -1,8 +1,8 @@
 <app-spinner [showSpinner]="!article || isAutostart"></app-spinner>
 
 <div
-  [ngClass.gt-xs]="{ 'content--regular': true }"
-  [ngClass.lt-sm]="{ 'content--mobile': true }"
+  [ngClass]="{ 'content--regular': true }"
+  [ngClass]="{ 'content--mobile': true }"
   class="page-content"
 >
   <div *ngIf="article && !isAutostart" class="header">
@@ -37,7 +37,7 @@
     *ngIf="!isRowRunnerActive && !isAutostart"
     class="article-content"
     lang="de"
-    [ngClass.gt-xs]="{ 'article-content--regular': true }"
+    [ngClass]="{ 'article-content--regular': true }"
   >
     <p>
       {{ this.article?.content }}
@@ -45,7 +45,7 @@
   </article>
 
   <div
-    [ngClass.gt-xs]="{ 'animationContainer--regular': true }"
+    [ngClass]="{ 'animationContainer--regular': true }"
     class="animationContainer"
   >
     <app-animation
