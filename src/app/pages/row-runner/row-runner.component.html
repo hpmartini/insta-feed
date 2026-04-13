@@ -1,8 +1,10 @@
 <app-spinner [showSpinner]="!article || isAutostart"></app-spinner>
 
 <div
-  [ngClass]="{ 'content--regular': true }"
-  [ngClass]="{ 'content--mobile': true }"
+  [ngClass]="{
+    'content--regular': true,
+    'content--mobile': true
+  }"
   class="page-content"
 >
   <div *ngIf="article && !isAutostart" class="header">
@@ -19,6 +21,16 @@
         mat-fab
       >
         <span>{{ activeLanguageDisplay }}</span>
+      </button>
+      <button
+        (click)="toggleRsvpMode()"
+        *ngIf="!isRowRunnerActive"
+        class="toggleSrt"
+        color="accent"
+        mat-fab
+        [title]="isSemanticRsvp ? 'Switch to Row Runner' : 'Switch to Semantic RSVP'"
+      >
+        <mat-icon>{{ isSemanticRsvp ? 'linear_scale' : 'view_stream' }}</mat-icon>
       </button>
       <button
         (click)="toggleActive()"
@@ -61,6 +73,7 @@
       [inputText]="article.content"
       [speed]="speed"
       [language]="activeLanguage"
+      [isSemanticRsvp]="isSemanticRsvp"
     ></app-animation>
   </div>
 </div>

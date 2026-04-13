@@ -31,6 +31,7 @@ export class RowRunnerComponent implements OnInit, OnDestroy {
   public speed = 30;
   public lines!: string[];
   public isRowRunnerActive = false;
+  public isSemanticRsvp = false;
   public fullScreen = false;
   public isAutostart = false;
   public languageOverride: SupportedLanguage | null = null;
@@ -84,6 +85,10 @@ export class RowRunnerComponent implements OnInit, OnDestroy {
 
   toggleLanguage(): void {
     this.languageOverride = this.activeLanguage === 'de' ? 'en' : 'de';
+  }
+
+  toggleRsvpMode(): void {
+    this.isSemanticRsvp = !this.isSemanticRsvp;
   }
 
   ngOnDestroy(): void {

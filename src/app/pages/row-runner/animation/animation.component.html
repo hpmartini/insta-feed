@@ -2,8 +2,11 @@
 <article
   lang="de"
   class="row-runner"
-  [ngClass]="{ 'row-runner--mobile': true }"
-  [ngClass]="{ 'row-runner--regular': true }"
+  [ngClass]="{
+    'row-runner--mobile': true,
+    'row-runner--regular': true,
+    'semantic-rsvp': isSemanticRsvp
+  }"
 >
   <p #rowRunner>{{ output }}</p>
 </article>

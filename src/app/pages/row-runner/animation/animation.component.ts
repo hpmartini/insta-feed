@@ -29,6 +29,7 @@ export class AnimationComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() inputText: string;
   @Input() speed: number;
   @Input() language: SupportedLanguage = 'de';
+  @Input() isSemanticRsvp = false;
 
   public output: string;
 
@@ -66,6 +67,17 @@ export class AnimationComponent implements OnInit, OnDestroy, AfterViewInit {
   private processWord(word: string): Observable<string> {
     const multiplier = this.getChunkSpeedMultiplier(word);
     const chunkSpeed = this.speed * multiplier;
+
+    if (this.isSemanticRsvp) {
+      return of(word).pipe(
+        map((w) => {
+          this.output = w;
+          this.ref.detectChanges();
+          return w;
+        }),
+        delay(chunkSpeed * word.length)
+      );
+    }
 
     // sequentially process the current word and each of its characters
     return of(word).pipe(
