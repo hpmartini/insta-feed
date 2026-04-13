@@ -83,11 +83,10 @@ exports.getFeedList = functions.https.onCall((data: any, context: CallableContex
 /***
  * TODO personalize
  */
-exports.loadSettings = functions.https.onCall(async () =>
+exports.loadSettings = functions.https.onCall(async (data: any, context: CallableContext) =>
   admin
     .firestore()
-    .collection('user')
-    .doc('settings')
+    .doc(`users/${getUid(context)}/settings/preferences`)
     .get()
     .then((snapshot) => snapshot.data())
 );
@@ -95,11 +94,10 @@ exports.loadSettings = functions.https.onCall(async () =>
 /***
  * TODO personalize
  */
-exports.saveSettings = functions.https.onCall(async (data: any) =>
+exports.saveSettings = functions.https.onCall(async (data: any, context: CallableContext) =>
   admin
     .firestore()
-    .collection('user')
-    .doc('settings')
+    .doc(`users/${getUid(context)}/settings/preferences`)
     .set(
       {
         speed: data.speed ?? null,
