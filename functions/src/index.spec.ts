@@ -23,13 +23,15 @@ jest.mock('firebase-admin', () => {
     get: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
+    add: jest.fn(),
   };
   return {
     initializeApp: jest.fn(),
     firestore: Object.assign(jest.fn(() => firestoreMock), {
       FieldValue: {
         arrayUnion: jest.fn(),
-        arrayRemove: jest.fn()
+        arrayRemove: jest.fn(),
+        serverTimestamp: jest.fn().mockReturnValue('server_timestamp')
       }
     }),
   };
@@ -37,7 +39,7 @@ jest.mock('firebase-admin', () => {
 
 const myFunctions = require('./index');
 
-describe('loadSettings and saveSettings', () => {
+describe('Firebase functions', () => {
   let firestoreMock: any;
 
   beforeEach(() => {
@@ -89,6 +91,47 @@ describe('loadSettings and saveSettings', () => {
 
       expect(firestoreMock.doc).toHaveBeenCalledWith('users/user123/settings/preferences');
       expect(firestoreMock.set).toHaveBeenCalledWith({ speed: null, defaultFeed: null }, { merge: true });
+    });
+  });
+
+  describe('saveComprehensionScore', () => {
+    it('should throw if not authenticated', async () => {
+      await expect(myFunctions.saveComprehensionScore({}, {})).rejects.toThrow();
+    });
+
+    it('should calculate passRate, adjust speed, and save score', async () => {
+      firestoreMock.get.mockResolvedValueOnce({ data: () => ({ speed: 30 }) });
+      firestoreMock.add.mockResolvedValueOnce(undefined);
+      
+      const context = { auth: { uid: 'user123' } };
+      const data = { score: 4, totalQuestions: 5, articleUrl: 'http://test' }; // 80% passRate
+      
+      const result = await myFunctions.saveComprehensionScore(data, context);
+
+      expect(firestoreMock.collection).toHaveBeenCalledWith('users/user123/scores');
+      expect(firestoreMock.add).toHaveBeenCalledWith(expect.objectContaining({
+        articleUrl: 'http://test',
+        score: 4,
+        totalQuestions: 5,
+        passRate: 0.8
+      }));
+      
+      expect(firestoreMock.doc).toHaveBeenCalledWith('users/user123/settings/preferences');
+      expect(firestoreMock.set).toHaveBeenCalledWith({ speed: 28 }, { merge: true });
+      expect(result).toEqual({ success: true, newSpeed: 28 });
+    });
+    
+    it('should increase delay (decrease speed) if passRate < 80%', async () => {
+      firestoreMock.get.mockResolvedValueOnce({ data: () => ({ speed: 30 }) });
+      firestoreMock.add.mockResolvedValueOnce(undefined);
+      
+      const context = { auth: { uid: 'user123' } };
+      const data = { score: 3, totalQuestions: 5, articleUrl: 'http://test' }; // 60% passRate
+      
+      const result = await myFunctions.saveComprehensionScore(data, context);
+
+      expect(firestoreMock.set).toHaveBeenCalledWith({ speed: 32 }, { merge: true });
+      expect(result).toEqual({ success: true, newSpeed: 32 });
     });
   });
 });
