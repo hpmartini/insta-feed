@@ -44,3 +44,50 @@
     margin: 0 2em 2em 2em
     align-self: center
     align-items: center
+
+.quiz-container
+  padding: 20px
+  margin-top: 20px
+  background: rgba(255, 255, 255, 0.05)
+  border-radius: 8px
+
+  h3
+    margin-top: 0
+
+  .question-card
+    margin-bottom: 20px
+    padding: 15px
+    background: rgba(0, 0, 0, 0.1)
+    border-radius: 4px
+
+  .options
+    display: flex
+    flex-direction: column
+    gap: 8px
+
+    button
+      padding: 10px
+      border: 1px solid #ccc
+      border-radius: 4px
+      background: transparent
+      color: inherit
+      cursor: pointer
+      text-align: left
+
+      &:hover:not([disabled])
+        background: rgba(255, 255, 255, 0.1)
+
+      &.selected
+        border-color: #aaa
+
+      &.correct
+        background-color: rgba(76, 175, 80, 0.2)
+        border-color: #4caf50
+
+      &.wrong
+        background-color: rgba(244, 67, 54, 0.2)
+        border-color: #f44336
+
+  .result-text
+    margin-top: 8px
+    font-weight: bold

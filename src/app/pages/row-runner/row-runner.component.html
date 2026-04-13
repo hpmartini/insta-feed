@@ -74,6 +74,37 @@
       [speed]="speed"
       [language]="activeLanguage"
       [isSemanticRsvp]="isSemanticRsvp"
+      (finished)="onAnimationFinished()"
     ></app-animation>
+
+    <div *ngIf="showQuiz" class="quiz-container">
+      <h3>Micro-Quiz</h3>
+      <div *ngIf="quizLoading">
+        <app-spinner [showSpinner]="true"></app-spinner>
+        <p>Generating questions...</p>
+      </div>
+      <div *ngIf="!quizLoading && quizData?.questions">
+        <div class="question-card" *ngFor="let q of quizData.questions; let qIndex = index">
+          <p><strong>{{ q.question }}</strong></p>
+          <div class="options">
+            <button 
+              *ngFor="let opt of q.options; let optIndex = index"
+              (click)="selectAnswer(qIndex, optIndex)"
+              [ngClass]="{
+                'selected': quizAnswers[qIndex] === optIndex,
+                'correct': quizAnswers[qIndex] !== undefined && optIndex === q.correctIndex,
+                'wrong': quizAnswers[qIndex] === optIndex && optIndex !== q.correctIndex
+              }"
+              [disabled]="quizAnswers[qIndex] !== undefined"
+            >
+              {{ opt }}
+            </button>
+          </div>
+          <p *ngIf="quizAnswers[qIndex] !== undefined" class="result-text">
+            {{ quizResults[qIndex] ? 'Correct!' : 'Incorrect.' }}
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

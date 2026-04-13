@@ -5,9 +5,11 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
+  Output,
   ViewChild,
 } from '@angular/core';
 import { concatMap, delay, map } from 'rxjs/operators';
@@ -30,6 +32,8 @@ export class AnimationComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() speed: number;
   @Input() language: SupportedLanguage = 'de';
   @Input() isSemanticRsvp = false;
+
+  @Output() finished = new EventEmitter<void>();
 
   public output: string;
 
@@ -56,7 +60,9 @@ export class AnimationComponent implements OnInit, OnDestroy, AfterViewInit {
         // initial delay
         delay(200)
       )
-      .subscribe();
+      .subscribe({
+        complete: () => this.finished.emit()
+      });
   }
 
   /***

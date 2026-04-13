@@ -130,3 +130,34 @@ function removeSlashesFromUrl(url: string): string {
     .replace(/\/$/, '')
     .replace(/\//g, '_');
 }
+
+/***
+ * LLM-based micro-quiz generator. 
+ * Takes extracted Readability text and returns 1-2 multiple-choice questions.
+ * (Mocked for now, integrate with OpenAI/Vertex AI in production).
+ */
+exports.generateMicroQuiz = functions.https.onCall(async (data: any, context: CallableContext) => {
+  const text = data.text;
+  if (!text) {
+    throw new functions.https.HttpsError(
+      'invalid-argument',
+      'Extracted text is required to generate a quiz.'
+    );
+  }
+
+  // MOCK LLM behavior
+  return {
+    questions: [
+      {
+        question: "Based on the article, what is the main subject?",
+        options: ["The primary topic discussed", "An unrelated topic", "A minor detail mentioned once", "Not mentioned"],
+        correctIndex: 0
+      },
+      {
+        question: "Which of the following best describes the conclusion?",
+        options: ["It ended abruptly", "It summarized the key points", "It asked a question", "No clear conclusion"],
+        correctIndex: 1
+      }
+    ]
+  };
+});

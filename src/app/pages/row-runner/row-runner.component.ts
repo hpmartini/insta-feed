@@ -1,12 +1,12 @@
-import { NgClass } from "@angular/common";
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NgClass, NgFor, NgIf } from "@angular/common";
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Functions, httpsCallable } from '@angular/fire/functions';
 import { Article } from '../../model/article';
 import { ActivatedRoute } from '@angular/router';
 import { AnimationActiveService } from '../../services/animation-active.service';
 import { SettingsFacade } from '../../+state/settings/settings.facade';
 import { ArticleService } from '../../services/article.service';
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
-import { NgIf } from '@angular/common';
 import { MatFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { AnimationComponent } from './animation/animation.component';
@@ -21,6 +21,7 @@ import { SupportedLanguage } from '../../services/chunking.service';
     imports: [NgClass, 
         SpinnerComponent,
         NgIf,
+        NgFor,
         MatFabButton,
         MatIcon,
         AnimationComponent,
@@ -35,6 +36,14 @@ export class RowRunnerComponent implements OnInit, OnDestroy {
   public fullScreen = false;
   public isAutostart = false;
   public languageOverride: SupportedLanguage | null = null;
+
+  public showQuiz = false;
+  public quizData: any = null;
+  public quizLoading = false;
+  public quizAnswers: { [key: number]: number } = {};
+  public quizResults: { [key: number]: boolean } = {};
+
+  private readonly functions: Functions = inject(Functions);
 
   get activeLanguage(): SupportedLanguage {
     return this.languageOverride || this.article?.language || 'de';
@@ -93,5 +102,28 @@ export class RowRunnerComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.animationActiveService.isAnimationActive = false;
+  }
+
+  onAnimationFinished(): void {
+    if (!this.article?.content || this.showQuiz) return;
+    this.showQuiz = true;
+    this.quizLoading = true;
+    
+    const generateMicroQuiz = httpsCallable(this.functions, 'generateMicroQuiz');
+    generateMicroQuiz({ text: this.article.content })
+      .then((result: any) => {
+        this.quizData = result.data;
+        this.quizLoading = false;
+      })
+      .catch((error) => {
+        console.error('Error generating quiz', error);
+        this.quizLoading = false;
+      });
+  }
+
+  selectAnswer(qIndex: number, optIndex: number): void {
+    this.quizAnswers[qIndex] = optIndex;
+    const correctIndex = this.quizData?.questions?.[qIndex]?.correctIndex;
+    this.quizResults[qIndex] = (optIndex === correctIndex);
   }
 }
