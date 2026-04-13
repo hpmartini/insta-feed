@@ -125,5 +125,31 @@ export class RowRunnerComponent implements OnInit, OnDestroy {
     this.quizAnswers[qIndex] = optIndex;
     const correctIndex = this.quizData?.questions?.[qIndex]?.correctIndex;
     this.quizResults[qIndex] = (optIndex === correctIndex);
+    
+    this.checkAndSubmitScore();
+  }
+
+  private checkAndSubmitScore(): void {
+    if (!this.quizData?.questions) return;
+    const totalQuestions = this.quizData.questions.length;
+    const answeredCount = Object.keys(this.quizAnswers).length;
+    
+    if (answeredCount === totalQuestions) {
+      const score = Object.values(this.quizResults).filter(res => res).length;
+      const saveComprehensionScore = httpsCallable(this.functions, 'saveComprehensionScore');
+      saveComprehensionScore({
+        score,
+        totalQuestions,
+        articleUrl: this.article?.url || ''
+      }).then((result: any) => {
+        if (result.data?.success && result.data?.newSpeed) {
+          // Load settings again to trigger update, or just use facade
+          this.settingsFacade.saveSettings({ speed: result.data.newSpeed });
+          console.log('New speed applied:', result.data.newSpeed);
+        }
+      }).catch(err => {
+        console.error('Failed to save comprehension score', err);
+      });
+    }
   }
 }

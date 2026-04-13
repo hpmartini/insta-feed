@@ -161,3 +161,46 @@ exports.generateMicroQuiz = functions.https.onCall(async (data: any, context: Ca
     ]
   };
 });
+
+
+/***
+ * Save comprehension score and adjust reading speed
+ */
+exports.saveComprehensionScore = functions.https.onCall(async (data: any, context: CallableContext) => {
+  const uid = getUid(context);
+  const { score, totalQuestions, articleUrl } = data;
+  
+  if (totalQuestions === 0) return { success: false };
+
+  const passRate = score / totalQuestions;
+
+  // 1. Save the score
+  await admin.firestore().collection(`users/${uid}/scores`).add({
+    articleUrl: articleUrl || '',
+    score,
+    totalQuestions,
+    passRate,
+    createdAt: admin.firestore.FieldValue.serverTimestamp()
+  });
+
+  // 2. Adjust speed based on target 80% pass rate
+  const prefsRef = admin.firestore().doc(`users/${uid}/settings/preferences`);
+  const prefsSnap = await prefsRef.get();
+  const prefs = prefsSnap.data() || {};
+  
+  // Default speed is 30 in the app
+  let currentSpeed = prefs.speed || 30;
+  
+  // Speed is a delay in ms, so lower is faster
+  if (passRate >= 0.8) {
+    // Increase WPM (decrease delay)
+    currentSpeed = Math.max(10, currentSpeed - 2);
+  } else {
+    // Decrease WPM (increase delay)
+    currentSpeed = Math.min(100, currentSpeed + 2);
+  }
+
+  await prefsRef.set({ speed: currentSpeed }, { merge: true });
+
+  return { success: true, newSpeed: currentSpeed };
+});
