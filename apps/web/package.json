@@ -1,0 +1,26 @@
+{
+  "name": "@instafeed/web",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "bun --bun next dev",
+    "build": "bun --bun next build",
+    "start": "bun --bun next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@instafeed/shared": "workspace:*",
+    "@mozilla/readability": "^0.6.0",
+    "linkedom": "^0.18.0",
+    "next": "^16.4.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "@types/node": "^26",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^5"
+  }
+}
