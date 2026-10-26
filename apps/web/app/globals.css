@@ -1,0 +1,25 @@
+:root { --bg:#f6f7f9; --fg:#1b1f24; --card:#fff; --muted:#667; --accent:#2563eb; --border:#dde1e6; }
+[data-theme='dark'] { --bg:#14171b; --fg:#e6e8ea; --card:#1e2227; --muted:#9aa; --accent:#6ea0ff; --border:#2d333a; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.5 system-ui, sans-serif; }
+a { color:var(--accent); }
+main { max-width:1000px; margin:0 auto; padding:1rem; }
+.nav { display:flex; gap:1rem; align-items:center; padding:.75rem 1rem; background:var(--card); border-bottom:1px solid var(--border); flex-wrap:wrap; }
+.nav a { text-decoration:none; color:var(--fg); } .nav a.active { color:var(--accent); font-weight:600; }
+.nav button { margin-left:auto; }
+button, input, select { font:inherit; color:inherit; background:var(--card); border:1px solid var(--border); border-radius:6px; padding:.4rem .7rem; }
+button { cursor:pointer; } button.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+.card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:.8rem 1rem; margin:.5rem 0; list-style:none; }
+small { color:var(--muted); display:block; }
+.auth { max-width:420px; margin:3rem auto; display:flex; flex-direction:column; gap:.7rem; }
+.auth label { display:flex; flex-direction:column; gap:.2rem; }
+.bar { display:flex; gap:.7rem; align-items:center; flex-wrap:wrap; margin:.5rem 0; } .bar h1 { margin:0 auto 0 0; }
+.error { color:#d33; }
+.badge { background:var(--accent); color:#fff; border-radius:4px; padding:0 .4rem; font-size:.8rem; }
+.articles { padding:0; margin:0; } .articles.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:.7rem; }
+.articles.grid .card { margin:0; }
+.text { white-space:pre-wrap; margin-top:1rem; }
+.runner:fullscreen { background:var(--bg); padding:1rem; display:flex; flex-direction:column; justify-content:center; }
+.marquee { overflow:hidden; white-space:nowrap; width:100%; margin-top:2rem; font-size:2.5rem; border-block:1px solid var(--border); padding:1rem 0; }
+.marquee span { display:inline-block; padding-left:100%; animation:run linear infinite; }
+@keyframes run { to { transform:translateX(-100%); } }

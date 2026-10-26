@@ -1,14 +1,47 @@
 # InstaFeed
 
-[![Deploy to Firebase Hosting on merge](https://github.com/hpmartini/insta-feed/actions/workflows/firebase-hosting-merge.yml/badge.svg)](https://github.com/hpmartini/insta-feed/actions/workflows/firebase-hosting-merge.yml)
+RSS-Reader mit KI-Zusammenfassung und Story-Clustering. Next.js (App Router) + Bun, Architektur nach BakeNews.
+Die frühere Angular-/Firebase-App ist entfernt (Git-Historie vor dem Commit „InstaFeed neu in Next.js auf Bun").
 
-Shield: [![CC BY NC SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
+## Start
 
-This work is licensed under a
-[Creative Commons Attribution NonCommercial ShareAlike 4.0 International License][cc-by-nc-sa].
+```sh
+bun install
+bun run dev      # API :4000 + Web :3000 → http://localhost:3000
+bun run build    # Next.js Production-Build
+bun run typecheck
+bun test         # offline, Feeds und KI gemockt
+```
 
-[![CC BY NC SA4.0][cc-by-nc-sa-image]][cc-by-nc-sa]
+Registrieren unter `/register`, Feeds unter `/feeds` anlegen, Artikel unter `/`.
 
-[cc-by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/4.0/
-[cc-by-nc-sa-image]: https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png
-[cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY%20NC%20SA%204.0-lightgrey.svg
+## Umgebungsvariablen
+
+| Variable | Default | Zweck |
+|:--|:--|:--|
+| `GEMINI_API_KEY` | – | Aktiviert Gemini (`gemini-2.5-flash`); ohne Key läuft der deterministische Mock |
+| `DATABASE_PATH` | `./data/instafeed.db` | SQLite-Datei (`bun:sqlite`), `:memory:` möglich |
+| `API_PORT` | `4000` | Port der API |
+| `API_URL` | `http://localhost:4000` | Ziel des `/api`-Rewrites in Next.js |
+
+Keine Secrets im Repo; `.env*` ist ignoriert.
+
+## Architektur
+
+```
+apps/web          Next.js UI (Login, Artikel, Artikel-Detail, Feeds, Row Runner, Einstellungen)
+apps/api          Bun.serve-API: Auth, Feeds, Artikel, Proxy, KI, Einstellungen (SQLite)
+packages/shared   Typen + Story-Clustering (Jaccard über Titel)
+packages/api-client  typisierter fetch-Client für die API
+```
+
+- Web ruft nur `/api/*` auf; `next.config.ts` leitet an die API weiter (gleiche Origin → Cookie-Session `instafeed_session`, HttpOnly).
+- Auth: E-Mail + Passwort (`Bun.password`), Sessions in SQLite. Feeds, Abos und Einstellungen gehören dem Nutzer.
+- Artikel: Feeds (RSS 2 / RDF / Atom, `fast-xml-parser`) aller abonnierten Feeds, neueste zuerst; Volltext über serverseitigen Proxy (Readability + linkedom, SSRF-Grundschutz gegen localhost/private IPs).
+- KI: `AiAdapter` (`apps/api/src/ai`) mit `mockAdapter` (erste Sätze, Titel-Clustering) und `geminiAdapter` (REST, Fallback auf Mock beim Clustering bei ungültiger Antwort). Wahl über `GEMINI_API_KEY`.
+- Row Runner: `/runner` zeigt Schlagzeilen (oder `?url=` Volltext) als Laufschrift, Tempo aus den Einstellungen.
+
+## Bekannte Grenzen
+
+- SSRF-Schutz prüft nur Host-Literale, keine DNS-Auflösung; vor öffentlichem Betrieb ergänzen.
+- Kein Rate-Limit, keine E-Mail-Verifikation; Feeds werden bei jedem Abruf neu geladen (kein Cache).

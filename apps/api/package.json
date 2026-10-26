@@ -1,0 +1,17 @@
+{
+  "name": "@instafeed/api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "start": "bun src/index.ts",
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "@instafeed/shared": "workspace:*",
+    "@mozilla/readability": "^0.6.0",
+    "fast-xml-parser": "^5.0.0",
+    "linkedom": "^0.18.0"
+  }
+}
