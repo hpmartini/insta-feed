@@ -22,10 +22,21 @@ const cookieOf = (req: Request, name: string) =>
 
 export function createApp({ db, ai, fetchImpl = fetch }: AppDeps) {
   async function fetchText(url: string): Promise<string> {
-    assertPublicUrl(url);
-    const res = await fetchImpl(url, { headers: { 'user-agent': 'InstaFeed/1.0' }, signal: AbortSignal.timeout(10_000) });
-    if (!res.ok) throw new HttpError(502, `Quelle antwortete mit ${res.status}`);
-    return res.text();
+    // Redirects are followed by hand so every hop is validated (no redirect-to-localhost bypass).
+    for (let hop = 0; hop < 5; hop++) {
+      assertPublicUrl(url);
+      const res = await fetchImpl(url, {
+        headers: { 'user-agent': 'InstaFeed/1.0' }, redirect: 'manual', signal: AbortSignal.timeout(10_000),
+      });
+      const next = res.status >= 300 && res.status < 400 ? res.headers.get('location') : null;
+      if (next) {
+        url = new URL(next, url).href;
+        continue;
+      }
+      if (!res.ok) throw new HttpError(502, `Quelle antwortete mit ${res.status}`);
+      return res.text();
+    }
+    throw new HttpError(502, 'Zu viele Weiterleitungen');
   }
 
   /** Items of all subscribed feeds (or one feed), newest first. A broken feed is skipped, not fatal. */

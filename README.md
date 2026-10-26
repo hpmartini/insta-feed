@@ -43,5 +43,6 @@ packages/api-client  typisierter fetch-Client für die API
 
 ## Bekannte Grenzen
 
-- SSRF-Schutz prüft nur Host-Literale, keine DNS-Auflösung; vor öffentlichem Betrieb ergänzen.
+- SSRF-Schutz: Host-Literale + jeder Redirect-Hop geprüft, aber keine DNS-Auflösung (Rebinding möglich); vor öffentlichem Betrieb IP auflösen und pinnen.
+- `/api/ai/summary` nimmt Text vom angemeldeten Client; Quota/Rate-Limit fehlt.
 - Kein Rate-Limit, keine E-Mail-Verifikation; Feeds werden bei jedem Abruf neu geladen (kein Cache).
