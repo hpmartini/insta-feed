@@ -20,6 +20,13 @@ bun run typecheck && bun run build && bun test
 
 **Injektion:** `createApp({ db, fetch, ai, now })` öffnet keine Dateien und liest keine Umgebung; `index.ts` verdrahtet (derzeit nur Mock-KI, ohne Key/Netz).
 
-**Stand:** Gerüst + Schema + Shared-Verträge. Feeds, Auth, Abruf-Absicherung (SSRF) und KI-Kuratierung sind noch nicht portiert.
+**Auth:** `POST /auth/register` (201) und `POST /auth/login` (200) setzen das Cookie `session` (HttpOnly, SameSite=Lax, Path=/, 30 Tage, `Secure` bei HTTPS) und liefern den User; `GET /auth/me` (200), `POST /auth/logout` (204, löscht Sitzung + Cookie). Öffentlich sind nur diese beiden POSTs und `GET /health`; alles andere ohne gültige Sitzung → 401. Passwort: `Bun.password` argon2id (8–256 Zeichen), E-Mail getrimmt + kleingeschrieben (Dublette → 409), Falschdaten → 401. Sitzungstoken: 32 Zufallsbytes, in der DB nur als SHA-256. Mutierende Requests mit vorhandenem, fremdem Origin → 403 (fehlender Origin, z. B. curl, ist erlaubt; Web :3000 → API :3001 braucht daher später einen Proxy/gleichen Origin).
+
+```sh
+curl -c jar -H 'content-type: application/json' -d '{"email":"a@b.de","password":"geheim1234"}' localhost:3001/auth/register
+curl -b jar localhost:3001/auth/me
+```
+
+**Stand:** Gerüst + Schema + Shared-Verträge + Auth. Feeds, Abruf-Absicherung (SSRF) und KI-Kuratierung sind noch nicht portiert.
 
 Lizenz: siehe `LICENSE`.
