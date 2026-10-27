@@ -38,7 +38,7 @@ export function geminiAdapter(apiKey: string, fetchImpl: typeof fetch = fetch): 
   const mock = mockAdapter();
 
   async function generate(prompt: string, asJson = false): Promise<string> {
-    const res = await fetchImpl(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`, {
+    const res = await fetchImpl(`${process.env.GEMINI_BASE_URL ?? "https://generativelanguage.googleapis.com"}/v1beta/models/${MODEL}:generateContent`, {
       method: 'POST',
       headers: { 'content-type': 'application/json', 'x-goog-api-key': apiKey },
       body: JSON.stringify({

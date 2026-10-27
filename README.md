@@ -23,6 +23,8 @@ Registrieren unter `/register`, Feeds unter `/feeds` anlegen, Artikel unter `/`.
 | `DATABASE_PATH` | `./data/instafeed.db` | SQLite-Datei (`bun:sqlite`), `:memory:` möglich |
 | `API_PORT` | `4000` | Port der API |
 | `API_URL` | `http://localhost:4000` | Ziel des `/api`-Rewrites in Next.js |
+| `GEMINI_BASE_URL` | Google-Endpoint | nur Test: Gemini-Endpunkt überschreiben |
+| `ALLOW_PRIVATE_URLS` | – | `1` deaktiviert den SSRF-Schutz (nur lokal/E2E, nie produktiv) |
 
 Keine Secrets im Repo; `.env*` ist ignoriert.
 
@@ -46,3 +48,7 @@ packages/api-client  typisierter fetch-Client für die API
 - SSRF-Schutz: Host-Literale + jeder Redirect-Hop geprüft, aber keine DNS-Auflösung (Rebinding möglich); vor öffentlichem Betrieb IP auflösen und pinnen.
 - `/api/ai/summary` nimmt Text vom angemeldeten Client; Quota/Rate-Limit fehlt.
 - Kein Rate-Limit, keine E-Mail-Verifikation; Feeds werden bei jedem Abruf neu geladen (kein Cache).
+
+## Verifikation
+
+Zusätzlich zu `bun test` wurde die UI per Headless-Chrome (Playwright) durchgespielt: Registrierung, Feed anlegen/bearbeiten/abbestellen, Artikel-Übersicht (neueste zuerst), Story-Gruppierung, Artikel-Detail mit Zusammenfassung, Row Runner, Einstellungen (persistiert, Dark-Theme), Abmelden. Lauf einmal mit Mock und einmal mit `GEMINI_API_KEY` gegen einen lokalen Fake-Gemini-Server (`GEMINI_BASE_URL`). Echte Gemini-API wurde mangels Key nicht aufgerufen.

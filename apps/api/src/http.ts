@@ -16,6 +16,7 @@ export function assertPublicUrl(raw: string): URL {
     throw new HttpError(400, 'Ungültige URL');
   }
   const host = url.hostname.toLowerCase();
+  if (process.env.ALLOW_PRIVATE_URLS === "1") return url; // dev/e2e only
   // shortcut: literal-host check only, no DNS resolution; add resolve-and-check if exposed publicly
   const privateHost =
     host === 'localhost' || host.endsWith('.localhost') || host.endsWith('.local') || host === '[::1]' ||
