@@ -76,3 +76,26 @@ export interface HealthResponse {
   ok: true;
   sqlite: string;
 }
+
+// --- API-Ein-/Ausgaben (Client und Backend teilen sie) ---
+export const CredentialsSchema = z.object({ email: z.string().email(), password: z.string().min(8).max(256) });
+export type Credentials = z.infer<typeof CredentialsSchema>;
+
+// Strikt wie das Backend: Besitzerfelder (id/userId) werden abgelehnt.
+export const FeedCreateSchema = z.object({
+  url: FeedSchema.shape.url,
+  title: z.string().trim().min(1),
+  iconUrl: FeedSchema.shape.iconUrl.unwrap().nullable().optional(),
+  subscribed: z.boolean().optional(),
+}).strict();
+export type FeedCreate = z.infer<typeof FeedCreateSchema>;
+export const FeedUpdateSchema = FeedCreateSchema.partial();
+export type FeedUpdate = z.infer<typeof FeedUpdateSchema>;
+
+export const RefreshResultSchema = z.object({ feed: FeedSchema, imported: z.number().int().min(0) });
+export type RefreshResult = z.infer<typeof RefreshResultSchema>;
+
+export const ArticleContentSchema = z.object({ text: z.string(), url: httpUrl, fallback: z.boolean() });
+export type ArticleContent = z.infer<typeof ArticleContentSchema>;
+
+export const ErrorBodySchema = z.object({ error: z.string(), issues: z.array(z.unknown()).optional() }).passthrough();
