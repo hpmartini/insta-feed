@@ -89,7 +89,7 @@ test("/health with injected stubs on separate dbs, no network", async () => {
       ai: { provider: "mock", model: "m", summarize: async () => "" },
       now: () => new Date(0),
     };
-    const body = (await createApp(deps)(new Request("http://x/health")).json()) as { ok: boolean; sqlite: string };
+    const body = (await (await createApp(deps)(new Request("http://x/health"))).json()) as { ok: boolean; sqlite: string };
     expect(body.ok).toBe(true);
     expect(body.sqlite).toMatch(/^\d+\.\d+/);
   }
