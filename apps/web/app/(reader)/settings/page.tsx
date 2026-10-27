@@ -10,6 +10,8 @@ export default function SettingsPage() {
   const feeds = useLoad(() => api.listFeeds(), []);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  // Kontrolliert: Optionen erscheinen erst nach dem Feed-Laden, defaultValue würde die gespeicherte ID verlieren.
+  const [defaultFeed, setDefaultFeed] = useState(settings.default_feed_id ?? "");
 
   async function save(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -55,7 +57,7 @@ export default function SettingsPage() {
         </label>
         <small className="muted">Der Ticker ist noch nicht portiert; das Tempo wird nur gespeichert.</small>
         <label>Standardfeed
-          <select name="default_feed_id" defaultValue={settings.default_feed_id ?? ""} disabled={feeds.state.status !== "ready"}>
+          <select name="default_feed_id" value={defaultFeed} onChange={(e) => setDefaultFeed(e.target.value)} disabled={feeds.state.status !== "ready"}>
             <option value="">Alle abonnierten</option>
             {feedList.map((f) => <option key={f.id} value={f.id}>{f.title}</option>)}
           </select>

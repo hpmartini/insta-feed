@@ -29,19 +29,23 @@ export default function Articles() {
     if (busy.current) return; // keine Überschneidung (Button + Intervall)
     busy.current = true;
     setRefreshing(true);
-    const results = await Promise.allSettled(targetsRef.current.map((f) => api.refreshFeed(f.id)));
-    const errors = results.flatMap((r, i) =>
-      r.status === "rejected" ? [`${targetsRef.current[i].title}: ${r.reason instanceof ApiError && r.reason.refresh?.feed.lastError ? r.reason.refresh.feed.lastError : errMsg(r.reason)}`] : [],
-    );
-    setReport({
-      ok: results.length - errors.length,
-      imported: results.reduce((n, r) => n + (r.status === "fulfilled" ? r.value.imported : 0), 0),
-      errors,
-    });
-    busy.current = false;
-    setRefreshing(false);
-    reloadAll.current.a();
-    reloadAll.current.f();
+    const targets = [...targetsRef.current]; // Filterwechsel während des Abrufs darf die Zuordnung nicht ändern
+    try {
+      const results = await Promise.allSettled(targets.map((f) => api.refreshFeed(f.id)));
+      const errors = results.flatMap((r, i) =>
+        r.status === "rejected" ? [`${targets[i].title}: ${r.reason instanceof ApiError && r.reason.refresh?.feed.lastError ? r.reason.refresh.feed.lastError : errMsg(r.reason)}`] : [],
+      );
+      setReport({
+        ok: results.length - errors.length,
+        imported: results.reduce((n, r) => n + (r.status === "fulfilled" ? r.value.imported : 0), 0),
+        errors,
+      });
+    } finally {
+      busy.current = false;
+      setRefreshing(false);
+      reloadAll.current.a();
+      reloadAll.current.f();
+    }
   }, []);
 
   useEffect(() => {
