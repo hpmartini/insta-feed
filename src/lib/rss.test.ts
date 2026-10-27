@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { assertHttpUrl, fetchFeed, mergeItems, parseFeed } from "./rss";
+import { fetchFeed, mergeItems, parseFeed } from "./rss";
 import type { FeedItem } from "@/lib/types";
 
 const RSS = `<?xml version="1.0"?>
@@ -89,23 +89,7 @@ describe("parseFeed", () => {
   });
 });
 
-describe("assertHttpUrl", () => {
-  test("accepts http(s)", () => {
-    expect(assertHttpUrl("https://a.test/x").hostname).toBe("a.test");
-    expect(assertHttpUrl("http://a.test").protocol).toBe("http:");
-  });
-  test("rejects other schemes and garbage", () => {
-    expect(() => assertHttpUrl("file:///etc/passwd")).toThrow();
-    expect(() => assertHttpUrl("javascript:alert(1)")).toThrow();
-    expect(() => assertHttpUrl("not a url")).toThrow();
-  });
-  test("rejects internal hosts", () => {
-    for (const u of ["http://localhost:3000", "http://127.0.0.1", "http://10.0.0.5", "http://192.168.1.1", "http://172.20.0.1", "http://169.254.169.254", "http://[::1]/"]) {
-      expect(() => assertHttpUrl(u)).toThrow("Interne");
-    }
-    expect(assertHttpUrl("http://172.32.0.1").hostname).toBe("172.32.0.1");
-  });
-});
+const PUBLIC_DNS = async () => ["93.184.216.34"];
 
 describe("fetchFeed", () => {
   test("fetches with user-agent and parses", async () => {
@@ -114,7 +98,7 @@ describe("fetchFeed", () => {
       seen = { url: String(input), ua: new Headers(init?.headers).get("user-agent"), signal: init?.signal };
       return new Response(RSS);
     }) as typeof fetch;
-    const feed = await fetchFeed("https://example.com/feed", stub);
+    const feed = await fetchFeed("https://example.com/feed", { fetch: stub, resolve: PUBLIC_DNS });
     expect(feed.items).toHaveLength(2);
     expect(seen?.url).toBe("https://example.com/feed");
     expect(seen?.ua).toBe("InstaFeed/2.0");
@@ -123,8 +107,8 @@ describe("fetchFeed", () => {
 
   test("throws on HTTP error and bad scheme", async () => {
     const stub = (async () => new Response("x", { status: 404 })) as unknown as typeof fetch;
-    await expect(fetchFeed("https://example.com/feed", stub)).rejects.toThrow("404");
-    await expect(fetchFeed("file:///etc/passwd", stub)).rejects.toThrow();
+    await expect(fetchFeed("https://example.com/feed", { fetch: stub, resolve: PUBLIC_DNS })).rejects.toThrow("404");
+    await expect(fetchFeed("file:///etc/passwd", { fetch: stub, resolve: PUBLIC_DNS })).rejects.toThrow();
   });
 });
 

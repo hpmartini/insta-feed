@@ -1,5 +1,6 @@
 import { XMLParser } from "fast-xml-parser";
 import type { FeedItem, ParsedFeed } from "@/lib/types";
+import { safeFetch, type Net } from "./net";
 
 // Entities are decoded by decode() below, so the parser must leave them alone (avoids double decoding).
 const parser = new XMLParser({
@@ -86,30 +87,8 @@ export function parseFeed(xml: string): ParsedFeed {
   throw new Error("Kein gültiger RSS- oder Atom-Feed");
 }
 
-/** Trust boundary: only http(s) URLs may be fetched server-side. */
-export function assertHttpUrl(raw: string): URL {
-  let url: URL;
-  try {
-    url = new URL(raw);
-  } catch {
-    throw new Error(`Ungültige URL: ${raw}`);
-  }
-  if (url.protocol !== "http:" && url.protocol !== "https:") {
-    throw new Error(`Nur http(s)-URLs erlaubt: ${raw}`);
-  }
-  if (PRIVATE_HOST.test(url.hostname)) throw new Error(`Interne Adressen sind nicht erlaubt: ${raw}`);
-  return url;
-}
-
-// shortcut: checks host literals only, not DNS results or redirects; resolve and pin IPs if exposed publicly.
-const PRIVATE_HOST =
-  /^(localhost|.*\.localhost|.*\.local|0\.0\.0\.0|127\.\d+\.\d+\.\d+|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+|169\.254\.\d+\.\d+|\[::1?\]|\[f[cd][0-9a-f:]*\]|\[fe80:[0-9a-f:]*\])$/i;
-
-export async function fetchFeed(url: string, fetchImpl: typeof fetch = fetch): Promise<ParsedFeed> {
-  const res = await fetchImpl(assertHttpUrl(url), {
-    signal: AbortSignal.timeout(10_000),
-    headers: { "user-agent": "InstaFeed/2.0" },
-  });
+export async function fetchFeed(url: string, net: Net = {}): Promise<ParsedFeed> {
+  const res = await safeFetch(url, net);
   if (!res.ok) throw new Error(`Feed-Abruf fehlgeschlagen: HTTP ${res.status}`);
   return parseFeed(await res.text());
 }

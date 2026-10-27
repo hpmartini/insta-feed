@@ -1,7 +1,7 @@
 import { Readability } from "@mozilla/readability";
 import { parseHTML } from "linkedom";
 import type { Article } from "@/lib/types";
-import { assertHttpUrl } from "./rss";
+import { safeFetch, type Net } from "./net";
 
 export function extractArticle(html: string, url: string): Article {
   const { document } = parseHTML(html);
@@ -18,11 +18,8 @@ export function extractArticle(html: string, url: string): Article {
   };
 }
 
-export async function fetchArticle(url: string, fetchImpl: typeof fetch = fetch): Promise<Article> {
-  const res = await fetchImpl(assertHttpUrl(url), {
-    signal: AbortSignal.timeout(10_000),
-    headers: { "user-agent": "InstaFeed/2.0" },
-  });
+export async function fetchArticle(url: string, net: Net = {}): Promise<Article> {
+  const res = await safeFetch(url, net);
   if (!res.ok) throw new Error(`Artikel-Abruf fehlgeschlagen: HTTP ${res.status}`);
   return extractArticle(await res.text(), url);
 }

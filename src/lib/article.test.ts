@@ -31,6 +31,8 @@ describe("extractArticle", () => {
   });
 });
 
+const PUBLIC_DNS = async () => ["93.184.216.34"];
+
 describe("fetchArticle", () => {
   test("fetches and extracts", async () => {
     let calledWith = "";
@@ -38,14 +40,14 @@ describe("fetchArticle", () => {
       calledWith = String(input);
       return new Response(HTML);
     }) as typeof fetch;
-    const a = await fetchArticle("https://news.test/a", stub);
+    const a = await fetchArticle("https://news.test/a", { fetch: stub, resolve: PUBLIC_DNS });
     expect(calledWith).toBe("https://news.test/a");
     expect(a.content).toContain("Readability treats it as content");
   });
 
   test("rejects bad scheme and HTTP errors", async () => {
     const stub = (async () => new Response("", { status: 500 })) as unknown as typeof fetch;
-    await expect(fetchArticle("javascript:alert(1)", stub)).rejects.toThrow();
-    await expect(fetchArticle("https://news.test/a", stub)).rejects.toThrow("500");
+    await expect(fetchArticle("javascript:alert(1)", { fetch: stub, resolve: PUBLIC_DNS })).rejects.toThrow();
+    await expect(fetchArticle("https://news.test/a", { fetch: stub, resolve: PUBLIC_DNS })).rejects.toThrow("500");
   });
 });

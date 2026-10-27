@@ -1,5 +1,5 @@
 import type { Database } from "bun:sqlite";
-import { assertHttpUrl } from "./rss";
+import { assertHttpUrl } from "./net";
 import type { Feed, FeedInput } from "./types";
 
 const DEFAULT_ICON = "📰";

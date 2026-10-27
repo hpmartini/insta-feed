@@ -19,7 +19,7 @@ test("merges feeds newest first and isolates failing feeds", async () => {
 
   const { items, errors } = await loadFeedItems(
     [feed(1, "https://a.test/rss"), feed(2, "https://b.test/rss"), feed(3, "https://broken.test/rss")],
-    fakeFetch,
+    { fetch: fakeFetch, resolve: async () => ["93.184.216.34"] },
   );
   expect(items.map((i) => [i.title, i.feedName])).toEqual([["Neu", "Feed 2"], ["Alt", "Feed 1"]]);
   expect(errors).toHaveLength(1);

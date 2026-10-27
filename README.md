@@ -61,7 +61,8 @@ src/
     session.ts         Cookie-Session für Next (requireUser)
     feeds.ts           Feed-CRUD und Abos, immer pro Nutzer
     settings.ts        Einstellungen pro Nutzer, validiert
-    rss.ts             RSS-2.0-/Atom-Parser, fetchFeed, mergeItems, URL-Prüfung
+    net.ts             safeFetch: URL-Prüfung, DNS-Check gegen interne IPs, Redirects Hop für Hop
+    rss.ts             RSS-2.0-/Atom-Parser, fetchFeed, mergeItems
     reader.ts          lädt alle Feeds parallel; ein defekter Feed blockiert die anderen nicht
     article.ts         Volltext über Readability und linkedom
     typewriter.ts      Frame-Logik des Row Runners
@@ -88,7 +89,7 @@ src/
 
 **Grenzen:**
 
-- Der Proxy blockt nur interne Hosts, die als Literal in der URL stehen (localhost, private IPs). DNS-Rebinding und Weiterleitungen auf interne Ziele fängt er nicht ab. Vor einem öffentlichen Betrieb muss das nachgerüstet werden.
+- Feed- und Artikelabrufe laufen über `safeFetch`. Das blockt Nicht-http(s)-URLs und interne Ziele (localhost, private, link-local und IPv4-mapped Adressen) bei jedem Redirect-Hop, auch nach der DNS-Auflösung. Offen bleibt ein DNS-Rebinding-Fenster zwischen Prüfung und Verbindung. Für öffentlichen Betrieb deshalb einen Egress-Proxy mit IP-Pinning vorschalten.
 - KI-Ergebnisse werden nicht gecacht. Mit Gemini kostet jeder Aufruf der Story-Ansicht einen API-Call.
 - Die Silbentrennung im Row Runner übernimmt CSS `hyphens: auto` (`lang="de"`); die alte hypher-Bibliothek ist entfallen.
 

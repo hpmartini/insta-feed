@@ -1,3 +1,4 @@
+import type { Net } from "./net";
 import { fetchFeed, mergeItems } from "./rss";
 import type { Feed, FeedItem } from "./types";
 
@@ -7,8 +8,8 @@ export interface FeedLoadResult {
 }
 
 /** Loads all given feeds in parallel; one broken feed must not hide the others. */
-export async function loadFeedItems(feeds: Feed[], fetchImpl: typeof fetch = fetch): Promise<FeedLoadResult> {
-  const results = await Promise.allSettled(feeds.map((feed) => fetchFeed(feed.url, fetchImpl)));
+export async function loadFeedItems(feeds: Feed[], net: Net = {}): Promise<FeedLoadResult> {
+  const results = await Promise.allSettled(feeds.map((feed) => fetchFeed(feed.url, net)));
   const loaded: Parameters<typeof mergeItems>[0] = [];
   const errors: FeedLoadResult["errors"] = [];
   results.forEach((result, i) => {
