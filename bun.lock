@@ -39,6 +39,7 @@
       "version": "0.0.0",
       "dependencies": {
         "@insta-feed/shared": "workspace:*",
+        "zod": "^3.23.8",
       },
     },
     "packages/shared": {

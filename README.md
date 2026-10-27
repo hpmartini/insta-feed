@@ -20,7 +20,7 @@ bun run typecheck && bun run build && bun test
 
 **Injektion:** `createApp({ db, fetch, resolve?, ai, now })` öffnet keine Dateien und liest keine Umgebung; `index.ts` verdrahtet den KI-Adapter über `createAiAdapter` (einzige Stelle, die `AI_PROVIDER`/`GEMINI_API_KEY` liest).
 
-**Auth:** `POST /auth/register` (201) und `POST /auth/login` (200) setzen das Cookie `session` (HttpOnly, SameSite=Lax, Path=/, 30 Tage, `Secure` bei HTTPS) und liefern den User; `GET /auth/me` (200), `POST /auth/logout` (204, löscht Sitzung + Cookie). Öffentlich sind nur diese beiden POSTs und `GET /health`; alles andere ohne gültige Sitzung → 401. Passwort: `Bun.password` argon2id (8–256 Zeichen), E-Mail getrimmt + kleingeschrieben (Dublette → 409), Falschdaten → 401. Sitzungstoken: 32 Zufallsbytes, in der DB nur als SHA-256. Mutierende Requests mit vorhandenem, fremdem Origin → 403 (fehlender Origin, z. B. curl, ist erlaubt; Web :3000 → API :3001 braucht daher später einen Proxy/gleichen Origin).
+**Auth:** `POST /auth/register` (201) und `POST /auth/login` (200) setzen das Cookie `session` (HttpOnly, SameSite=Lax, Path=/, 30 Tage, `Secure` bei HTTPS) und liefern den User; `GET /auth/me` (200), `POST /auth/logout` (204, löscht Sitzung + Cookie). Öffentlich sind nur diese beiden POSTs und `GET /health`; alles andere ohne gültige Sitzung → 401. Passwort: `Bun.password` argon2id (8–256 Zeichen), E-Mail getrimmt + kleingeschrieben (Dublette → 409), Falschdaten → 401. Sitzungstoken: 32 Zufallsbytes, in der DB nur als SHA-256. Mutierende Requests mit vorhandenem, fremdem Origin → 403 (fehlender Origin, z. B. curl, ist erlaubt; Browser-Zugriffe laufen deshalb über den same-origin-Proxy, siehe „API-Client“).
 
 ```sh
 curl -c jar -H 'content-type: application/json' -d '{"email":"a@b.de","password":"geheim1234"}' localhost:3001/auth/register
@@ -44,6 +44,25 @@ curl -b jar localhost:3001/auth/me
 - **Bekannte Lücke:** DNS-Rebinding. Die Adresse wird vorab geprüft, `fetch` löst erneut auf. Behebung: Verbindung an die geprüfte IP binden (Host und TLS-Prüfung erhalten).
 
 **Stand:** Gerüst, Schema, Shared-Verträge, Auth, Feeds-CRUD/Abo, Feed-Import, Artikelliste, Inhaltsextraktion, safeFetch. KI-Zusammenfassung und Story-Clustering (siehe unten). Noch nicht portiert: Ticker/Frontend-Seiten.
+
+## API-Client (`packages/api-client`) und same-origin
+
+```ts
+import { ApiError, createApiClient } from "@insta-feed/api-client";
+
+const api = createApiClient(); // Basis "/api", Cookies per credentials: "same-origin"
+try {
+  await api.login({ email, password });
+  const { feed, imported } = await api.refreshFeed(id);
+} catch (e) {
+  if (e instanceof ApiError && e.kind === "http" && e.status === 502) console.log(e.refresh?.feed.lastError);
+}
+```
+
+- 17 Methoden: `health`, `register/login/me/logout`, `listFeeds/createFeed/getFeed/updateFeed/deleteFeed/setSubscribed/refreshFeed`, `listArticles({ feedId })`, `articleContent`, `summarize`, `listStories`, `getSettings/putSettings`. Erfolgsantworten werden mit den Shared-Schemas geprüft.
+- `ApiError.kind`: `http` (`status`, Servermeldung, `issues` bei 400, `refresh` bei Refresh-502), `network` (`cause`), `response` (Antwort passt nicht zum Schema). Keine automatischen Wiederholungen.
+- **Same-origin:** `apps/web/app/api/[...path]/route.ts` leitet `/api/*` an `API_INTERNAL_URL` (Vorgabe `http://localhost:3001`, nur serverseitig) weiter, reicht Cookie/`Set-Cookie`/Status/204 durch, setzt `no-store`. Fremder `Origin` bei mutierenden Requests → 403 schon im Proxy; gültiger wird für das Backend auf dessen Origin umgeschrieben (ein Next-`rewrites` würde den Web-Origin weiterreichen → 403). Backend-Check bleibt unverändert.
+- **Grenzen:** Proxy puffert Request-Bodies; hinter einem Reverse-Proxy muss `Host`/`X-Forwarded-Host` den öffentlichen Origin widerspiegeln. Ein Browser-Durchlauf (Cookie im echten Browser) ist nicht belegt, nur curl gegen `:3000`. Frontend-Seiten/Ticker fehlen weiter.
 
 ## KI (`apps/api/src/ai`, `clustering.ts`)
 
