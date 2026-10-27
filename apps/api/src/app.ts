@@ -1,6 +1,7 @@
 import type { Database } from "bun:sqlite";
 import type { HealthResponse } from "@insta-feed/shared";
 import { currentUser, login, logout, register } from "./auth";
+import { feeds } from "./feeds";
 
 /** Provider-neutral AI port; concrete adapters (mock, gemini, claude) are follow-up work. */
 export interface AiPort {
@@ -36,6 +37,7 @@ export function createApp(deps: Deps) {
     if (!user) return Response.json({ error: "unauthorized" }, { status: 401 });
     if (route === "GET /auth/me") return Response.json(user);
     if (route === "POST /auth/logout") return logout(deps, req);
+    if (url.pathname === "/feeds" || url.pathname.startsWith("/feeds/")) return feeds(deps, user, req, url.pathname);
     return new Response("not found", { status: 404 });
   };
 }

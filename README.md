@@ -27,6 +27,6 @@ curl -c jar -H 'content-type: application/json' -d '{"email":"a@b.de","password"
 curl -b jar localhost:3001/auth/me
 ```
 
-**Stand:** Gerüst + Schema + Shared-Verträge + Auth. Feeds, Abruf-Absicherung (SSRF) und KI-Kuratierung sind noch nicht portiert.
+**Feeds** (Sitzung nötig, alles per `user_id` gefiltert; fremde oder unbekannte ID → 404, auch bei ungültigem Body): `GET /feeds` (eigene, inkl. abbestellter), `POST /feeds` (201; `url` http(s) + `title` Pflicht, `iconUrl?`, `subscribed?` Vorgabe `true`), `GET /feeds/:id`, `PATCH /feeds/:id` (200; Teilupdate, mind. ein Feld; `iconUrl: null` entfernt das Icon; `{ "subscribed": true|false }` abonniert/abbestellt idempotent, Artikel bleiben), `DELETE /feeds/:id` (204; leert eigene `default_feed_id`, Artikel per Kaskade weg). Unbekannte Felder (`id`, `userId`, `user_id`, …) und ungültige Eingaben → 400 (zod, strict); eigene doppelte URL → 409 (gleiche URL bei anderem Nutzer erlaubt). Kein Netzwerkabruf beim Anlegen/Ändern.
 
-Lizenz: siehe `LICENSE`.
+**Stand:** Gerüst + Schema + Shared-Verträge + Auth + Feeds-CRUD/Abo. Abruf-Absicherung (SSRF), Import und KI-Kuratierung sind noch nicht portiert.
