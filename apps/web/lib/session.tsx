@@ -4,6 +4,7 @@ import { ApiError, createApiClient } from "@insta-feed/api-client";
 import type { Settings, User } from "@insta-feed/shared";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { loginUrl } from "./login-url";
 
 export const api = createApiClient();
 
@@ -38,7 +39,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   const toLogin = useCallback(() => {
     setBoot({ status: "anon" });
-    router.replace(pathRef.current === "/" ? "/login" : `/login?next=${encodeURIComponent(pathRef.current)}`);
+    router.replace(loginUrl(pathRef.current, window.location.search)); // Query erhalten (z. B. /ticker?article=…&autostart=true)
   }, [router]);
 
   useEffect(() => {

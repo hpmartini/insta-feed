@@ -32,7 +32,7 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
 
   return (
     <article>
-      <p><Link href="/">← Artikel</Link></p>
+      <p><Link href="/">← Artikel</Link> · <Link href={`/ticker?article=${encodeURIComponent(id)}`}>Im Ticker lesen</Link></p>
       <h1>Artikel</h1>
       {content.state.status === "loading" && <p aria-busy="true" role="status">Lade Volltext …</p>}
       {content.state.status === "error" && (

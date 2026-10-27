@@ -43,7 +43,7 @@ curl -b jar localhost:3001/auth/me
 - **`safeFetch`** (jeder ausgehende Abruf): nur http(s), keine URL-Zugangsdaten, Loopback/private/Link-Local/CGNAT/Multicast/reservierte Bereiche gesperrt (IPv4 in allen Schreibweisen, IPv6 nur 2000::/3, IPv4-mapped und 6to4 geprüft), alle DNS-Antworten müssen öffentlich sein, höchstens 3 Weiterleitungen (jedes Ziel neu geprüft), 10 s Gesamtzeit (inkl. DNS und Body), 2 MiB Body-Limit beim Streamen, keine Cookies.
 - **Bekannte Lücke:** DNS-Rebinding. Die Adresse wird vorab geprüft, `fetch` löst erneut auf. Behebung: Verbindung an die geprüfte IP binden (Host und TLS-Prüfung erhalten).
 
-**Stand:** Gerüst, Schema, Shared-Verträge, Auth, Feeds-CRUD/Abo, Feed-Import, Artikelliste, Inhaltsextraktion, safeFetch. KI-Zusammenfassung und Story-Clustering (siehe unten). Frontend-Seiten (siehe „Frontend“). Noch nicht portiert: Ticker.
+**Stand:** Gerüst, Schema, Shared-Verträge, Auth, Feeds-CRUD/Abo, Feed-Import, Artikelliste, Inhaltsextraktion, safeFetch. KI-Zusammenfassung und Story-Clustering (siehe unten). Frontend-Seiten (siehe „Frontend“).
 
 ## API-Client (`packages/api-client`) und same-origin
 
@@ -108,9 +108,11 @@ Auth-pflichtig, Nutzer immer aus der Sitzung. Felder (snake_case, alle fünf Pfl
 | `/articles/[id]` | Volltext (Hinweis bei `fallback`), Originallink, Zusammenfassung auf Knopfdruck mit Provider/Modell/Prompt-Version; Mock als „Mock … keine echte KI“ |
 | `/feeds` | anlegen, bearbeiten, abonnieren/abbestellen, löschen, aktualisieren; `lastError`/409 je Zeile |
 | `/stories` | Cluster mit Artikel- und Quellenlinks; als lokale Heuristik (`jaccard-v1`) gekennzeichnet |
+| `/ticker` | Laufschrift, zeichenweise, Tempo = `settings.speed` (ms pro Zeichen, kleiner = schneller). Ohne `article`: Titel der Artikel abonnierter Feeds. Mit `?article=<id>`: Volltext dieses Artikels (nur gespeicherte, eigene; Hinweis bei `fallback`). Standard gestoppt; Start setzt fort, Stopp pausiert, am Ende stoppt er und „Neu starten“ beginnt von vorn. `?autostart=true` (nur exakt `true`) startet nach dem Laden, ohne Browser-Vollbild (braucht Nutzeraktion). Vollbild per Knopf (Escape verlässt); ohne Fullscreen-API bildschirmfüllende CSS-Ansicht. Beispiele: `/ticker?autostart=true`, `/ticker?article=<id>&autostart=true` |
+| `/ticker` | Laufschrift, zeichenweise, Tempo = `settings.speed` (ms pro Zeichen, kleiner = schneller). Ohne `article`: Titel der Artikel abonnierter Feeds. Mit `?article=<id>`: Volltext dieses Artikels (nur gespeicherte, eigene; Hinweis bei `fallback`). Standard gestoppt; Start setzt fort, Stopp pausiert, am Ende stoppt er und „Neu starten“ beginnt von vorn. `?autostart=true` (nur exakt `true`) startet nach dem Laden, ohne Browser-Vollbild (braucht Nutzeraktion). Vollbild per Knopf (Escape verlässt); ohne Fullscreen-API bildschirmfüllende CSS-Ansicht. Beispiele: `/ticker?autostart=true`, `/ticker?article=<id>&autostart=true` |
 | `/settings` | alle fünf Felder; Theme setzt `data-theme` am `<html>` (`system` per `prefers-color-scheme`) |
 
 - **Sitzung:** Middleware leitet ohne `session`-Cookie auf `/login` (nur Präsenz); die Shell prüft per `GET /auth/me`, bevor Nutzerdaten erscheinen. Jedes spätere 401 verwirft die Daten und führt zum Login; Netzwerkfehler/5xx bleiben Fehler mit „Erneut versuchen“.
 - **Zustände:** Laden, Fehler, leer und Erfolg sind getrennt (`components/states.tsx`); veraltete Antworten bei Filterwechsel werden verworfen (`lib/use-load.ts`). Artikeltexte werden als Text gerendert.
 - **Start:** `bun run dev` (web :3000, api :3001). Build braucht weder API noch Gemini-Key.
-- **Nicht belegt:** Browser-Durchlauf aller Seiten (nur curl gegen Middleware/Rewrite, `bun test`, Build, Typecheck); Ticker fehlt, `speed` wird nur gespeichert; keine Frontend-Komponententests.
+- **Nicht belegt:** Browser-Durchlauf aller Seiten (nur curl gegen Middleware/Rewrite, `bun test`, Build, Typecheck); Ticker nur gebaut und typgeprüft, nicht im Browser durchlaufen; keine Frontend-Komponententests (nur `loginUrl`).

@@ -55,7 +55,6 @@ export default function SettingsPage() {
         <label>Ticker-Tempo (ms pro Zeichen, 1–100)
           <input name="speed" type="number" min={1} max={100} step="any" required defaultValue={settings.speed} />
         </label>
-        <small className="muted">Der Ticker ist noch nicht portiert; das Tempo wird nur gespeichert.</small>
         <label>Standardfeed
           <select name="default_feed_id" value={defaultFeed} onChange={(e) => setDefaultFeed(e.target.value)} disabled={feeds.state.status !== "ready"}>
             <option value="">Alle abonnierten</option>

@@ -40,3 +40,9 @@ test("localPath: nur lokale Pfade", async () => {
   expect(localPath("/feeds?x=1")).toBe("/feeds?x=1");
   for (const bad of ["//evil.com", "/\\evil.com", "/\t/evil.com", "/\n/evil.com", "https://evil.com", "evil.com", "", null]) expect(localPath(bad)).toBe("/");
 });
+
+test("loginUrl: Rücksprung behält die Query (Ticker-Parameter)", async () => {
+  const { loginUrl } = await import("./lib/login-url");
+  expect(loginUrl("/")).toBe("/login");
+  expect(loginUrl("/ticker", "?article=a%2Fb&autostart=true")).toBe("/login?next=%2Fticker%3Farticle%3Da%252Fb%26autostart%3Dtrue");
+});
