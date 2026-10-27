@@ -1,0 +1,37 @@
+:root {
+  --bg: #fff; --fg: #1a1a1a; --muted: #666; --card: #f5f5f7; --border: #d4d4d8; --accent: #0b5fff; --err: #b00020; --ok: #137333; --warn: #8a5a00;
+  color-scheme: light;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+:root[data-theme="dark"] { --bg: #121212; --fg: #eee; --muted: #a0a0a0; --card: #1e1e22; --border: #3a3a40; --accent: #7aa7ff; --err: #ff8a95; --ok: #7ddc9a; --warn: #f0c36a; color-scheme: dark; }
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] { --bg: #121212; --fg: #eee; --muted: #a0a0a0; --card: #1e1e22; --border: #3a3a40; --accent: #7aa7ff; --err: #ff8a95; --ok: #7ddc9a; --warn: #f0c36a; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); line-height: 1.5; }
+main { max-width: 56rem; margin: 0 auto; padding: 1rem; }
+a { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; padding: .5rem 1rem; border-bottom: 1px solid var(--border); }
+.bar nav { display: flex; flex-wrap: wrap; gap: .75rem; flex: 1; }
+.bar a[aria-current="page"] { font-weight: 700; }
+.muted { color: var(--muted); }
+.error { color: var(--err); }
+.ok { color: var(--ok); }
+.warn { color: var(--warn); }
+.center { text-align: center; padding-top: 4rem; }
+.auth { max-width: 24rem; }
+label { display: flex; flex-direction: column; gap: .25rem; margin-bottom: .75rem; }
+.toolbar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .75rem; margin-bottom: .75rem; }
+.toolbar label { margin: 0; }
+.stack { display: flex; flex-direction: column; max-width: 28rem; }
+input, select, button { font: inherit; padding: .4rem .6rem; border: 1px solid var(--border); border-radius: 6px; background: var(--card); color: var(--fg); }
+button { cursor: pointer; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+ul { padding-left: 1.25rem; }
+.articles, .feeds, .stories { list-style: none; padding: 0; }
+.articles li, .feeds > li, .stories > li { padding: .6rem 0; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; }
+.articles.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: 1rem; }
+.articles.cards li { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+.fulltext { white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 600px) { main { padding: .75rem; } .bar { gap: .5rem; } }

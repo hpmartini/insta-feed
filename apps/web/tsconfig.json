@@ -20,7 +20,10 @@
   },
   "include": [
     "next-env.d.ts",
-    "app",
+    "next.config.ts",
+    "middleware.ts",
+    "**/*.ts",
+    "**/*.tsx",
     ".next/types/**/*.ts"
   ],
   "exclude": [
