@@ -5,20 +5,15 @@ import { articleContent, listArticles, refreshFeed } from "./articles";
 import { feeds } from "./feeds";
 import { settings } from "./settings";
 import type { Resolver } from "./safe-fetch";
-
-/** Provider-neutral AI port; concrete adapters (mock, gemini, claude) are follow-up work. */
-export interface AiPort {
-  readonly provider: "mock" | "gemini" | "claude";
-  readonly model: string;
-  summarize(input: { title: string; content: string }): Promise<string>;
-}
+import type { AiAdapter } from "./ai/adapter";
+import { listStories, summarizeArticle } from "./ai/routes";
 
 export interface Deps {
   db: Database;
   fetch: typeof fetch;
   /** DNS lookup used by safeFetch; defaults to the system resolver. */
   resolve?: Resolver;
-  ai: AiPort;
+  ai: AiAdapter;
   now: () => Date;
 }
 
@@ -47,6 +42,9 @@ export function createApp(deps: Deps) {
     if (route === "GET /articles") return listArticles(deps, user, url);
     const content = req.method === "GET" ? /^\/articles\/([^/]+)\/content$/.exec(url.pathname) : null;
     if (content) return articleContent(deps, user, content[1]!);
+    const summary = req.method === "POST" ? /^\/articles\/([^/]+)\/summary$/.exec(url.pathname) : null;
+    if (summary) return summarizeArticle(deps, user, summary[1]!);
+    if (route === "GET /stories") return listStories(deps, user);
     if (url.pathname === "/settings") return settings(deps, user, req);
     if (url.pathname === "/feeds" || url.pathname.startsWith("/feeds/")) return feeds(deps, user, req, url.pathname);
     return new Response("not found", { status: 404 });
