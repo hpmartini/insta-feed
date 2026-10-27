@@ -170,6 +170,13 @@ test("content: extracts text from the stored link only, without scripts, styles 
   expect(s.fetched).toEqual(["https://example.com/posts/1"]);
 });
 
+test("content: void <br> elements split text instead of breaking extraction", async () => {
+  const s = await setup();
+  const id = await withArticle(s);
+  s.routes.set("https://example.com/posts/1", () => new Response("<p>A<br>B</p>", { headers: { "content-type": "text/html" } }));
+  expect(await content(s, id)).toMatchObject({ text: "A\n\nB", fallback: false });
+});
+
 test("content: fetch error, bad status, non-html and empty text fall back to snippet plus link", async () => {
   const s = await setup();
   const id = await withArticle(s);

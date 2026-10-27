@@ -75,7 +75,10 @@ test("times out on a stalled resolver, a stalled response and a slow body", asyn
   const never = new Promise<never>(() => {});
   await expect(safeFetch("http://a.test/", { fetch: boom, resolve: () => never, timeoutMs: 30 })).rejects.toThrow("timeout");
   await expect(safeFetch("http://a.test/", { fetch: (() => never) as unknown as typeof fetch, resolve: pub, timeoutMs: 30 })).rejects.toThrow("timeout");
-  const slow = new ReadableStream<Uint8Array>({ pull: () => new Promise(() => {}) });
+  let cancelled = false;
+  const slow = new ReadableStream<Uint8Array>({ pull: () => new Promise(() => {}), cancel() { cancelled = true; } });
   const f = (async () => new Response(slow)) as unknown as typeof fetch;
   await expect(safeFetch("http://a.test/", { fetch: f, resolve: pub, timeoutMs: 30 })).rejects.toThrow("timeout");
+  expect(cancelled).toBe(true);
+  expect(slow.locked).toBe(false);
 });

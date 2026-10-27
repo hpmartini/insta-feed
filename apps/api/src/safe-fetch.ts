@@ -139,16 +139,22 @@ async function readBounded(res: Response, maxBytes: number, race: <T>(p: Promise
   const reader = res.body.getReader();
   const chunks: Uint8Array[] = [];
   let size = 0;
-  for (;;) {
-    const { done, value } = await race(reader.read());
-    if (done) break;
-    size += value.byteLength;
-    if (size > maxBytes) {
-      ctl.abort();
-      void reader.cancel().catch(() => {});
-      throw new SafeFetchError("response too large");
+  try {
+    for (;;) {
+      const { done, value } = await race(reader.read());
+      if (done) break;
+      size += value.byteLength;
+      if (size > maxBytes) {
+        ctl.abort();
+        throw new SafeFetchError("response too large");
+      }
+      chunks.push(value);
     }
-    chunks.push(value);
+    return new TextDecoder().decode(Buffer.concat(chunks));
+  } catch (e) {
+    void reader.cancel().catch(() => {}); // timeout, abort or size limit: release the source
+    throw e;
+  } finally {
+    reader.releaseLock();
   }
-  return new TextDecoder().decode(Buffer.concat(chunks));
 }

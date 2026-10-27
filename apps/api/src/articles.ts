@@ -69,7 +69,7 @@ export async function refreshFeed(deps: Deps, user: User, feedId: string): Promi
   return error === undefined ? json(body, 200) : json({ ...body, error }, 502);
 }
 
-const BLOCK_TAGS = "p,br,div,li,ul,ol,h1,h2,h3,h4,h5,h6,article,section,blockquote,pre,tr,table";
+const BLOCK_TAGS = "p,div,li,ul,ol,h1,h2,h3,h4,h5,h6,article,section,blockquote,pre,tr,table";
 const SKIP_TAGS = "script,style,noscript,template,svg,head,nav,header,footer,aside,form,iframe";
 const ENTITIES: Record<string, string> = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " " };
 const decode = (s: string) =>
@@ -95,9 +95,11 @@ export async function extractText(html: string): Promise<string> {
     .on(BLOCK_TAGS, {
       element(el) {
         out += BREAK;
-        el.onEndTag?.(() => void (out += BREAK));
+        if (!el.selfClosing) el.onEndTag?.(() => void (out += BREAK));
       },
     })
+    // void element: has no end tag, onEndTag would throw
+    .on("br", { element: () => void (out += BREAK) })
     .on("*", {
       text(t) {
         if (skip === 0) out += t.text;
