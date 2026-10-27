@@ -53,3 +53,7 @@ data/
 .env
 next-env.d.ts
 *.tsbuildinfo
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite*
