@@ -44,8 +44,8 @@ export function isPrivateIp(ip: string): boolean {
       (a === 192 && b === 168)
     );
   }
-  const v6 = ip.toLowerCase();
-  return v6 === "::" || v6 === "::1" || /^f[cd]/.test(v6) || /^fe[89ab]/.test(v6) || /^ff/.test(v6) || /^::ffff:/.test(v6);
+  // "::…" covers unspecified, loopback, IPv4-mapped/-compatible; 64:ff9b: (NAT64) and 2002: (6to4) embed IPv4.
+  return /^(::|f[cd]|fe[89ab]|ff|64:ff9b:|2002:)/i.test(ip);
 }
 
 /**
