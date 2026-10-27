@@ -32,6 +32,7 @@ Alle Variablen sind optional. Vorlage: `.env.example`, kopieren nach `.env.local
 |:--|:--|:--|
 | `GEMINI_API_KEY` | – | Ist der Key gesetzt, laufen Zusammenfassung und Clustering über Gemini. Ohne Key greift ein deterministischer Mock. |
 | `GEMINI_MODEL` | `gemini-2.5-flash` | Gemini-Modell |
+| `GEMINI_BASE_URL` | Google-API | Anderer Endpunkt, z. B. Gateway oder lokales Test-Double |
 | `DB_PATH` | `./data/instafeed.sqlite` | SQLite-Datei; wird beim ersten Zugriff angelegt |
 | `CLUSTERING_THRESHOLD` | `0.5` | Jaccard-Schwelle für das Mock-Clustering (0..1) |
 

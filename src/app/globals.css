@@ -209,8 +209,8 @@ select:focus-visible {
 }
 
 .summary {
-  border-left: 3px solid var(--accent);
-  padding-left: 0.9rem;
+  background: color-mix(in srgb, var(--accent) 7%, var(--card));
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
 }
 
 .prose p {

@@ -17,13 +17,15 @@ export function parseJson<T>(text: string): T | null {
 export function createGeminiAi(opts: {
   apiKey: string;
   model?: string;
+  /** Alternative API endpoint, e.g. a corporate gateway or a local test double. */
+  baseUrl?: string;
   generate?: (prompt: string) => Promise<string>;
 }): AiAdapter {
   const model = opts.model ?? "gemini-2.5-flash";
   const generate =
     opts.generate ??
     (async (prompt: string) => {
-      const ai = new GoogleGenAI({ apiKey: opts.apiKey });
+      const ai = new GoogleGenAI({ apiKey: opts.apiKey, httpOptions: opts.baseUrl ? { baseUrl: opts.baseUrl } : undefined });
       const res = await ai.models.generateContent({
         model,
         contents: prompt,

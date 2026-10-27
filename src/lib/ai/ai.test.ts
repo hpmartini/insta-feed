@@ -89,3 +89,22 @@ describe("gemini adapter", () => {
     warn.mockRestore();
   });
 });
+
+test("gemini adapter does a real SDK round trip with the key (local Gemini-compatible server)", async () => {
+  const seen: { path: string; key: string | null }[] = [];
+  const server = Bun.serve({
+    port: 0,
+    async fetch(req) {
+      seen.push({ path: new URL(req.url).pathname, key: req.headers.get("x-goog-api-key") });
+      const text = JSON.stringify({ summary: "Zusammenfassung aus Gemini." });
+      return Response.json({ candidates: [{ content: { role: "model", parts: [{ text }] }, finishReason: "STOP" }] });
+    },
+  });
+  try {
+    const ai = getAi({ GEMINI_API_KEY: "k-123", GEMINI_BASE_URL: server.url.origin });
+    expect(await ai.summarize({ title: "T", content: "Inhalt." })).toBe("Zusammenfassung aus Gemini.");
+    expect(seen).toEqual([{ path: "/v1beta/models/gemini-2.5-flash:generateContent", key: "k-123" }]);
+  } finally {
+    server.stop(true);
+  }
+});
