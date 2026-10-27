@@ -24,6 +24,8 @@ bun run dev                    # http://localhost:3000
 bun run build && bun run start
 ```
 
+Runtime smoke (starts the dev server on a temp DB, checks API and every page): `bash scripts/smoke-dev.sh`.
+
 Open `/register`, create an account, add a feed under **Feeds** (for example `https://www.heise.de/rss/heise-atom.xml`).
 
 ## Environment variables
