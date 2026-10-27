@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Hand-written to the RSS 2.0 spec (https://www.rssboard.org/rss-specification); not a captured live feed. -->
+<rss version="2.0">
+  <channel>
+    <title>Example RSS</title>
+    <link>https://example.com/</link>
+    <description>Fixture</description>
+    <item>
+      <title>First &amp; best</title>
+      <link>https://example.com/posts/1</link>
+      <guid isPermaLink="false">post-1</guid>
+      <pubDate>Tue, 06 Jan 2026 10:00:00 GMT</pubDate>
+      <description>&lt;p&gt;Hello &lt;b&gt;world&lt;/b&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Second</title>
+      <link>https://example.com/posts/2</link>
+      <pubDate>Wed, 07 Jan 2026 10:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <link>https://example.com/posts/3</link>
+      <guid>post-3</guid>
+      <pubDate>not a date</pubDate>
+    </item>
+    <item>
+      <title>No usable link</title>
+      <link>javascript:alert(1)</link>
+    </item>
+    <item>
+      <title>No link at all</title>
+    </item>
+  </channel>
+</rss>
