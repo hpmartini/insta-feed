@@ -3,6 +3,7 @@ import type { HealthResponse } from "@insta-feed/shared";
 import { currentUser, login, logout, register } from "./auth";
 import { articleContent, listArticles, refreshFeed } from "./articles";
 import { feeds } from "./feeds";
+import { settings } from "./settings";
 import type { Resolver } from "./safe-fetch";
 
 /** Provider-neutral AI port; concrete adapters (mock, gemini, claude) are follow-up work. */
@@ -46,6 +47,7 @@ export function createApp(deps: Deps) {
     if (route === "GET /articles") return listArticles(deps, user, url);
     const content = req.method === "GET" ? /^\/articles\/([^/]+)\/content$/.exec(url.pathname) : null;
     if (content) return articleContent(deps, user, content[1]!);
+    if (url.pathname === "/settings") return settings(deps, user, req);
     if (url.pathname === "/feeds" || url.pathname.startsWith("/feeds/")) return feeds(deps, user, req, url.pathname);
     return new Response("not found", { status: 404 });
   };

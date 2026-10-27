@@ -16,7 +16,7 @@ bun run dev            # web :3000, api :3001
 bun run typecheck && bun run build && bun test
 ```
 
-**Persistenz:** `apps/api/src/index.ts` öffnet SQLite unter `DATABASE_PATH` (Vorgabe `data/insta-feed.db`, Elternordner wird angelegt, `:memory:` erlaubt) und migriert vor `Bun.serve`. Schema-Version in `PRAGMA user_version` (aktuell 2; v2 ergänzt `feeds.last_error`); Migration ist idempotent und atomar, höhere unbekannte Versionen werden abgelehnt. Tabellen: `users`, `sessions`, `feeds`, `articles`, `settings`, `ai_cache`.
+**Persistenz:** `apps/api/src/index.ts` öffnet SQLite unter `DATABASE_PATH` (Vorgabe `data/insta-feed.db`, Elternordner wird angelegt, `:memory:` erlaubt) und migriert vor `Bun.serve`. Schema-Version in `PRAGMA user_version` (aktuell 3; v2 ergänzt `feeds.last_error`, v3 `settings.theme/view/refresh_minutes` und begrenzt Alt-Tempo auf 1–100); Migration ist idempotent und atomar, höhere unbekannte Versionen werden abgelehnt. Tabellen: `users`, `sessions`, `feeds`, `articles`, `settings`, `ai_cache`.
 
 **Injektion:** `createApp({ db, fetch, resolve?, ai, now })` öffnet keine Dateien und liest keine Umgebung; `index.ts` verdrahtet (derzeit nur Mock-KI, ohne Key/Netz).
 
@@ -43,4 +43,22 @@ curl -b jar localhost:3001/auth/me
 - **`safeFetch`** (jeder ausgehende Abruf): nur http(s), keine URL-Zugangsdaten, Loopback/private/Link-Local/CGNAT/Multicast/reservierte Bereiche gesperrt (IPv4 in allen Schreibweisen, IPv6 nur 2000::/3, IPv4-mapped und 6to4 geprüft), alle DNS-Antworten müssen öffentlich sein, höchstens 3 Weiterleitungen (jedes Ziel neu geprüft), 10 s Gesamtzeit (inkl. DNS und Body), 2 MiB Body-Limit beim Streamen, keine Cookies.
 - **Bekannte Lücke:** DNS-Rebinding. Die Adresse wird vorab geprüft, `fetch` löst erneut auf. Behebung: Verbindung an die geprüfte IP binden (Host und TLS-Prüfung erhalten).
 
-**Stand:** Gerüst, Schema, Shared-Verträge, Auth, Feeds-CRUD/Abo, Feed-Import, Artikelliste, Inhaltsextraktion, safeFetch. Noch nicht portiert: KI-Kuratierung (Zusammenfassung, Story-Clustering), Ticker/Frontend-Seiten, Einstellungen.
+**Stand:** Gerüst, Schema, Shared-Verträge, Auth, Feeds-CRUD/Abo, Feed-Import, Artikelliste, Inhaltsextraktion, safeFetch. Noch nicht portiert: KI-Kuratierung (Zusammenfassung, Story-Clustering), Ticker/Frontend-Seiten.
+
+## Einstellungen (`/settings`)
+
+Auth-pflichtig, Nutzer immer aus der Sitzung. Felder (snake_case, alle fünf Pflicht):
+
+| Feld | Werte | Vorgabe |
+|:-----|:------|:--------|
+| `theme` | `system` \| `light` \| `dark` | `system` |
+| `view` | `list` \| `cards` | `list` |
+| `refresh_minutes` | ganze Zahl 0–1440 (0 = aus) | `0` |
+| `speed` | Zahl 1–100, ms pro Zeichen (Row-Runner) | `30` |
+| `default_feed_id` | eigene Feed-ID oder `null` | `null` |
+
+- `GET`: legt beim ersten Abruf die Vorgaben an (nur für den Aufrufer), überschreibt nie.
+- `PUT`: ersetzt alle fünf Felder vollständig, auch vor dem ersten `GET`; antwortet mit dem gespeicherten Stand.
+- Fehler: `400` ungültig (fehlende/zusätzliche Felder, falscher Typ, Tempo außerhalb 1–100, kaputtes JSON), `401` ohne/abgelaufene Sitzung, `403` fremder Origin, `404` fremde oder unbekannte `default_feed_id` (nichts wird geändert).
+- Feed löschen setzt `default_feed_id` auf `null`.
+- Theme-/View-Werte und Refresh-Bereich stammen aus dem Legacy-Code; die Vorgabe `refresh_minutes: 0` ist neu festgelegt (Legacy ebenfalls 0).
