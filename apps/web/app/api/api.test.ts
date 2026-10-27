@@ -75,7 +75,7 @@ describe("API auth", () => {
   });
 
   test("bad JSON -> 400", async () => {
-    const res = await register(new Request("http://localhost/api/auth/register", { method: "POST", body: "{kaputt" }), undefined);
+    const res = await register(new Request("http://localhost/api/auth/register", { method: "POST", headers: { "content-type": "application/json" }, body: "{kaputt" }), undefined);
     expect(res.status).toBe(400);
   });
 });
@@ -143,4 +143,12 @@ describe("API feeds, articles, AI, settings", () => {
     expect(saved).toMatchObject({ theme: "dark", view: "cards", refreshMinutes: 5, speed: 7 });
     expect((await putSettings(req("/api/settings", { method: "PUT", cookie, body: { theme: "x" } }), undefined)).status).toBe(400);
   });
+});
+
+test("JSON endpoints refuse form posts (login CSRF)", async () => {
+  const res = await login(
+    new Request("http://localhost/api/auth/login", { method: "POST", headers: { "content-type": "application/x-www-form-urlencoded" }, body: "email=a%40example.com&password=geheim1234" }),
+    undefined,
+  );
+  expect(res.status).toBe(415);
 });

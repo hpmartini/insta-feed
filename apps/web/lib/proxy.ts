@@ -20,6 +20,9 @@ function privateV4(ip: string): boolean {
     (a === 169 && b === 254) ||
     (a === 172 && b >= 16 && b <= 31) ||
     (a === 192 && b === 168) ||
+    (a === 192 && b === 0 && ip.startsWith("192.0.0.")) ||
+    ip.startsWith("192.0.2.") || ip.startsWith("198.51.100.") || ip.startsWith("203.0.113.") || // documentation
+    (a === 198 && (b === 18 || b === 19)) || // benchmarking
     a >= 224 // multicast, reserved, broadcast
   );
 }
@@ -35,7 +38,8 @@ export function isPrivateIp(ip: string): boolean {
     if (hex.length === 2 && hex.every((n) => n >= 0 && n <= 0xffff)) return privateV4(`${hex[0]! >> 8}.${hex[0]! & 255}.${hex[1]! >> 8}.${hex[1]! & 255}`);
     return true;
   }
-  return v6 === "::" || v6 === "::1" || /^f[cd]/.test(v6) || /^fe[89ab]/.test(v6) || v6.startsWith("ff");
+  // Allowlist: only global unicast (2000::/3); 6to4, Teredo and documentation prefixes can embed or hide IPv4 targets.
+  return !/^[23]/.test(v6) || /^(2002:|2001:0*:|2001:db8:)/.test(v6);
 }
 
 /**

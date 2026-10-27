@@ -27,7 +27,9 @@ export function authed<C = unknown>(fn: (req: Request, user: User, ctx: C) => Re
   });
 }
 
+/** Requiring application/json keeps cross-site HTML forms out (they cannot send it without a CORS preflight), which covers login CSRF. */
 export async function readJson(req: Request): Promise<Record<string, unknown>> {
+  if (!req.headers.get("content-type")?.toLowerCase().startsWith("application/json")) throw new HttpError(415, "Content-Type application/json erforderlich");
   try {
     const body = await req.json();
     if (body && typeof body === "object" && !Array.isArray(body)) return body as Record<string, unknown>;

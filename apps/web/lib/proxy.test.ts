@@ -18,6 +18,10 @@ describe("SSRF guard", () => {
     "http://[fe80::1]/",
     "http://[fd00::1]/",
     "http://drucker.local/",
+    "http://198.18.0.1/",
+    "http://203.0.113.5/",
+    "http://[2002:7f00:1::]/", // 6to4 wrapping 127.0.0.1
+    "http://[::127.0.0.1]/",
     "http://2130706433/", // decimal form of 127.0.0.1, normalised by URL
     "file:///etc/passwd",
     "ftp://example.com/",
