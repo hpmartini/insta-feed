@@ -2,7 +2,7 @@ import { Database } from "bun:sqlite";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 const V1 = `
 create table users (
@@ -61,7 +61,9 @@ create table ai_cache (
 );
 `;
 
-const MIGRATIONS = [V1];
+const V2 = `alter table feeds add column last_error text;`;
+
+export const MIGRATIONS = [V1, V2];
 
 export function openDb(path: string): Database {
   if (path !== ":memory:") mkdirSync(dirname(path), { recursive: true });

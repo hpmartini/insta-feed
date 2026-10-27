@@ -8,5 +8,8 @@
     "build": "bun build src/index.ts --target=bun --outdir=dist",
     "typecheck": "tsc -p ."
   },
-  "dependencies": { "@insta-feed/shared": "workspace:*" }
+  "dependencies": {
+    "@insta-feed/shared": "workspace:*",
+    "rss-parser": "^3.13.0"
+  }
 }

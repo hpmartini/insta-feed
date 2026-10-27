@@ -15,6 +15,7 @@ export const FeedSchema = z.object({
   title: z.string(),
   iconUrl: httpUrl.optional(),
   subscribed: z.boolean().default(true),
+  lastError: z.string().optional(), // letzter fehlgeschlagener Abruf, bis zum nächsten Erfolg
 });
 export type Feed = z.infer<typeof FeedSchema>;
 
