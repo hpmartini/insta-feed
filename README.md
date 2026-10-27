@@ -4,7 +4,7 @@ RSS-Reader als Bun-Workspaces-Monorepo.
 
 | Pfad | Inhalt |
 |:-----|:-------|
-| `apps/web` | Next.js-Frontend (Platzhalter-Seite) |
+| `apps/web` | Next.js-15-Frontend (App Router): `/login`, `/register`, `/`, `/articles/[id]`, `/feeds`, `/stories`, `/settings` |
 | `apps/api` | Bun-API, SQLite via `bun:sqlite` (`/health`) |
 | `packages/shared` | zod-Schemas/Typen (User, Feed, Article, Settings, Summary, StoryCluster, Source), `mergeSources` |
 | `packages/api-client` | typisierter API-Client |
@@ -43,7 +43,7 @@ curl -b jar localhost:3001/auth/me
 - **`safeFetch`** (jeder ausgehende Abruf): nur http(s), keine URL-Zugangsdaten, Loopback/private/Link-Local/CGNAT/Multicast/reservierte Bereiche gesperrt (IPv4 in allen Schreibweisen, IPv6 nur 2000::/3, IPv4-mapped und 6to4 geprüft), alle DNS-Antworten müssen öffentlich sein, höchstens 3 Weiterleitungen (jedes Ziel neu geprüft), 10 s Gesamtzeit (inkl. DNS und Body), 2 MiB Body-Limit beim Streamen, keine Cookies.
 - **Bekannte Lücke:** DNS-Rebinding. Die Adresse wird vorab geprüft, `fetch` löst erneut auf. Behebung: Verbindung an die geprüfte IP binden (Host und TLS-Prüfung erhalten).
 
-**Stand:** Gerüst, Schema, Shared-Verträge, Auth, Feeds-CRUD/Abo, Feed-Import, Artikelliste, Inhaltsextraktion, safeFetch. KI-Zusammenfassung und Story-Clustering (siehe unten). Noch nicht portiert: Ticker/Frontend-Seiten.
+**Stand:** Gerüst, Schema, Shared-Verträge, Auth, Feeds-CRUD/Abo, Feed-Import, Artikelliste, Inhaltsextraktion, safeFetch. KI-Zusammenfassung und Story-Clustering (siehe unten). Frontend-Seiten (siehe „Frontend“). Noch nicht portiert: Ticker.
 
 ## API-Client (`packages/api-client`) und same-origin
 
@@ -61,8 +61,8 @@ try {
 
 - 17 Methoden: `health`, `register/login/me/logout`, `listFeeds/createFeed/getFeed/updateFeed/deleteFeed/setSubscribed/refreshFeed`, `listArticles({ feedId })`, `articleContent`, `summarize`, `listStories`, `getSettings/putSettings`. Erfolgsantworten werden mit den Shared-Schemas geprüft.
 - `ApiError.kind`: `http` (`status`, Servermeldung, `issues` bei 400, `refresh` bei Refresh-502), `network` (`cause`), `response` (Antwort passt nicht zum Schema). Keine automatischen Wiederholungen.
-- **Same-origin:** `apps/web/app/api/[...path]/route.ts` leitet `/api/*` an `API_INTERNAL_URL` (Vorgabe `http://localhost:3001`, nur serverseitig) weiter, reicht Cookie/`Set-Cookie`/Status/204 durch, setzt `no-store`. Fremder `Origin` bei mutierenden Requests → 403 schon im Proxy; gültiger wird für das Backend auf dessen Origin umgeschrieben (ein Next-`rewrites` würde den Web-Origin weiterreichen → 403). Backend-Check bleibt unverändert.
-- **Grenzen:** Proxy puffert Request-Bodies; hinter einem Reverse-Proxy muss `Host`/`X-Forwarded-Host` den öffentlichen Origin widerspiegeln. Ein Browser-Durchlauf (Cookie im echten Browser) ist nicht belegt, nur curl gegen `:3000`. Frontend-Seiten/Ticker fehlen weiter.
+- **Same-origin:** `apps/web/next.config.ts` rewritet `/api/:path*` → `${API_URL}/:path*` (Vorgabe `http://localhost:3001`; **wird beim `next build` fixiert**). Die Middleware `apps/web/middleware.ts` läuft vorher auf `/api/*`: fremder oder `null`-Origin bei mutierenden Requests → 403, gültiger Origin wird für das Backend auf dessen Origin umgeschrieben (ein reiner Rewrite würde den Web-Origin weiterreichen → Backend-403); fehlender Origin bleibt erlaubt. Cookie, `Set-Cookie`, Status, 204 und Query laufen durch. Backend-Check bleibt unverändert.
+- **Grenzen:** Web-Origin kommt aus `PUBLIC_ORIGIN`, sonst aus `Host`/`X-Forwarded-Host`/`-Proto` (hinter Reverse-Proxy setzen; HTTPS-Cookie-Verhalten dort nicht geprüft). Rewrite-Header/Cookies per curl gegen `next dev` belegt, nicht im echten Browser.
 
 ## KI (`apps/api/src/ai`, `clustering.ts`)
 
@@ -97,3 +97,20 @@ Auth-pflichtig, Nutzer immer aus der Sitzung. Felder (snake_case, alle fünf Pfl
 - Fehler: `400` ungültig (fehlende/zusätzliche Felder, falscher Typ, Tempo außerhalb 1–100, kaputtes JSON), `401` ohne/abgelaufene Sitzung, `403` fremder Origin, `404` fremde oder unbekannte `default_feed_id` (nichts wird geändert).
 - Feed löschen setzt `default_feed_id` auf `null`.
 - Theme-/View-Werte und Refresh-Bereich stammen aus dem Legacy-Code; die Vorgabe `refresh_minutes: 0` ist neu festgelegt (Legacy ebenfalls 0).
+
+
+## Frontend (`apps/web`)
+
+| Seite | Inhalt |
+|:------|:-------|
+| `/login`, `/register` | öffentlich; Rücksprung (`?next=`) nur lokale Pfade |
+| `/` | Artikel, Feed-Filter (Vorgabe = `default_feed_id`), Listen-/Kartenansicht, „Aktualisieren“ (Teilfehler je Feed gemeldet), Auto-Refresh gemäß `refresh_minutes` ohne Überschneidung |
+| `/articles/[id]` | Volltext (Hinweis bei `fallback`), Originallink, Zusammenfassung auf Knopfdruck mit Provider/Modell/Prompt-Version; Mock als „Mock … keine echte KI“ |
+| `/feeds` | anlegen, bearbeiten, abonnieren/abbestellen, löschen, aktualisieren; `lastError`/409 je Zeile |
+| `/stories` | Cluster mit Artikel- und Quellenlinks; als lokale Heuristik (`jaccard-v1`) gekennzeichnet |
+| `/settings` | alle fünf Felder; Theme setzt `data-theme` am `<html>` (`system` per `prefers-color-scheme`) |
+
+- **Sitzung:** Middleware leitet ohne `session`-Cookie auf `/login` (nur Präsenz); die Shell prüft per `GET /auth/me`, bevor Nutzerdaten erscheinen. Jedes spätere 401 verwirft die Daten und führt zum Login; Netzwerkfehler/5xx bleiben Fehler mit „Erneut versuchen“.
+- **Zustände:** Laden, Fehler, leer und Erfolg sind getrennt (`components/states.tsx`); veraltete Antworten bei Filterwechsel werden verworfen (`lib/use-load.ts`). Artikeltexte werden als Text gerendert.
+- **Start:** `bun run dev` (web :3000, api :3001). Build braucht weder API noch Gemini-Key.
+- **Nicht belegt:** Browser-Durchlauf aller Seiten (nur curl gegen Middleware/Rewrite, `bun test`, Build, Typecheck); Ticker fehlt, `speed` wird nur gespeichert; keine Frontend-Komponententests.
