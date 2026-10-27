@@ -7,8 +7,13 @@ export const dynamic = "force-dynamic";
 async function proxy(req: Request, { params }: { params: Promise<{ path: string[] }> }): Promise<Response> {
   const origin = req.headers.get("origin");
   const url = new URL(req.url);
+  // req.url carries Next's configured hostname, not the one the client used, so derive the public origin
+  // from PUBLIC_ORIGIN or the proxy/Host headers (browsers can't forge these cross-site).
+  const host = req.headers.get("x-forwarded-host") ?? req.headers.get("host");
+  const proto = req.headers.get("x-forwarded-proto")?.split(",")[0].trim() ?? url.protocol.slice(0, -1);
+  const webOrigin = process.env.PUBLIC_ORIGIN ?? (host ? `${proto}://${host.split(",")[0].trim()}` : url.origin);
   // Same rule as the backend: absent Origin is fine, a present one must be this web origin.
-  if (!["GET", "HEAD", "OPTIONS"].includes(req.method) && origin !== null && origin !== url.origin) {
+  if (!["GET", "HEAD", "OPTIONS"].includes(req.method) && origin !== null && origin !== webOrigin) {
     return Response.json({ error: "forbidden origin" }, { status: 403 });
   }
   const { path } = await params;
