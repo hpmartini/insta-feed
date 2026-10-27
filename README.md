@@ -52,3 +52,5 @@ packages/api-client  typisierter fetch-Client für die API
 ## Verifikation
 
 Zusätzlich zu `bun test` wurde die UI per Headless-Chrome (Playwright) durchgespielt: Registrierung, Feed anlegen/bearbeiten/abbestellen, Artikel-Übersicht (neueste zuerst), Story-Gruppierung, Artikel-Detail mit Zusammenfassung, Row Runner, Einstellungen (persistiert, Dark-Theme), Abmelden. Lauf einmal mit Mock und einmal mit `GEMINI_API_KEY` gegen einen lokalen Fake-Gemini-Server (`GEMINI_BASE_URL`). Echte Gemini-API wurde mangels Key nicht aufgerufen.
+
+E2E-Skript: `e2e/` (`bun e2e/fake-server.ts`; App mit `ALLOW_PRIVATE_URLS=1 [GEMINI_API_KEY=x GEMINI_BASE_URL=http://127.0.0.1:5055] bun run dev`; dann `bun add -d playwright-core` und `bun e2e/run.mjs [gemini|mock]`, Chrome-Pfad per `CHROME_PATH`).
