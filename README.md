@@ -28,7 +28,7 @@ Open `/register`, create an account, add a feed under **Feeds** (for example `ht
 
 ## Environment variables
 
-Copy `.env.example` if you want to set any of them. All are optional.
+All are optional. Either export them in the shell or put them in `apps/web/` in a file named like the template at the repo root (`.env.example`, copied to `apps/web/.env`): that is where Next loads it from.
 
 | Variable | Default | Meaning |
 |:--|:--|:--|
