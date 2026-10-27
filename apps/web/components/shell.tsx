@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { useSession } from "../lib/session";
 
-const NAV = [["/", "Artikel"], ["/feeds", "Feeds"], ["/stories", "Stories"], ["/settings", "Einstellungen"]] as const;
+const NAV = [["/", "Artikel"], ["/feeds", "Feeds"], ["/stories", "Stories"], ["/ticker", "Ticker"], ["/settings", "Einstellungen"]] as const;
 
 export function Shell({ children }: { children: ReactNode }) {
   const { user, logout } = useSession();
