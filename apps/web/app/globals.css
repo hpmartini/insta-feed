@@ -91,7 +91,7 @@ button.primary { background: var(--accent); color: var(--accent-text); border-co
 .items h2 a:hover { color: var(--accent); }
 .meta { color: var(--muted); font-size: .8rem; }
 .summary { margin: .5rem 0; }
-.summary-text { background: var(--bg); border-left: 3px solid var(--accent); padding: .5rem .7rem; margin: 0; }
+.summary-text { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: .5rem .7rem; margin: 0; }
 section.card li { padding: .15rem 0; }
 
 .reader { max-width: 42rem; margin: 0 auto; }
