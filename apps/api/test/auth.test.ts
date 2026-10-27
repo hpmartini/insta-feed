@@ -14,7 +14,7 @@ function setup() {
   const app = createApp({
     db,
     fetch: (() => { throw new Error("network"); }) as unknown as typeof fetch,
-    ai: { provider: "mock", model: "m", summarize: async () => "" },
+    ai: { provider: "mock", model: "m", summarize: async () => ({ text: "x" }) },
     now: () => clock.t,
   });
   const call = (method: string, path: string, o: { body?: unknown; cookie?: string; origin?: string } = {}) =>

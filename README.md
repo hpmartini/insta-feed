@@ -18,7 +18,7 @@ bun run typecheck && bun run build && bun test
 
 **Persistenz:** `apps/api/src/index.ts` öffnet SQLite unter `DATABASE_PATH` (Vorgabe `data/insta-feed.db`, Elternordner wird angelegt, `:memory:` erlaubt) und migriert vor `Bun.serve`. Schema-Version in `PRAGMA user_version` (aktuell 3; v2 ergänzt `feeds.last_error`, v3 `settings.theme/view/refresh_minutes` und begrenzt Alt-Tempo auf 1–100); Migration ist idempotent und atomar, höhere unbekannte Versionen werden abgelehnt. Tabellen: `users`, `sessions`, `feeds`, `articles`, `settings`, `ai_cache`.
 
-**Injektion:** `createApp({ db, fetch, resolve?, ai, now })` öffnet keine Dateien und liest keine Umgebung; `index.ts` verdrahtet (derzeit nur Mock-KI, ohne Key/Netz).
+**Injektion:** `createApp({ db, fetch, resolve?, ai, now })` öffnet keine Dateien und liest keine Umgebung; `index.ts` verdrahtet den KI-Adapter über `createAiAdapter` (einzige Stelle, die `AI_PROVIDER`/`GEMINI_API_KEY` liest).
 
 **Auth:** `POST /auth/register` (201) und `POST /auth/login` (200) setzen das Cookie `session` (HttpOnly, SameSite=Lax, Path=/, 30 Tage, `Secure` bei HTTPS) und liefern den User; `GET /auth/me` (200), `POST /auth/logout` (204, löscht Sitzung + Cookie). Öffentlich sind nur diese beiden POSTs und `GET /health`; alles andere ohne gültige Sitzung → 401. Passwort: `Bun.password` argon2id (8–256 Zeichen), E-Mail getrimmt + kleingeschrieben (Dublette → 409), Falschdaten → 401. Sitzungstoken: 32 Zufallsbytes, in der DB nur als SHA-256. Mutierende Requests mit vorhandenem, fremdem Origin → 403 (fehlender Origin, z. B. curl, ist erlaubt; Web :3000 → API :3001 braucht daher später einen Proxy/gleichen Origin).
 
@@ -43,7 +43,23 @@ curl -b jar localhost:3001/auth/me
 - **`safeFetch`** (jeder ausgehende Abruf): nur http(s), keine URL-Zugangsdaten, Loopback/private/Link-Local/CGNAT/Multicast/reservierte Bereiche gesperrt (IPv4 in allen Schreibweisen, IPv6 nur 2000::/3, IPv4-mapped und 6to4 geprüft), alle DNS-Antworten müssen öffentlich sein, höchstens 3 Weiterleitungen (jedes Ziel neu geprüft), 10 s Gesamtzeit (inkl. DNS und Body), 2 MiB Body-Limit beim Streamen, keine Cookies.
 - **Bekannte Lücke:** DNS-Rebinding. Die Adresse wird vorab geprüft, `fetch` löst erneut auf. Behebung: Verbindung an die geprüfte IP binden (Host und TLS-Prüfung erhalten).
 
-**Stand:** Gerüst, Schema, Shared-Verträge, Auth, Feeds-CRUD/Abo, Feed-Import, Artikelliste, Inhaltsextraktion, safeFetch. Noch nicht portiert: KI-Kuratierung (Zusammenfassung, Story-Clustering), Ticker/Frontend-Seiten.
+**Stand:** Gerüst, Schema, Shared-Verträge, Auth, Feeds-CRUD/Abo, Feed-Import, Artikelliste, Inhaltsextraktion, safeFetch. KI-Zusammenfassung und Story-Clustering (siehe unten). Noch nicht portiert: Ticker/Frontend-Seiten.
+
+## KI (`apps/api/src/ai`, `clustering.ts`)
+
+Auswahl (`createAiAdapter`): `AI_PROVIDER=mock` erzwingt den Mock, auch mit Key; sonst Gemini bei nichtleerem `GEMINI_API_KEY`; sonst Mock. Ohne Key läuft alles offline.
+
+| Route | Antwort |
+|:------|:--------|
+| `POST /articles/:id/summary` | 200 `Summary` (`text`, `sources` = aktueller Originallink, `provider`, `model`, `promptVersion`, `createdAt`); fremde/unbekannte ID → 404 vor Cache und Anbieter; Gemini-Fehler → 502, kein Fallback, kein Cache-Eintrag |
+| `GET /stories` | 200 `StoryCluster[]` der eigenen Artikel, neueste Story zuerst, `[]` ohne Treffer |
+
+- **Mock** ist eine echte, deterministische Funktion der Eingabe (Titel + gekürzter Inhalt), keine Zusammenfassung im KI-Sinn; die Antwort trägt `provider: "mock"`.
+- **Gemini:** `@google/genai`, `gemini-2.5-flash`, `responseSchema` + JSON-MIME, 20 s Limit. Antwort wird mit zod validiert; Transportfehler, leere Antwort, kaputtes JSON und Schemaverletzung → 502 mit fester Meldung (kein SDK-Text, kein Key). Provider/Modell setzt der Server, nie die Modellantwort.
+- **Cache** (`ai_cache`): Schlüssel = Nutzer, Operation, Provider, Modell, `PROMPT_VERSION` und SHA-256 über (Titel, Inhalt, Provider, Modell, `PROMPT_VERSION`). Nur validierte Erfolge; defekte Einträge zählen als Miss. Artikel-ID und Quellen kommen bei jeder Antwort vom aktuellen Artikel. `PROMPT_VERSION` bei jeder Prompt-/Schemaänderung erhöhen.
+- **Clustering:** Jaccard über Titel-Wörter (NFKC, Kleinschreibung, Satzzeichen = Trenner, Ziffern bleiben), Schwelle 0,75. Leere Wortmengen sind nie ähnlich (BakeNews: 1). Ein Artikel kommt in die erste Gruppe, zu **jedem** Mitglied er ähnlich genug ist (keine Brückencluster). Sortierung: Zeit absteigend, dann ID; unabhängig von der Eingabereihenfolge. Fenster: Veröffentlichung in [jetzt − 48 h, jetzt]; undatierte, unlesbare und zukünftige Artikel entfallen. Quellen per `mergeSources`.
+- **Label:** Stories sind eine lokale Heuristik, kein KI-Aufruf: `provider: "mock"`, `model`/`promptVersion: "jaccard-v1"` (bei Algorithmusänderung erhöhen).
+- **Grenzen:** keine Stoppwörter, nur Titel verglichen; Gemini-Erreichbarkeit nur per Stub getestet.
 
 ## Einstellungen (`/settings`)
 

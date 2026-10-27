@@ -1,15 +1,11 @@
-import { createApp, type AiPort } from "./app";
+import { createApp } from "./app";
+import { createAiAdapter } from "./ai/factory";
 import { migrate, openDb } from "./db";
 
 const db = openDb(process.env.DATABASE_PATH ?? "data/insta-feed.db");
 migrate(db);
 
-// Placeholder until a real adapter exists: runs without key or network.
-const ai: AiPort = {
-  provider: "mock",
-  model: "mock",
-  summarize: async ({ title }) => title,
-};
+const ai = createAiAdapter({ provider: process.env.AI_PROVIDER, geminiApiKey: process.env.GEMINI_API_KEY });
 
 const app = createApp({ db, fetch, ai, now: () => new Date() });
 

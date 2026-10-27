@@ -86,7 +86,7 @@ test("/health with injected stubs on separate dbs, no network", async () => {
     const deps: Deps = {
       db,
       fetch: (() => { throw new Error("network"); }) as unknown as typeof fetch,
-      ai: { provider: "mock", model: "m", summarize: async () => "" },
+      ai: { provider: "mock", model: "m", summarize: async () => ({ text: "x" }) },
       now: () => new Date(0),
     };
     const body = (await (await createApp(deps)(new Request("http://x/health"))).json()) as { ok: boolean; sqlite: string };
