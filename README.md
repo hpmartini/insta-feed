@@ -41,7 +41,7 @@ Alle Variablen sind optional. Vorlage: `.env.example`, kopieren nach `.env.local
 - **Feeds** (`/feeds`): Feeds per Name, URL und Icon hinzufügen, bearbeiten, abonnieren, abbestellen und löschen. Jeder Feed gehört einem Nutzer.
 - **Artikel** (`/articles`): Artikel aller abonnierten Feeds, neueste zuerst. Filter nach Feed. Zwei Ansichten: Liste oder Stories (KI-Cluster über Feeds hinweg).
 - **Artikel-Detail** (`/articles/read?url=…`): Der Server holt den Volltext und extrahiert ihn mit Readability. So entsteht kein CORS-Problem. Dazu kommt eine KI-Zusammenfassung. Derselbe Proxy steht als JSON unter `GET /api/article?url=…` bereit.
-- **Row Runner** (`/row-runner?url=…`): Laufschrift, die den Artikel Zeichen für Zeichen schreibt. Mit Start/Stopp und Vollbild; das Tempo kommt aus den Einstellungen.
+- **Row Runner** (`/row-runner?url=…`): Laufschrift, die den Artikel Zeichen für Zeichen schreibt. Mit Start/Stopp und Vollbild; das Tempo kommt aus den Einstellungen. Wie in der alten App läuft der Artikeltext durch, nicht nur die Schlagzeile.
 - **Einstellungen** (`/settings`): Theme, Standard-Ansicht, Standard-Feed, Auto-Aktualisierung und Row-Runner-Tempo.
 
 ## Architektur
