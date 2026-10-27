@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { mergeSources, SettingsSchema, SourceSchema } from "./index";
+import { DEFAULT_SETTINGS, mergeSources, SettingsSchema, SourceSchema } from "./index";
 import type { Source } from "./index";
 
 const s = (url: string, origin: Source["origin"] = "feed", name = url): Source => ({ name, url, origin });
@@ -31,6 +31,9 @@ test("inputs not mutated", () => {
 });
 
 test("schemas", () => {
-  expect(SettingsSchema.parse({})).toEqual({ speed: 30 });
+  expect(SettingsSchema.safeParse({}).success).toBe(false);
+  expect(SettingsSchema.parse(DEFAULT_SETTINGS)).toEqual(DEFAULT_SETTINGS);
+  for (const speed of [0, 101, Infinity, NaN]) expect(SettingsSchema.safeParse({ ...DEFAULT_SETTINGS, speed }).success).toBe(false);
+  for (const speed of [1, 100]) expect(SettingsSchema.safeParse({ ...DEFAULT_SETTINGS, speed }).success).toBe(true);
   expect(SourceSchema.safeParse({ name: "x", url: "javascript:alert(1)", origin: "feed" }).success).toBe(false);
 });

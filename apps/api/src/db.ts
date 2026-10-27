@@ -2,7 +2,7 @@ import { Database } from "bun:sqlite";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 const V1 = `
 create table users (
@@ -63,7 +63,15 @@ create table ai_cache (
 
 const V2 = `alter table feeds add column last_error text;`;
 
-export const MIGRATIONS = [V1, V2];
+// Tempo auf 1–100 ms/Zeichen begrenzen, damit Altwerte den neuen Vertrag erfüllen.
+const V3 = `
+alter table settings add column theme text not null default 'system' check (theme in ('system', 'light', 'dark'));
+alter table settings add column view text not null default 'list' check (view in ('list', 'cards'));
+alter table settings add column refresh_minutes integer not null default 0 check (refresh_minutes between 0 and 1440);
+update settings set speed = min(max(speed, 1), 100);
+`;
+
+export const MIGRATIONS = [V1, V2, V3];
 
 export function openDb(path: string): Database {
   if (path !== ":memory:") mkdirSync(dirname(path), { recursive: true });

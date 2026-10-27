@@ -30,10 +30,15 @@ export const ArticleSchema = z.object({
 });
 export type Article = z.infer<typeof ArticleSchema>;
 
+// Werte wie Legacy (THEMES/VIEWS, refreshMinutes 0–1440; 0 = aus). Tempo in ms pro Zeichen.
 export const SettingsSchema = z.object({
-  speed: z.number().positive().default(30), // Row-Runner, Vorgabe wie Legacy
-  defaultFeedId: id.optional(),
-});
+  theme: z.enum(["system", "light", "dark"]),
+  view: z.enum(["list", "cards"]),
+  refresh_minutes: z.number().int().min(0).max(1440),
+  speed: z.number().finite().min(1).max(100),
+  default_feed_id: id.nullable(),
+}).strict();
+export const DEFAULT_SETTINGS: Settings = { theme: "system", view: "list", refresh_minutes: 0, speed: 30, default_feed_id: null };
 export type Settings = z.infer<typeof SettingsSchema>;
 
 export const SourceSchema = z.object({

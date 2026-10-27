@@ -102,8 +102,23 @@ test("v1 data survives the v2 migration; last_error starts empty", () => {
   user(db, "u1");
   feed(db, "f1", "u1");
   db.run("insert into articles values ('a1', 'f1', 'u1', 'g', 'https://f.test/1', 't', 'c', null)");
-  migrate(db);
+  migrate(db, MIGRATIONS.slice(0, 2));
   expect(version(db)).toBe(2);
   expect(db.query("select last_error from feeds where id = ?").get("f1")).toEqual({ last_error: null });
   expect(db.query("select count(*) c from articles").get()).toEqual({ c: 1 });
+});
+
+test("v3 adds settings columns, keeps speed/feed, clamps old speed", () => {
+  const db = mem();
+  migrate(db, MIGRATIONS.slice(0, 2));
+  for (const u of ["u1", "u2"]) user(db, u);
+  feed(db, "f1", "u1");
+  db.run("insert into settings (user_id, speed, default_feed_id) values ('u1', 55, 'f1'), ('u2', 500, null)");
+  migrate(db);
+  migrate(db);
+  expect(version(db)).toBe(3);
+  expect(db.query("select * from settings order by user_id").all()).toEqual([
+    { user_id: "u1", speed: 55, default_feed_id: "f1", theme: "system", view: "list", refresh_minutes: 0 },
+    { user_id: "u2", speed: 100, default_feed_id: null, theme: "system", view: "list", refresh_minutes: 0 },
+  ]);
 });
