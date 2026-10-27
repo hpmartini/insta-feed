@@ -16,6 +16,34 @@ bun run dev            # web :3000, api :3001
 bun run typecheck && bun run build && bun test
 ```
 
+## Umgebungsvariablen
+
+Alle optional; ohne `.env` läuft alles offline mit Mock-KI.
+
+| Variable | Wirkung | Vorgabe |
+|:---------|:--------|:--------|
+| `GEMINI_API_KEY` | Gemini-Key; nur serverseitig gelesen (`createAiAdapter`). Leer → Mock | leer |
+| `AI_PROVIDER` | `mock` erzwingt den Mock, auch mit Key; sonst Gemini bei Key | leer |
+| `DATABASE_PATH` | SQLite-Datei der API (`:memory:` möglich) | `data/insta-feed.db` |
+| `API_PORT` | Port der API | `3001` |
+| `API_URL` | Rewrite-Ziel von `/api/*` im Web; **beim `next build` fixiert** | `http://localhost:3001` |
+| `PUBLIC_ORIGIN` | Web-Origin für die Origin-Prüfung hinter Reverse-Proxy | aus `Host` abgeleitet |
+
+## Architektur
+
+Browser → `apps/web` (Next.js, same-origin `/api/*`, Middleware: Origin-Check) → `apps/api` (`createApp({ db, fetch, resolve?, ai, now })`) → SQLite (`bun:sqlite`) / `safeFetch` → Feeds und Artikelseiten / KI-Adapter (Mock | Gemini). Verträge (zod) in `packages/shared`, typisierter Client in `packages/api-client`. Details je Bereich unten.
+
+## Shortcuts (bekannte Grenzen)
+
+| Shortcut | Grenze / Ausbau |
+|:---------|:----------------|
+| DNS-Rebinding bei `safeFetch` | `fetch` löst nach der Prüfung neu auf (`safe-fetch.ts`); Verbindung an geprüfte IP binden |
+| Login-Timing | unbekannte E-Mail überspringt argon2, Timing verrät Registrierung (`auth.ts`); Dummy-Verify ergänzen |
+| Stories = Titel-Jaccard | keine Stoppwörter, nur Titel, `provider: "mock"`/`jaccard-v1`; kein KI-Clustering |
+| Gemini nur per Stub getestet | kein Live-Test; echte Erreichbarkeit nicht belegt |
+| Kein Browser-Durchlauf | Seiten/Ticker nur gebaut, typgeprüft, per curl gegen Rewrite geprüft; keine Komponententests |
+| Origin-Check ohne Origin erlaubt | curl/Server-zu-Server möglich; Schutz gilt Browsern |
+
 **Persistenz:** `apps/api/src/index.ts` öffnet SQLite unter `DATABASE_PATH` (Vorgabe `data/insta-feed.db`, Elternordner wird angelegt, `:memory:` erlaubt) und migriert vor `Bun.serve`. Schema-Version in `PRAGMA user_version` (aktuell 3; v2 ergänzt `feeds.last_error`, v3 `settings.theme/view/refresh_minutes` und begrenzt Alt-Tempo auf 1–100); Migration ist idempotent und atomar, höhere unbekannte Versionen werden abgelehnt. Tabellen: `users`, `sessions`, `feeds`, `articles`, `settings`, `ai_cache`.
 
 **Injektion:** `createApp({ db, fetch, resolve?, ai, now })` öffnet keine Dateien und liest keine Umgebung; `index.ts` verdrahtet den KI-Adapter über `createAiAdapter` (einzige Stelle, die `AI_PROVIDER`/`GEMINI_API_KEY` liest).
@@ -108,7 +136,6 @@ Auth-pflichtig, Nutzer immer aus der Sitzung. Felder (snake_case, alle fünf Pfl
 | `/articles/[id]` | Volltext (Hinweis bei `fallback`), Originallink, Zusammenfassung auf Knopfdruck mit Provider/Modell/Prompt-Version; Mock als „Mock … keine echte KI“ |
 | `/feeds` | anlegen, bearbeiten, abonnieren/abbestellen, löschen, aktualisieren; `lastError`/409 je Zeile |
 | `/stories` | Cluster mit Artikel- und Quellenlinks; als lokale Heuristik (`jaccard-v1`) gekennzeichnet |
-| `/ticker` | Laufschrift, zeichenweise, Tempo = `settings.speed` (ms pro Zeichen, kleiner = schneller). Ohne `article`: Titel der Artikel abonnierter Feeds. Mit `?article=<id>`: Volltext dieses Artikels (nur gespeicherte, eigene; Hinweis bei `fallback`). Standard gestoppt; Start setzt fort, Stopp pausiert, am Ende stoppt er und „Neu starten“ beginnt von vorn. `?autostart=true` (nur exakt `true`) startet nach dem Laden, ohne Browser-Vollbild (braucht Nutzeraktion). Vollbild per Knopf (Escape verlässt); ohne Fullscreen-API bildschirmfüllende CSS-Ansicht. Beispiele: `/ticker?autostart=true`, `/ticker?article=<id>&autostart=true` |
 | `/ticker` | Laufschrift, zeichenweise, Tempo = `settings.speed` (ms pro Zeichen, kleiner = schneller). Ohne `article`: Titel der Artikel abonnierter Feeds. Mit `?article=<id>`: Volltext dieses Artikels (nur gespeicherte, eigene; Hinweis bei `fallback`). Standard gestoppt; Start setzt fort, Stopp pausiert, am Ende stoppt er und „Neu starten“ beginnt von vorn. `?autostart=true` (nur exakt `true`) startet nach dem Laden, ohne Browser-Vollbild (braucht Nutzeraktion). Vollbild per Knopf (Escape verlässt); ohne Fullscreen-API bildschirmfüllende CSS-Ansicht. Beispiele: `/ticker?autostart=true`, `/ticker?article=<id>&autostart=true` |
 | `/settings` | alle fünf Felder; Theme setzt `data-theme` am `<html>` (`system` per `prefers-color-scheme`) |
 
