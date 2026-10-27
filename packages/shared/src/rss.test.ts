@@ -57,3 +57,11 @@ describe("parseFeed", () => {
     expect(parseFeed("<rss><channel><item><title>kaputt", feed)).toEqual([]);
   });
 });
+
+test("hostile input stays linear", () => {
+  const t = performance.now();
+  parseFeed(`<rss>${"<item ".repeat(100_000)}`, feed);
+  parseFeed(`<rss><item><title>${"<script ".repeat(100_000)}</title></item></rss>`, feed);
+  parseFeed(`<rss><item><title>${"<".repeat(200_000)}</title></item></rss>`, feed);
+  expect(performance.now() - t).toBeLessThan(2000);
+});

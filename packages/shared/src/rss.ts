@@ -1,12 +1,29 @@
 import { createHash } from "node:crypto";
 import type { Feed, FeedItem } from "./types";
-import { decodeEntities, stripHtml } from "./text";
+import { asciiLower, decodeEntities, stripHtml } from "./text";
 
 /** Text of the first <tag>…</tag>, CDATA unwrapped (not entity-decoded). Ported from BakeNews. */
 export function extractTag(xml: string, tag: string): string {
   const re = new RegExp(`<${tag}(?:\\s[^>]*)?>(?:\\s*<!\\[CDATA\\[([\\s\\S]*?)\\]\\]>\\s*|([\\s\\S]*?))</${tag}>`, "i");
   const m = xml.match(re);
   return (m?.[1] ?? m?.[2] ?? "").trim();
+}
+
+/** All <tag …>…</tag> blocks via indexOf: linear, unlike a lazy regex on unclosed tags in hostile input. */
+function blocks(xml: string, tag: string): string[] {
+  const lower = asciiLower(xml);
+  const out: string[] = [];
+  const close = `</${tag}>`;
+  for (let from = 0; ; ) {
+    const start = lower.indexOf(`<${tag}`, from);
+    if (start < 0) return out;
+    const next = lower[start + tag.length + 1];
+    if (next !== ">" && next !== " " && next !== "\n" && next !== "\t" && next !== "\r") { from = start + 1; continue; }
+    const end = lower.indexOf(close, start);
+    if (end < 0) return out;
+    out.push(xml.slice(start, end + close.length));
+    from = end + close.length;
+  }
 }
 
 function atomLink(entry: string): string {
@@ -27,8 +44,8 @@ function isoDate(raw: string): string {
 export function parseFeed(xml: string, feed: Pick<Feed, "id" | "name">): FeedItem[] {
   if (typeof xml !== "string" || !/^\s*(<\?xml|<rss|<feed|<rdf:RDF)/i.test(xml)) return [];
 
-  const rss = xml.match(/<item[\s>][\s\S]*?<\/item>/gi) ?? [];
-  const atom = rss.length ? [] : (xml.match(/<entry[\s>][\s\S]*?<\/entry>/gi) ?? []);
+  const rss = blocks(xml, "item");
+  const atom = rss.length ? [] : blocks(xml, "entry");
 
   const items = [...rss, ...atom].map((x): FeedItem => {
     const isAtom = !rss.length;

@@ -18,9 +18,8 @@ export function decodeEntities(s: string): string {
 /** HTML -> plain text. Entities are decoded after the tags are gone, so "&lt;b&gt;" stays literal text. */
 export function stripHtml(html: string): string {
   return decodeEntities(
-    html
-      .replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ")
-      .replace(/<[^>]*>/g, " "),
+    dropBlocks(dropBlocks(html, "script"), "style")
+      .replace(/<[^<>]*>/g, " "),
   )
     .replace(/\s+/g, " ")
     .trim();
@@ -29,4 +28,21 @@ export function stripHtml(html: string): string {
 export function firstSentences(text: string, n: number, maxChars = 600): string {
   const out = text.split(/(?<=[.!?])\s+/).slice(0, n).join(" ");
   return out.length > maxChars ? `${out.slice(0, maxChars - 1).trimEnd()}…` : out;
+}
+
+/** Length-preserving lowercase (String#toLowerCase can change the length, which would break index maths). */
+export const asciiLower = (s: string) => s.replace(/[A-Z]/g, (c) => c.toLowerCase());
+
+/** Drops <tag>…</tag> elements via indexOf: linear, unlike a lazy regex on unclosed tags in hostile input. */
+function dropBlocks(html: string, tag: string): string {
+  const lower = asciiLower(html);
+  let out = "";
+  for (let from = 0; ; ) {
+    const start = lower.indexOf(`<${tag}`, from);
+    if (start < 0) return out + html.slice(from);
+    out += `${html.slice(from, start)} `;
+    const end = lower.indexOf(`</${tag}>`, start);
+    if (end < 0) return out;
+    from = end + tag.length + 3;
+  }
 }
