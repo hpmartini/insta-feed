@@ -32,6 +32,7 @@ module.exports = {
     "constructor-super": "error",
     eqeqeq: ["warn", "always"],
     "import/no-deprecated": "warn",
+    "import/no-unresolved": ["error", {ignore: ["^firebase-functions/"]}],
     "import/no-extraneous-dependencies": "error",
     "import/no-unassigned-import": "warn",
     "no-cond-assign": "error",
