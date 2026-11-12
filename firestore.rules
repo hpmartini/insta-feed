@@ -9,6 +9,12 @@ service cloud.firestore {
       allow read, write: if isOwner(userId);
     }
 
+    // settings/preferences and scores: the owner may read them; writes go through
+    // Cloud Functions (Admin SDK), so a client cannot fake scores or the adapted speed.
+    match /users/{userId}/{document=**} {
+      allow read: if isOwner(userId);
+    }
+
     function isOwner(userId) {
       return request.auth.uid == userId;
     }

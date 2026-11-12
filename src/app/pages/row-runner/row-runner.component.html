@@ -83,6 +83,7 @@
         <app-spinner [showSpinner]="true"></app-spinner>
         <p>Generating questions...</p>
       </div>
+      <p *ngIf="!quizLoading && !quizData?.questions">The quiz is not available right now.</p>
       <div *ngIf="!quizLoading && quizData?.questions">
         <div class="question-card" *ngFor="let q of quizData.questions; let qIndex = index">
           <p><strong>{{ q.question }}</strong></p>

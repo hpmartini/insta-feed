@@ -12,3 +12,14 @@ This work is licensed under a
 [cc-by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/4.0/
 [cc-by-nc-sa-image]: https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png
 [cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY%20NC%20SA%204.0-lightgrey.svg
+
+## Cloud Functions: Micro-Quiz
+
+`generateMicroQuiz` calls Gemini (`gemini-2.5-flash`) and needs the secret `GEMINI_API_KEY`.
+Without it the function answers `failed-precondition`; there is no mock fallback.
+
+```sh
+firebase functions:secrets:set GEMINI_API_KEY   # once per project
+firebase deploy --only functions,firestore:rules
+cd functions && npm ci --include=dev && npm run lint && npm run build && npm test
+```
